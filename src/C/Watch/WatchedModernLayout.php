@@ -28,7 +28,9 @@ class WatchedModernLayout extends WatchedRegistry {
         parent::build();
         $store = $this->store;
         $this->registry->each(function ($item) use($store) {
-            $store->storeFile($item['absolute_path']);
+            if ($item['extension']){
+                $store->storeFile($item['absolute_path']);
+            }
         });
         return $this;
     }
