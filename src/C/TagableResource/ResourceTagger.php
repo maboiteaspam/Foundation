@@ -1,6 +1,8 @@
 <?php
 namespace C\TagableResource;
 
+use C\Misc\Utils;
+
 class ResourceTagger{
 
     public $taggers = [];
@@ -28,14 +30,12 @@ class ResourceTagger{
         $this->taggers[$dataType] = $computer;
     }
 
-    public function isFresh () {
-        $resource = $this->taggedResource;
-        $originalTag = $resource->originalTag;
-        return $originalTag&&$originalTag===$this->sign();
+    public function isFresh ($res) {
+        $originalTag = $res->originalTag;
+        return $originalTag&&$originalTag===$this->sign($res);
     }
 
-    public function sign () {
-        $resource = $this->taggedResource;
+    public function sign ($resource) {
         $h = '';
         foreach ($resource->resources as $res) {
             $tagger = $res['type'];
