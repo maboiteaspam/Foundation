@@ -57,15 +57,16 @@ class RepositoryProxy implements TagableResourceInterface, UnwrapableResourceInt
         if (!$this->tager) {
             $res = new TagedResource();
             $res->addResource([$this->repository->getRepositoryName(), $this->method], 'repository', $asName);
-            $method_args = $this->method[1];
-            foreach( $method_args as $index=>$arg) {
-                if ($arg instanceof TagableResourceInterface) {
-                    $res->addTaggedResource($arg->getTaggedResource(), $asName);
-                }
-            }
-            return $res;
+        } else {
+            $res = $this->tager->getTaggedResource();
         }
-        return $this->tager->getTaggedResource();
+        $method_args = $this->method[1];
+        foreach( $method_args as $index=>$arg) {
+            if ($arg instanceof TagableResourceInterface) {
+                $res->addTaggedResource($arg->getTaggedResource(), $asName);
+            }
+        }
+        return $res;
     }
 
     public function __call ($method, $args) {
