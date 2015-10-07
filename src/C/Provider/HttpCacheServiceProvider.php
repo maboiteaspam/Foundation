@@ -43,7 +43,35 @@ class HttpCacheServiceProvider implements ServiceProviderInterface
      **/
     public function boot(Application $app)
     {
+
         $app->before(function (Request $request, Application $app) {
+            if (isset($app['httpcache.tagger'])) {
+                $tagger = $app['httpcache.tagger'];
+                /* @var $fs \C\FS\KnownFs */
+                /* @var $tagger \C\TagableResource\ResourceTagger */
+                $tagger->tagDataWith('request', function ($value) use($request) {
+                    if ($value[0]==='_GET') {
+                        return $request->query->get($value[1], null, true);
+
+                    } else if ($value[0]==='_POST') {
+                        return $request->request->get($value[1], null, true);
+
+                    } else if ($value[0]==='_COOKIE') {
+                        return $request->cookies->get($value[1], null, true);
+
+                    } else if ($value[0]==='_SESSION') {
+                        return $request->getSession()->get($value[1], null, true);
+
+                    } else if ($value[0]==='_FILES') {
+                        return $request->files->get($value[1]);
+
+                    } else if ($value[0]==='_HEADER') {
+                        return $request->headers->get($value[1]);
+
+                    }
+                    throw new \Exception("missing computer for repository {$value[0]}");
+                });
+            }
             Utils::stderr('-------------');
             Utils::stderr('receiving url '.$request->getUri());
         }, Application::EARLY_EVENT);
@@ -64,7 +92,7 @@ class HttpCacheServiceProvider implements ServiceProviderInterface
                     if ($res) {
                         Utils::stderr('found resource for etag: '.$etag);
                         $originalTag = $res->originalTag;
-                        $fresh = $checkFreshness && $tagger->isFresh($res);
+                        $fresh = !$checkFreshness || $checkFreshness && $tagger->isFresh($res);
                         if ($fresh) {
                             $content = $store->getContent($etag);
                             $body = $content['body'];
@@ -146,15 +174,18 @@ class HttpCacheServiceProvider implements ServiceProviderInterface
             Utils::stderr('response code '.var_export($response->getStatusCode(), true));
             Utils::stderr('response is from cache '.var_export($response->headers->has("X-CACHED"), true));
 
+            $layout = $app['layout'];
+            $TaggedResource = $layout->getTaggedResource();
+
             if ($request->isMethodSafe()
                 && $response->isCacheable()
                 && !$response->getStatusCode()!==304
                 && !$response->headers->has("X-CACHED")
-                && $app["httpcache.tagger"]->getTaggedResource()) {
+                && $TaggedResource) {
                 $etag = $response->getEtag();
-                Utils::stderr('saving resource '.$request->getUri());
                 Utils::stderr(' etag '.$etag);
                 if ($etag) {
+                    Utils::stderr('saving resource '.$request->getUri());
                     $headers = $response->headers->all();
                     // those are headers to save into cahce.
                     // later when the cache is served, they are re injected.
@@ -164,7 +195,7 @@ class HttpCacheServiceProvider implements ServiceProviderInterface
                         'Surrogate-Capability',
                     ]);
                     $app["httpcache.store"]->store(
-                        $app["httpcache.tagger"]->getTaggedResource(),
+                        $TaggedResource,
                         $request->getUri(), [
                         'headers'   => $headers,
                         'body'      => $response->getContent()
