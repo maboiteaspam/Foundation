@@ -66,6 +66,10 @@ class Layout implements TagableResourceInterface{
      */
     public $fs;
     /**
+     * @var TagedResource
+     */
+    public $tagResource;
+    /**
      * this let you inject extra
      * resources tags to apply on
      * the layout level
@@ -309,26 +313,29 @@ class Layout implements TagableResourceInterface{
      * @return bool|TagedResource
      */
     public function getTaggedResource () {
-        $res = new TagedResource();
-        $excluded = $this->excludedBlocksFromTagResource();
-        try{
-            $res->addResource($this->debugEnabled?'with-debug':'without-debug');
-            $res->addResource($this->block);
-            $res->addResource($this->requestMatcher->getTaggedResource());
-            foreach($this->globalResourceTags as $extra) {
-                $res->addTaggedResource($extra);
-            }
-            foreach($this->registry->blocks as $block) {
-                if ($block->resolved
-                    && !in_array($block->id, $excluded)) {
-                    /* @var $block Block */
-                    $res->addTaggedResource($block->getTaggedResource());
+        if ($this->tagResource===null) {
+            $res = new TagedResource();
+            $excluded = $this->excludedBlocksFromTagResource();
+            try{
+                $res->addResource($this->debugEnabled?'with-debug':'without-debug');
+                $res->addResource($this->block);
+                $res->addResource($this->requestMatcher->getTaggedResource());
+                foreach($this->globalResourceTags as $extra) {
+                    $res->addTaggedResource($extra);
                 }
+                foreach($this->registry->blocks as $block) {
+                    if ($block->resolved
+                        && !in_array($block->id, $excluded)) {
+                        /* @var $block Block */
+                        $res->addTaggedResource($block->getTaggedResource());
+                    }
+                }
+            }catch(\Exception $ex) {
+                $res = false;
             }
-        }catch(\Exception $ex) {
-            $res = false;
+            $this->tagResource = $res;
         }
-        return $res;
+        return $this->tagResource;
     }
     #endregion
 
