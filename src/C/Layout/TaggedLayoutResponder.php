@@ -30,9 +30,7 @@ class TaggedLayoutResponder extends LayoutResponder{
             // this layout contains resource which prevent from being cached.
             // we shall not let that happen.
         } else {
-//            $etag = $app['httpcache.tagger']->sign($TaggedResource);
-            $this->tagger->setTaggedResource($TaggedResource);
-            $etag = $this->tagger->sign();
+            $etag = $this->tagger->sign($TaggedResource);
 
             Utils::stderr('response is tagged with '.$etag);
             $response->setProtocolVersion('1.1');
@@ -43,11 +41,7 @@ class TaggedLayoutResponder extends LayoutResponder{
 //                    $response->setMaxAge(60*10);
         }
 
-
-        if (!$response->isNotModified($request)) {
-            Utils::stderr('response is modified ');
-            $response->setContent($content);
-        }
+        $response->setContent($content);
 
         return $response;
     }
