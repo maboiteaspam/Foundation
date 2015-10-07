@@ -103,6 +103,7 @@ class HttpCacheServiceProvider implements ServiceProviderInterface
                             $response->headers->set("X-CACHED", "true");
                             Utils::stderr('responding from cache a content length ='.strlen($body));
                             Utils::stderr('headers ='.json_encode($content['headers']));
+                            Utils::stderr('require fresh:'.json_encode($checkFreshness));
                             return $response;
 
                         } else {
