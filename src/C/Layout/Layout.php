@@ -92,10 +92,9 @@ class Layout implements TagableResourceInterface{
      */
     public $currentBlockInRender;
 
-    public function __construct ($config=[]) {
+    public function __construct () {
         $this->registry = new RegistryBlock();
         $this->block = 'root';
-        $this->config = array_merge([], $config);
     }
 
     #region initialization
