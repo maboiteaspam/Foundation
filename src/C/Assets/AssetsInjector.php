@@ -276,11 +276,11 @@ class AssetsInjector {
                     if (substr($match,0,1)==='"' || substr($match,0,1)==="'") {
                         $match = substr($match, 1, -1);
                     }
-                    $content = str_replace($matches[0][$i], "url(/".$assetItem['dir']."/$match)", $content);
+                    $content = str_replace($matches[0][$i], "url(/".str_replace("\\", "/", $assetItem['dir'])."/$match)", $content);
                 }
                 $content = "/* $assetFile -> $assetShortPath */ \n$content";
             } else if ($assetItem['extension']==='js') {
-                $content = "(function(modulePath){;".$content.";})('".$assetItem['dir']."');";
+                $content = "(function(modulePath){;".$content.";})('".str_replace("\\", "/", $assetItem['dir'])."');";
             }
         } else {
             $content = "\n/* assset not found $assetFile */\n";
