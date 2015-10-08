@@ -10,7 +10,6 @@ use C\Layout\LayoutResponder;
 use C\Layout\LayoutSerializer;
 use C\Layout\RequestTypeMatcher;
 use C\Layout\TaggedLayoutResponder;
-use C\Misc\Utils;
 use C\View\Env;
 use C\View\Context;
 use C\View\Helper\CommonViewHelper;
@@ -34,6 +33,7 @@ class LayoutServiceProvider implements ServiceProviderInterface
     {
         LocalFs::$record = $app['debug'];
 
+        // @todo move this to a factory, add a layout.main
         $app['layout'] = $app->share(function(Application $app) {
             $layout = new Layout();
             if ($app['debug']) $layout->enableDebug(true);
@@ -69,6 +69,8 @@ class LayoutServiceProvider implements ServiceProviderInterface
             return $layout;
         });
 
+        // @todo add layout.view.helpers
+        // do extend
         $app['layout.helper.layout'] = $app->share(function (Application $app) {
             $layoutViewHelper = new LayoutViewHelper();
             $layoutViewHelper->setEnv($app['layout.env']);
@@ -99,6 +101,7 @@ class LayoutServiceProvider implements ServiceProviderInterface
             return $formHelper;
         });
 
+        // @todo check and compare with translator module and it s available_languages config option
         $app['layout.translator.available_languages'] = ['en', 'fr'];
         $app['layout.env.charset'] = 'utf-8';
         $app['layout.env.date_format'] = '';
