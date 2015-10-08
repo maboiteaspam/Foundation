@@ -75,11 +75,11 @@ class LayoutSerializer {
                 $templateFile = '';
                 $assets = [];
                 $data = [];
-                $isCacheExcluded = in_array($block->id, $cacheExcludedBlocks);
-
+                $isCacheExcluded = false;
                 $isCacheable = true;
 
                 if ($block) {
+                    $isCacheExcluded = in_array($block->id, $cacheExcludedBlocks);
                     if (isset($block->options['template'])) {
                         $template = $block->options['template'];
                         $templateFile = $layoutFS->get($block->options['template']);
