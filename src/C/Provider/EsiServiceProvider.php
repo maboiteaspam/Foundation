@@ -2,7 +2,6 @@
 namespace C\Provider;
 
 use C\Esi\TokenViewHelper;
-use C\Layout\Layout;
 use C\Misc\Utils;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
