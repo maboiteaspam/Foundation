@@ -22,7 +22,7 @@ class WatchedCapsule extends WatchedRegistry {
     }
 
     public function changed ($action, $file) {
-        parent::changed($action, $file);
+        return parent::changed($action, $file);
     }
 
 

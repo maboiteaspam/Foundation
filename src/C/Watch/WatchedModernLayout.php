@@ -36,10 +36,12 @@ class WatchedModernLayout extends WatchedRegistry {
     }
 
     public function changed ($action, $file) {
+        $ret = false;
         if ($action==='unlink'){
             $item = $this->registry->get($file);
             if ($item) {
                 $this->store->removeFile($item['absolute_path']);
+                $ret = true;
             }
         }
 
@@ -49,8 +51,10 @@ class WatchedModernLayout extends WatchedRegistry {
             $item = $this->registry->get($file);
             if ($item) {
                 $this->store->storeFile($item['absolute_path']);
+                $ret = true;
             }
         }
+        return $ret;
     }
 
 }
