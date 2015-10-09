@@ -35,7 +35,7 @@ class FormViewHelper extends  AbstractStaticLayoutHelper{
 
             Transforms::transform()
                 ->setLayout($T->getLayout())
-                ->sefDefaultData($blockSubject, [$formId=>FormBuilder::createView($form)]);
+                ->setDefaultData($blockSubject, [$formId=>FormBuilder::createView($form)]);
             return true;
         }
     }
