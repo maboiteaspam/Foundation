@@ -119,9 +119,15 @@ class Transforms implements TransformsInterface{
         return $this;
     }
 
-    public function sefDefaultData($id, $data=[]){
+    public function setDefaultData($id, $data=[]){
         $block = $this->layout->getOrCreate($id);
         $block->data = array_merge($data, $block->data);
+        return $this;
+    }
+
+    public function setDefaultMeta($id, $meta=[]){
+        $block = $this->layout->getOrCreate($id);
+        $block->meta = array_merge($meta, $block->meta);
         return $this;
     }
     public function updateData($id, $data=[]){
