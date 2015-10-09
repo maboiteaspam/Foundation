@@ -8,24 +8,39 @@ meta:
 structure:
   - root:
       set_template: HTML:/html.php
+      debug_with: comments
   - html_begin:
       body: >
         <!DOCTYPE html>
         <html>
+      debug_with: comments
   - html_head:
       set_template: HTML:/head.php
+      debug_with: comments
+  - template_head_css:
+      debug_with: comments
+  - page_head_css:
+      debug_with: comments
+  - template_head_js:
+      debug_with: comments
+  - page_head_js:
+      debug_with: comments
   - html_body_begin:
       body: |
         <body>
+      debug_with: comments
   - body:
       set_template: HTML:/1-column.php
   - footer:
       set_template: HTML:/footer.php
   - script_bottom:
       body:
+      debug_with: comments
   - html_body_end:
       body: |
         </body>
+      debug_with: comments
   - html_end:
       body: |
         </html>
+      debug_with: comments
