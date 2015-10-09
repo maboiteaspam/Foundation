@@ -3,30 +3,16 @@ namespace C\ModernApp\File;
 
 use C\Layout\Transforms as BaseTransforms;
 use C\Layout\TransformsInterface;
-use C\ModernApp\File\Helpers\FileHelper;
 use C\TagableResource\TagedResource;
 
 class Transforms extends BaseTransforms implements FileTransformsInterface{
 
     /**
-     * @param mixed $options
      * @return Transforms
      */
-    public static function transform($options){
-        $T = new self($options);
-        $T->options = $options;
-        $helpers = array_merge($options['modern.layout.helpers'],[
-            new FileHelper()
-        ]);
-        return $T
-            ->setStore($options['modern.layout.store'])
-            ->setHelpers($helpers);
+    public static function transform(){
+        return new self();
     }
-
-    /**
-     * @var array
-     */
-    protected $options;
 
     /**
      * @var Store
@@ -37,15 +23,12 @@ class Transforms extends BaseTransforms implements FileTransformsInterface{
 
     public function addHelper (StaticLayoutHelperInterface $helper) {
         $this->helpers[] = $helper;
+        return $this;
     }
 
     public function setStore(Store $store) {
         $this->store = $store;
         return $this;
-    }
-
-    public function getOptions() {
-        return $this->options;
     }
 
     /**
@@ -57,7 +40,10 @@ class Transforms extends BaseTransforms implements FileTransformsInterface{
             func_get_args())) {
             return $this;
         }
-        return new VoidFileTransforms($this);
+        $T = new VoidFileTransforms();
+        return $T
+            ->setLayout($this->getLayout())
+            ->setInnerTransform($this);
     }
 
     /**
@@ -73,7 +59,10 @@ class Transforms extends BaseTransforms implements FileTransformsInterface{
             func_get_args())) {
             return $this;
         }
-        return new VoidFileTransforms($this);
+        $T = new VoidFileTransforms();
+        return $T
+            ->setLayout($this->getLayout())
+            ->setInnerTransform($this);
     }
     /**
      * switch to a request kind
@@ -90,13 +79,19 @@ class Transforms extends BaseTransforms implements FileTransformsInterface{
         if (call_user_func_array([$this->layout->requestMatcher, 'isRequestKind'], func_get_args())) {
             return $this;
         }
-        return new VoidFileTransforms($this);
+        $T = new VoidFileTransforms();
+        return $T
+            ->setLayout($this->getLayout())
+            ->setInnerTransform($this);
     }
     public function forLang ($lang) {
         if (call_user_func_array([$this->layout->requestMatcher, 'isLang'], func_get_args())) {
             return $this;
         }
-        return new VoidFileTransforms($this);
+        $T = new VoidFileTransforms();
+        return $T
+            ->setLayout($this->getLayout())
+            ->setInnerTransform($this);
     }
 
     public function setHelpers(array $helpers) {
@@ -122,7 +117,10 @@ class Transforms extends BaseTransforms implements FileTransformsInterface{
             }
         }
 
-        $structure = Transforms::transform($this->options);
+        $structure = Transforms::transform()
+            ->setLayout($this->getLayout())
+            ->setStore($this->store)
+            ->setHelpers($this->helpers);
         if (isset($layoutStruct['structure'])) {
             foreach ($layoutStruct['structure'] as $actions) {
 

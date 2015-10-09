@@ -9,15 +9,21 @@ class AssetsHelper extends AbstractStaticLayoutHelper{
 
     public function executeBlockNode (FileTransformsInterface $T, $blockSubject, $nodeAction, $nodeContents) {
         if ($nodeAction==="add_assets") {
-            Transforms::transform($T->getOptions())->addAssets($blockSubject, $nodeContents);
+            Transforms::transform()
+                ->setLayout($T->getLayout())
+                ->addAssets($blockSubject, $nodeContents);
             return true;
 
         } else if ($nodeAction==="remove_assets") {
-            Transforms::transform($T->getOptions())->removeAssets($blockSubject, $nodeContents);
+            Transforms::transform()
+                ->setLayout($T->getLayout())
+                ->removeAssets($blockSubject, $nodeContents);
             return true;
 
         } else if ($nodeAction==="replace_assets") {
-            Transforms::transform($T->getOptions())->replaceAssets($blockSubject, $nodeContents);
+            Transforms::transform()
+                ->setLayout($T->getLayout())
+                ->replaceAssets($blockSubject, $nodeContents);
             return true;
 
         }

@@ -2,16 +2,14 @@
 namespace C\Esi;
 
 use C\Layout\Transforms as base;
-use C\Layout\Layout;
 
 class Transforms extends base{
 
     /**
-     * @param mixed $options
      * @return Transforms
      */
-    public static function transform($options){
-        return new self($options);
+    public static function transform(){
+        return new self();
     }
 
     public function esify($target, $options=[]){

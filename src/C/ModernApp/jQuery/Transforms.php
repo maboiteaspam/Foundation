@@ -6,11 +6,10 @@ use C\Layout\Transforms as base;
 class Transforms extends base{
 
     /**
-     * @param mixed $options
      * @return Transforms
      */
-    public static function transform($options){
-        return new self($options);
+    public static function transform(){
+        return new self();
     }
 
     public function inject($options=[]){

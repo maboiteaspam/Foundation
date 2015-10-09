@@ -27,8 +27,8 @@ class VoidFileTransforms extends VoidTransforms implements FileTransformsInterfa
     public function executeBlockNode (FileTransformsInterface $T, $subject, $nodeAction, $nodeContents) {
     }
 
-    public function getOptions() {
-        return $this->innerTransform->getOptions();
+    public function importFile($file) {
+        return $this;
     }
 
     public function then($fn) {

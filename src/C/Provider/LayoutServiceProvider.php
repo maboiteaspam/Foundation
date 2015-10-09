@@ -33,8 +33,7 @@ class LayoutServiceProvider implements ServiceProviderInterface
     {
         LocalFs::$record = $app['debug'];
 
-        // @todo move this to a factory, add a layout.main
-        $app['layout'] = $app->share(function(Application $app) {
+        $app['layout.factory'] = $app->protect(function() use($app) {
             $layout = new Layout();
             if ($app['debug']) $layout->enableDebug(true);
             if (isset($app['dispatcher'])) $layout->setDispatcher($app['dispatcher']);
@@ -57,48 +56,17 @@ class LayoutServiceProvider implements ServiceProviderInterface
             }
             $layout->setRequestMatcher($requestMatcher);
 
-
             $layout->setLayoutSerializer($app['layout.serializer']);
 
-            $app['layout.helper.layout']->setLayout($layout);
-            $app['layout.view']->addHelper($app['layout.helper.layout']);
-            $app['layout.view']->addHelper($app['layout.helper.common']);
-            $app['layout.view']->addHelper($app['layout.helper.routing']);
-            $app['layout.view']->addHelper($app['layout.helper.form']);
+            $layoutViewHelper = new LayoutViewHelper();
+            $layoutViewHelper->setEnv($app['layout.env']);
+            $layoutViewHelper->setLayout($layout);
+            $layout->context->addHelper($layoutViewHelper);
 
             return $layout;
         });
-
-        // @todo add layout.view.helpers
-        // do extend
-        $app['layout.helper.layout'] = $app->share(function (Application $app) {
-            $layoutViewHelper = new LayoutViewHelper();
-            $layoutViewHelper->setEnv($app['layout.env']);
-            return $layoutViewHelper;
-        });
-
-        $app['layout.helper.common'] = $app->share(function (Application $app) {
-            $commonHelper = new CommonViewHelper();
-            $commonHelper->setEnv($app['layout.env']);
-            // see more about translator here http://stackoverflow.com/questions/25482856/basic-use-of-translationserviceprovider-in-silex
-            if (isset($app['translator'])) {
-                $commonHelper->setTranslator($app['translator']);
-            }
-            return $commonHelper;
-        });
-
-        $app['layout.helper.routing'] = $app->share(function (Application $app) {
-            $routingHelper = new RoutingViewHelper();
-            $routingHelper->setEnv($app['layout.env']);
-            $routingHelper->setUrlGenerator($app["url_generator"]);
-            return $routingHelper;
-        });
-
-        $app['layout.helper.form'] = $app->share(function (Application $app) {
-            $formHelper = new FormViewHelper();
-            $formHelper->setEnv($app['layout.env']);
-            $formHelper->setCommonHelper($app['layout.helper.common']);
-            return $formHelper;
+        $app['layout'] = $app->share(function(Application $app) {
+            return $app['layout.factory']();
         });
 
         // @todo check and compare with translator module and it s available_languages config option
@@ -118,6 +86,37 @@ class LayoutServiceProvider implements ServiceProviderInterface
 
         $app['layout.view'] = $app->share(function() {
             return new Context();
+        });
+
+        $app['layout.view'] = $app->extend("layout.view", function(Context $view, Application $app) {
+            $view->addHelper($app['layout.helper.common']);
+            return $view;
+        });
+
+        $app['layout.helper.common'] = $app->share(function(Application $app) {
+            $commonHelper = new CommonViewHelper();
+            $commonHelper->setEnv($app['layout.env']);
+            // see more about translator here http://stackoverflow.com/questions/25482856/basic-use-of-translationserviceprovider-in-silex
+            if (isset($app['translator'])) {
+                $commonHelper->setTranslator($app['translator']);
+            }
+            return $commonHelper;
+        });
+
+        $app['layout.view'] = $app->extend("layout.view", function(Context $view, Application $app) {
+            $routingHelper = new RoutingViewHelper();
+            $routingHelper->setEnv($app['layout.env']);
+            $routingHelper->setUrlGenerator($app["url_generator"]);
+            $view->addHelper($routingHelper);
+            return $view;
+        });
+
+        $app['layout.view'] = $app->extend("layout.view", function(Context $view, Application $app) {
+            $formHelper = new FormViewHelper();
+            $formHelper->setEnv($app['layout.env']);
+            $formHelper->setCommonHelper($app['layout.helper.common']);
+            $view->addHelper($formHelper);
+            return $view;
         });
 
         $app['layout.responder'] = $app->share(function(Application $app) {

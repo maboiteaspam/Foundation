@@ -7,11 +7,10 @@ use Silex\Application;
 class Transforms extends BaseTransforms{
 
     /**
-     * @param mixed $options
      * @return Transforms
      */
-    public static function transform($options){
-        return new self($options);
+    public static function transform(){
+        return new self();
     }
 
     public function baseTemplate ($bodyTemplate='HTML:/1-column.php') {

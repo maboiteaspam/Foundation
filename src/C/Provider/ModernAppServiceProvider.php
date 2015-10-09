@@ -52,7 +52,10 @@ class ModernAppServiceProvider implements ServiceProviderInterface
             $helpers[] = new \C\ModernApp\File\Helpers\AssetsHelper();
             $helpers[] = new \C\ModernApp\File\Helpers\jQueryHelper();
             $helpers[] = new \C\ModernApp\File\Helpers\IntlHelper();
-            $helpers[] = new \C\ModernApp\File\Helpers\DashboardHelper();
+            $helpers[] = new \C\ModernApp\File\Helpers\FileHelper();
+            $helper = new \C\ModernApp\File\Helpers\DashboardHelper();
+            $helper->setExtensions($app['modern.dashboard.extensions']);
+            $helpers[] = $helper;
             $helpers[] = new \C\ModernApp\File\Helpers\RequestHelper();
             return $helpers;
         });

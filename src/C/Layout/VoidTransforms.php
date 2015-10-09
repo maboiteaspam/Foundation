@@ -3,14 +3,8 @@ namespace C\Layout;
 
 class VoidTransforms implements TransformsInterface{
 
-    /**
-     * @param TransformsInterface $transform
-     */
-    public function __construct(TransformsInterface $transform){
-        $this->setLayout($transform->getLayout());
-        $this->innerTransform = $transform;
+    public function __construct(){
     }
-    public $innerTransform;
 
     /**
      * @var \C\Layout\Layout
@@ -19,6 +13,16 @@ class VoidTransforms implements TransformsInterface{
 
     public function setLayout (Layout $layout) {
         $this->layout = $layout;
+        return $this;
+    }
+
+    /**
+     * @var \C\Layout\TransformsInterface
+     */
+    public $innerTransform;
+
+    public function setInnerTransform (TransformsInterface $T) {
+        $this->innerTransform = $T;
         return $this;
     }
 

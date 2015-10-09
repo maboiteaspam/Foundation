@@ -22,22 +22,26 @@ class LayoutHelper extends  AbstractStaticLayoutHelper{
 
     public function executeBlockNode (FileTransformsInterface $T, $blockSubject, $nodeAction, $nodeContents) {
         if ($nodeAction==="set_template") {
-            Transforms::transform($T->getOptions())
+            Transforms::transform()
+                ->setLayout($T->getLayout())
                 ->setTemplate($blockSubject, (string)$nodeContents);
             return true;
 
         } else if ($nodeAction==="body") {
-            Transforms::transform($T->getOptions())
+            Transforms::transform()
+                ->setLayout($T->getLayout())
                 ->setBody($blockSubject, (string)$nodeContents);
             return true;
 
         } else if ($nodeAction==="set_default_data") {
-            Transforms::transform($T->getOptions())
+            Transforms::transform()
+                ->setLayout($T->getLayout())
                 ->sefDefaultData($blockSubject, $nodeContents);
             return true;
 
         } else if ($nodeAction==="update_meta") {
-            Transforms::transform($T->getOptions())
+            Transforms::transform()
+                ->setLayout($T->getLayout())
                 ->updateMeta($blockSubject, $nodeContents);
             return true;
 
@@ -59,7 +63,8 @@ class LayoutHelper extends  AbstractStaticLayoutHelper{
                 'target'=>'',
                 'options'=>[],
             ],$nodeContents);
-            Transforms::transform($T->getOptions())
+            Transforms::transform()
+                ->setLayout($T->getLayout())
                 ->insertBeforeBlock($nodeContents['target'], $blockSubject, $nodeContents['options']);
             return true;
 
@@ -74,16 +79,21 @@ class LayoutHelper extends  AbstractStaticLayoutHelper{
                 'target'    =>'',
                 'options'   =>[],
             ],$nodeContents);
-            Transforms::transform($T->getOptions())
+            Transforms::transform()
+                ->setLayout($T->getLayout())
                 ->insertAfterBlock($nodeContents['target'], $blockSubject, $nodeContents['options']);
             return true;
 
         } else if ($nodeAction==="clear") {
-            Transforms::transform($T->getOptions())->clearBlock($blockSubject, 'all');
+            Transforms::transform()
+                ->setLayout($T->getLayout())
+                ->clearBlock($blockSubject, 'all');
             return true;
 
         } else if ($nodeAction==="delete") {
-            Transforms::transform($T->getOptions())->deleteBlock($blockSubject);
+            Transforms::transform()
+                ->setLayout($T->getLayout())
+                ->deleteBlock($blockSubject);
             return true;
 
         }

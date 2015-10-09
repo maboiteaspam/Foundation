@@ -8,11 +8,10 @@ use C\Misc\Utils;
 class Transforms extends Base{
 
     /**
-     * @param mixed $options
      * @return Transforms
      */
-    public static function transform($options){
-        return new self($options);
+    public static function transform(){
+        return new self();
     }
 
     /**

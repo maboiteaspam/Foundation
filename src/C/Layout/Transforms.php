@@ -3,20 +3,14 @@ namespace C\Layout;
 
 class Transforms implements TransformsInterface{
 
-    /**
-     * @param mixed $options
-     */
-    public function __construct($options=[]){
-        if (isset($options['layout'])) $this->setLayout($options['layout']);
-        if (isset($options['layout.responder'])) $this->setResponder($options['layout.responder']);
+    public function __construct(){
     }
 
     /**
-     * @param mixed $options
      * @return Transforms
      */
-    public static function transform($options){
-        return new self($options);
+    public static function transform(){
+        return new self();
     }
 
     /**
@@ -30,20 +24,6 @@ class Transforms implements TransformsInterface{
      */
     public function setLayout (Layout $layout) {
         $this->layout = $layout;
-        return $this;
-    }
-
-    /**
-     * @var LayoutResponder
-     */
-    public $responder;
-
-    /**
-     * @param LayoutResponder $responder
-     * @return $this
-     */
-    public function setResponder (LayoutResponder $responder) {
-        $this->responder = $responder;
         return $this;
     }
 
@@ -215,7 +195,10 @@ class Transforms implements TransformsInterface{
             func_get_args())) {
             return $this;
         }
-        return new VoidTransforms($this);
+        $T = new VoidTransforms();
+        return $T
+            ->setLayout($this->getLayout())
+            ->setInnerTransform($this);
     }
 
     /**
@@ -233,13 +216,19 @@ class Transforms implements TransformsInterface{
         if (call_user_func_array([$this->layout->requestMatcher, 'isRequestKind'], func_get_args())) {
             return $this;
         }
-        return new VoidTransforms($this);
+        $T = new VoidTransforms();
+        return $T
+            ->setLayout($this->getLayout())
+            ->setInnerTransform($this);
     }
     public function forLang ($lang) {
         if (call_user_func_array([$this->layout->requestMatcher, 'isLang'], func_get_args())) {
             return $this;
         }
-        return new VoidTransforms($this);
+        $T = new VoidTransforms();
+        return $T
+            ->setLayout($this->getLayout())
+            ->setInnerTransform($this);
     }
 
     public function insertAfterBlock ($target, $id, $options=[]){
@@ -269,11 +258,5 @@ class Transforms implements TransformsInterface{
             $block->registerDisplayedBlock($id, true);
         });
         return $this;
-    }
-
-    public function respond ($request, $response=null){
-        $args = func_get_args();
-        array_unshift($args, $this->layout);
-        return call_user_func_array([$this->responder, 'respond'], $args);
     }
 }

@@ -30,7 +30,8 @@ class IntlHelper extends  AbstractStaticLayoutHelper{
                 'locale'    => '',
                 'domain'    =>null,
             ],$nodeContents);
-            Transforms::transform($T->getOptions())
+            Transforms::transform()
+                ->setLayout($T->getLayout())
                 ->addIntl($blockSubject,
                     $nodeContents['intl'],
                     $nodeContents['locale'],

@@ -19,7 +19,9 @@ class jQueryHelper extends  AbstractStaticLayoutHelper{
                 'jquery'    => "jQuery:/jquery-{$version}.min.js",
                 'target'    => $nodeContents['target'],
             ], $nodeContents);
-            jQuery::transform($T->getOptions())->inject($nodeContents);
+            jQuery::transform()
+                ->setLayout($T->getLayout())
+                ->inject($nodeContents);
             return true;
 
         } else if ($nodeAction==="dom_prepend_to") {
