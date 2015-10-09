@@ -36,7 +36,7 @@ class LayoutHelper extends  AbstractStaticLayoutHelper{
         } else if ($nodeAction==="set_default_data") {
             Transforms::transform()
                 ->setLayout($T->getLayout())
-                ->sefDefaultData($blockSubject, $nodeContents);
+                ->setDefaultData($blockSubject, $nodeContents);
             return true;
 
         } else if ($nodeAction==="update_meta") {
