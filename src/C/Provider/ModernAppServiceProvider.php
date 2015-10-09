@@ -52,6 +52,9 @@ class ModernAppServiceProvider implements ServiceProviderInterface
             $helpers[] = new \C\ModernApp\File\Helpers\AssetsHelper();
             $helpers[] = new \C\ModernApp\File\Helpers\jQueryHelper();
             $helpers[] = new \C\ModernApp\File\Helpers\IntlHelper();
+            $helper = new \C\ModernApp\File\Helpers\FormViewHelper();
+            $helper->setFactory($app['form.factory']);
+            $helpers[] = $helper;
             $helpers[] = new \C\ModernApp\File\Helpers\FileHelper();
             $helper = new \C\ModernApp\File\Helpers\DashboardHelper();
             $helper->setExtensions($app['modern.dashboard.extensions']);
