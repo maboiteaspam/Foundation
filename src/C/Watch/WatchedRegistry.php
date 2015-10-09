@@ -40,25 +40,21 @@ class WatchedRegistry extends AbstractWatched {
     }
 
     public function changed ($action, $file) {
-        $name = $this->getName();
         $updated = false;
         if ($action==='unlink'){
             $item = $this->registry->get($file);
             if ($item) {
-                Utils::stdout("removed from $name");
                 $this->registry->removeItem($file);
                 $updated = true;
             }
         } else if($action==='change'){
             $item = $this->registry->get($file);
             if ($item) {
-                Utils::stdout("updated in $name");
                 $this->registry->refreshItem($file);
                 $updated = true;
             }
         } else if($action==='add' || $action==='addDir'){
             if ($this->registry->isInRegisteredPaths($file)) {
-                Utils::stdout("added to $name");
                 $this->registry->addItem($file);
                 $updated = true;
             }
