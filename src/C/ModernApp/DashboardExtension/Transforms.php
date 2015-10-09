@@ -98,13 +98,30 @@ class Transforms extends Base{
                 $block = $layout->get($id);
                 if ($block) {
                     $caller = Utils::findCaller($block->stack, $fromClass);
-                    $block->body = "\n<c_block_node id='$id' caller='".\json_encode($caller)."'\n>".$block->body;
+                    $caller = \json_encode($caller);
+                    $debug_with = isset($block->meta['debug_with'])
+                        ?$block->meta['debug_with']
+                        :"node";
+                    if ($debug_with==="node") {
+                        $block->body = "\n<c_block_node id='$id' caller='$caller'>\n".$block->body;
+                    } else {
+                        $block->body = "\n<!-- START id='$id' caller='$caller'  -->\n".$block->body;
+                    }
                 }
             });
             $this->layout->afterRenderAnyBlock(function ($ev, Layout $layout, $id) {
                 $block = $layout->get($id);
                 if ($block) {
-                    $block->body = $block->body."\n</c_block_node>\n";
+
+                    $debug_with = isset($block->meta['debug_with'])
+                        ?$block->meta['debug_with']
+                        :"node";
+                    if ($debug_with==="node") {
+                        $block->body = $block->body."\n</c_block_node>\n";
+                    } else {
+                        $block->body = $block->body."\n<!-- END id='$id' -->\n";
+                    }
+                    $block->body = trim($block->body)."\n";
                 }
             });
 
