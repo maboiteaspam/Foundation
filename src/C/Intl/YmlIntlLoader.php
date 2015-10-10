@@ -3,12 +3,16 @@
 namespace C\Intl;
 
 use C\FS\LocalFs;
-use Silex\Application;
 use Symfony\Component\Yaml\Yaml;
 
-class YmlIntlLoader extends AbstractIntlLoader {
+class YmlIntlLoader extends AbstractIntlFileLoader {
 
-    public function load ($filePath) {
+
+    public function __construct () {
+        $this->ext = 'yml';
+    }
+
+    public function load ($filePath, $locale, $domain) {
         return Yaml::parse (LocalFs::file_get_contents ($filePath), true, false, true);
     }
 }

@@ -5,10 +5,14 @@ use C\FS\KnownFs;
 use C\FS\LocalFs;
 use C\FS\Registry;
 
-use C\Intl\IntlInjector;
-use C\Intl\IntlLoader;
+use C\Intl\IntlFileLoader;
+use C\Intl\IntlJitLoader;
+use C\Intl\LocaleManager;
+use C\Intl\Translator;
+use C\Intl\XliffIntlLoader;
 use C\Intl\YmlIntlLoader;
 
+use Moust\Silex\Cache\CacheInterface;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -48,11 +52,34 @@ class IntlServiceProvider implements ServiceProviderInterface
         });
 
         $app['intl.loader'] = $app->share(function(Application $app) {
-            $loader = new IntlLoader();
-            $loader->addLoader(
-                new YmlIntlLoader($app['intl-content.cache'], 'yml'));
+            $loader = new IntlFileLoader();
+            $loader->addLoader(new YmlIntlLoader());
+            $loader->addLoader(new XliffIntlLoader());
             return $loader;
         });
+        $app['intl.jitloader'] = $app->share(function(Application $app) {
+            /* @var $mngr LocaleManager */
+            /* @var $cache CacheInterface */
+            $manager = $app['locale.manager'];
+            $cache = $app['intl-content.cache'];
+            $jitLoader = new IntlJitLoader();
+            $jitLoader->setCache($cache);
+            $jitLoader->setLocaleManager($manager);
+            return $jitLoader;
+        });
+
+
+        $app['locale'] = 'en';
+        $app['locale.manager'] = $app->share(function(Application $app) {
+            return new LocaleManager();
+        });
+
+        $app['translator'] = $app->share(function(Application $app) {
+            $translator = new Translator(null, $app['debug']);
+            $translator->setJitLoader($app['intl.jitloader']);
+            return $translator;
+        });
+        if (!isset($app['locale_fallbacks'])) $app['locale_fallbacks'] = array('en');
     }
     /**
      *
@@ -62,11 +89,27 @@ class IntlServiceProvider implements ServiceProviderInterface
      **/
     public function boot(Application $app)
     {
+        $fs = $app['intl.fs'];
+        /* @var $fs KnownFS */
+        if (isset($app['validator'])) {
+            $r = new \ReflectionClass('Symfony\Component\Validator\Validation');
+            $path = dirname($r->getFilename()).'/Resources/translations/';
+            $fs->register($path, 'Validator');
+        }
+
+        if (isset($app['form.factory'])) {
+            $r = new \ReflectionClass('Symfony\Component\Form\Form');
+            $path = dirname($r->getFilename()).'/Resources/translations/';
+            $fs->register($path, 'Validator');
+        }
+
+
         if (isset($app['watchers.watched'])) {
             $app['watchers.watched'] = $app->extend('watchers.watched', function($watched, Application $app) {
                 $w = new WatchedIntl();
                 $w->setRegistry($app['intl.fs']->registry);
                 $w->setLoader($app['intl.loader']);
+                $w->setJitLoader($app['intl.jitloader']);
                 $w->setName("intl");
                 $watched[] = $w;
                 return $watched;
@@ -75,22 +118,26 @@ class IntlServiceProvider implements ServiceProviderInterface
 
         $app->before(function (Request $request) use ($app) {
             $app['intl.fs']->registry->loadFromCache();
-            if (isset($app['translator'])) {
-                $app['translator']->setLocale(
-                    $request->getPreferredLanguage($app['layout.translator.available_languages'])
-                );
-            }
-        });
+            if (isset($app['locale.manager'])) {
 
-        $app->before(function ($request, Application $app) {
-            if (isset($app['translator'])) {
-                $injector = new IntlInjector();
-                $injector->translator = $app['translator'];
-                $injector->intlFS = $app['intl.fs'];
-                $injector->loader = $app['intl.loader'];
-                $app['layout']->beforeRender(function () use($injector, $app) {
-                    $injector->applyToLayout($app['layout']);
-                }, Application::EARLY_EVENT);
+                $localMngr = $app['locale.manager'];
+                /* @var $localMngr \C\Intl\LocaleManager */
+                $localMngr->setFallbackLocales($app['locale_fallbacks']);
+
+                /* @var $jitLoader \C\Intl\IntlJitLoader */
+                $jitLoader = $app['intl.jitloader'];
+                $knownLocales = $jitLoader->fetchWellKnownLocales();
+
+                $reqLng = $request->getPreferredLanguage(null);
+                if (!$reqLng) $reqLng = $app['locale_fallbacks'][0];
+
+                $locale = $localMngr->computeLocales ($knownLocales, $reqLng);
+                if ($locale) {
+                    $locale = $locale[0];
+                    $localMngr->setLocale($locale);
+                } else {
+                    // ouch. That s a kind of problem..
+                }
             }
         });
 

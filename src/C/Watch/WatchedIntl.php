@@ -2,68 +2,66 @@
 
 namespace C\Watch;
 
-use C\Intl\IntlLoader;
+use C\Intl\IntlJitLoader;
+use C\Intl\IntlFileLoader;
 
 class WatchedIntl extends WatchedRegistry {
 
     /**
-     * @var IntlLoader
+     * @var IntlFileLoader
      */
     public $loader;
 
-    public function setLoader (IntlLoader $loader) {
+    public function setLoader (IntlFileLoader $loader) {
         $this->loader = $loader;
+    }
+
+    /**
+     * @var IntlJitLoader
+     */
+    public $jitLoader;
+
+    public function setJitLoader (IntlJitLoader $jitLoader) {
+        $this->jitLoader = $jitLoader;
     }
 
     public function clearCache (){
         parent::clearCache();
-        $this->loader->clearCache();
-    }
-
-    public function resolveRuntime () {
-        parent::resolveRuntime();
     }
 
     public function build () {
         parent::build();
-        $loader = $this->loader;
-        $this->registry->each(function ($item) use($loader) {
-            if($item['extension'])
-                $loader->storeFile($item['absolute_path'], $item['extension']);
-        });
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function loadFromCache () {
-        return parent::loadFromCache();
-    }
-
-    /**
-     * @return array
-     */
-    public function saveToCache () {
-        return parent::saveToCache();
+        return $this->buildTranslations();
     }
 
     public function changed ($action, $file) {
-        if ($action==='unlink'){
-            $item = $this->registry->get($file);
-            if ($item) {
-                $this->loader->removeFile($item['absolute_path'], $item['extension']);
+        $updated = parent::changed($action, $file);
+        $this->buildTranslations();
+        return $updated;
+    }
+
+    public function buildTranslations () {
+        $loader = $this->loader;
+        $all = [];
+        $this->registry->each(function ($item) use(&$all, $loader) {
+            if($loader->canLoad($item['extension'])) {
+                $intl = $loader->fileNameToIntl($item['absolute_path'], $item['extension']);
+                $locale = $intl['locale'];
+                $domain = $intl['domain'];
+                if (!isset($all[$locale])) $all[$locale] = [];
+                if (!isset($all[$locale][$domain])) $all[$locale][$domain] = [];
+                $all[$locale] = array_merge($all[$locale][$domain], [
+                    $domain=> $loader->loadFile($item['absolute_path'], $item['extension'], $locale, $domain)
+                ]);
+            }
+        });
+        foreach ($all as $locale=>$domainTranslations) {
+            foreach ($domainTranslations as $domain=>$translations) {
+                $this->jitLoader->storeDomain($locale, $domain, $translations);
             }
         }
-
-        parent::changed($action, $file);
-
-        if($action==='change' || $action==='add' || $action==='addDir'){
-            $item = $this->registry->get($file);
-            if ($item) {
-                $this->loader->storeFile($item['absolute_path'], $item['extension']);
-            }
-        }
+        $this->jitLoader->storeAllKnownLocales(array_keys($all));
+        return $this;
     }
 
 }
