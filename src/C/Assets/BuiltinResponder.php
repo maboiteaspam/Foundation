@@ -45,13 +45,18 @@ class BuiltinResponder {
     }
 
     /**
-     * @return bool
+     * @param bool|false $verbose
      */
     public function respond ($verbose=false) {
         $reqUrl = $_SERVER['PHP_SELF'];
         $acceptableAssets = ['jpeg','jpg','png','gif','css','js'];
         $extension = substr(strrchr($reqUrl, "."), 1);
         if (in_array($extension, $acceptableAssets)) {
+
+            if (substr($reqUrl,0,1)==='/' && strpos($reqUrl,':')!==false) {
+                $reqUrl = substr($reqUrl, 1);
+            }
+
             $item = $this->fs->get($reqUrl);
             if ($item) {
                 echo $this->sendAsset($item['absolute_path'], $item['extension']);

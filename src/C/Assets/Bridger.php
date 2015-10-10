@@ -13,7 +13,11 @@ class Bridger {
         $aliases = [];
         if ($type==='builtin') {
             foreach ($paths as $i=>$path) {
-                $urlAlias = substr(realpath($path), strlen(realpath($basePath)));
+                if (substr(realpath($path), 0, strlen(realpath($basePath)))===realpath($basePath))
+                    $urlAlias = substr(realpath($path), strlen(realpath($basePath)));
+                else if ($fs->registry->getAliasFromPath($path)!==false){
+                    $urlAlias = "/".$fs->registry->getAliasFromPath($path);
+                }
                 $urlAlias = str_replace(DIRECTORY_SEPARATOR, "/", $urlAlias);
                 $aliases[$urlAlias] = realpath($path);
             }
@@ -21,14 +25,22 @@ class Bridger {
         } else if ($type==='apache') {
             $aliases = "";
             foreach ($paths as $path) {
-                $urlAlias = substr(realpath($path), strlen(realpath($basePath))+1);
+                if (substr(realpath($path), 0, strlen(realpath($basePath)))===realpath($basePath))
+                    $urlAlias = substr(realpath($path), strlen(realpath($basePath)));
+                else if ($fs->registry->getAliasFromPath($path)!==false){
+                    $urlAlias = "/".$fs->registry->getAliasFromPath($path);
+                }
                 $urlAlias = str_replace(DIRECTORY_SEPARATOR, "/", $urlAlias);
                 $aliases .= "Alias $urlAlias\t$path\n";
             }
         } else if ($type==='nginx') {
             $aliases = "";
             foreach ($paths as $path) {
-                $urlAlias = substr(realpath($path), strlen(realpath($basePath))+1);
+                if (substr(realpath($path), 0, strlen(realpath($basePath)))===realpath($basePath))
+                    $urlAlias = substr(realpath($path), strlen(realpath($basePath)));
+                else if ($fs->registry->getAliasFromPath($path)!==false){
+                    $urlAlias = "/".$fs->registry->getAliasFromPath($path);
+                }
                 $urlAlias = str_replace(DIRECTORY_SEPARATOR, "/", $urlAlias);
                 $aliases .= "Alias $urlAlias\t$path\n";
             }

@@ -2,7 +2,6 @@
 
 namespace C\FS;
 
-use C\Misc\Utils;
 use Moust\Silex\Cache\CacheInterface;
 
 class Registry {
@@ -46,13 +45,9 @@ class Registry {
     }
 
     public function registerPath($path, $as=null){
-        $p = realpath($path);
-        if ($p===false) Utils::stderr("This path does not exists $path");
-        else {
-            $this->config['paths'][] = $p;
-            if($as) $this->config['alias']["$as:"] = $p;
-        }
-        return $p;
+            $this->config['paths'][] = rp($path);
+            if($as) $this->config['alias']["$as:"] = rp($path);
+        return $path;
     }
     public function setBasePath($path){
         $this->config['basePath'] = $path;
@@ -60,6 +55,12 @@ class Registry {
     }
     public function getBasePath(){
         return $this->config['basePath'];
+    }
+    public function getAliasFromPath ($path) {
+        foreach ($this->config['alias'] as $a=>$p) {
+            if ($p===$path) return $a;
+        }
+        return false;
     }
 
     public function isFresh(){
@@ -119,17 +120,16 @@ class Registry {
         $basePath = $this->config['basePath'];
         $ret = [];
         foreach( $paths as $index=>$path) {
-            $rp = LocalFs::realpath($path);
-            if ($rp===false) {
-                $rp = LocalFs::realpath("$basePath".DIRECTORY_SEPARATOR."$path");
-            }
-            if ($rp!==false) {
+            $rp = new \SplFileInfo($path);
+            if ($rp->isLink()) {
+                $ret[$index] = $rp->getLinkTarget();
+            } else if ($rp->isDir()) {
+
+                $rp = $rp->getRealPath();
                 if (substr($rp, 0, strlen($basePath))===$basePath) {
                     $rp = substr($rp, strlen($basePath)+1);
                 }
                 $ret[$index] = $rp;
-            } else {
-                // log that something is wrong in some assets path.
             }
         }
         $ret = array_unique($ret);
@@ -283,9 +283,9 @@ class Registry {
 
     public function isInRegisteredPaths ($file) {
         $paths = $this->config['paths'];
-        $d = dirname($file);
+        $d = realpath(dirname($file));
         foreach ($paths as $path) {
-            if ($path===$d) {
+            if (realpath($path)===$d) {
                 return true;
             }
         }

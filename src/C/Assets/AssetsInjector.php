@@ -5,7 +5,6 @@ namespace C\Assets;
 use C\FS\KnownFs;
 use C\FS\LocalFs;
 use C\Misc\Utils;
-use Silex\Application;
 use C\Layout\Layout;
 
 /**
@@ -84,10 +83,14 @@ class AssetsInjector {
         $assetsFS = $this->assetsFS;
         $ext = $this->getExtFromTarget($target);
         foreach ($assets as $asset) {
-            if ($assetsFS->file_exists($asset)) {
-                $a = $assetsFS->get($asset);
+            $a = $assetsFS->get($asset);
+            if ($a) {
                 if ($a) {
-                    $assetName = $a['dir'].$a['name'];
+                    if ($a['isRelative']) {
+                        $assetName = $a['dir'].$a['name'];
+                    } else {
+                        $assetName = $asset;
+                    }
                     $assetUrl = "$assetName?t=".$a['sha1'];
 
                     if ($ext==="js")
