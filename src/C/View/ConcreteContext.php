@@ -19,6 +19,23 @@ interface ConcreteContext {
 
     #region CommonViewHelper
     /**
+     * @param $id
+     * @param array $parameters
+     * @param null $domain
+     * @param null $locale
+     * @return array
+     */
+    public function trans ($id, $parameters=[], $domain=null, $locale=null);
+    /**
+     * @param $id
+     * @param $number
+     * @param array $parameters
+     * @param null $domain
+     * @param null $locale
+     * @return array
+     */
+    public function transChoice ($id, $number, $parameters=[], $domain=null, $locale=null);
+    /**
      * Converts a date to the given format.
      *
      * <pre>
