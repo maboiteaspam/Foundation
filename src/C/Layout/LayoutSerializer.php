@@ -73,12 +73,16 @@ class LayoutSerializer {
                 /* @var $block Block */
                 $template = 'inlined body';
                 $templateFile = '';
+                $parentId = '';
                 $assets = [];
                 $data = [];
+                $displayedBlocks = [];
                 $isCacheExcluded = false;
                 $isCacheable = true;
 
                 if ($block) {
+                    $parentId = $block->getParentBlockId();
+                    $displayedBlocks = $block->getDisplayedBlocksId();
                     $isCacheExcluded = in_array($block->id, $cacheExcludedBlocks);
                     if (isset($block->options['template'])) {
                         $template = $block->options['template'];
@@ -150,6 +154,8 @@ class LayoutSerializer {
                     'templateFile'=>$templateFile,
                     'assets'=>$assets,
                     'id'=>$blockId,
+                    'parentId'=>$parentId,
+                    'displayedBlocks'=>$displayedBlocks,
                     'data'=>$data,
                     'exists'=>$options['exists'],
                     'shown'=>$options['shown'],

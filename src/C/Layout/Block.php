@@ -12,6 +12,7 @@ class Block implements TagableResourceInterface{
 
     public $id;
     public $body;
+    public $parentId;
     public $resolved = false;
 
     public $options = [
@@ -98,6 +99,13 @@ class Block implements TagableResourceInterface{
     }
     public function getTemplate(){
         return $this->options['template'];
+    }
+
+    public function setParentRenderBlock($parentId){
+        $this->parentId = $parentId;
+    }
+    public function getParentBlockId(){
+        return $this->parentId;
     }
 
     /**
@@ -200,5 +208,25 @@ class Block implements TagableResourceInterface{
 
     public function registerDisplayedBlock($id, $shown=true) {
         $this->displayed_blocks[] = ["id"=>$id, "shown"=>$shown];
+    }
+
+    public function registerDisplayedBlockAfter($afterId, $id, $shown=true) {
+        $index = array_keys($this->getDisplayedBlocksId(), $afterId);
+        if (count($index)) {
+            $index = $index[0];
+            array_splice($this->displayed_blocks, $index, 0, [["id"=>$id, "shown"=>$shown]]);
+        } else {
+            $this->displayed_blocks[] = ["id"=>$id, "shown"=>$shown];
+        }
+    }
+
+    public function registerDisplayedBlockBefore($beforeId, $id, $shown=true) {
+        $index = array_keys($this->getDisplayedBlocksId(), $beforeId);
+        if (count($index)) {
+            $index = $index[0];
+            array_splice($this->displayed_blocks, $index, 0, [["id"=>$id, "shown"=>$shown]]);
+        } else {
+            array_unshift($this->displayed_blocks, ["id"=>$id, "shown"=>$shown]);
+        }
     }
 }

@@ -18,10 +18,8 @@ class LayoutViewHelper extends AbstractViewHelper {
         $layout = $this->layout;
         $shown = $layout->registry->has($blockId);
         if ($force) $layout->getOrCreate($blockId);
-        $layout->registry
-            ->get($layout->currentBlockInRender)
-            ->registerDisplayedBlock($blockId, $shown)
-            ;
+        $this->block->registerDisplayedBlock($blockId, $shown);
+        if ($shown) $layout->registry->get($blockId)->setParentRenderBlock($this->block->id);
         echo "<!-- placeholder for block $blockId -->";
     }
 }

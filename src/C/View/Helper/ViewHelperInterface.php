@@ -5,6 +5,6 @@ use C\Layout\Block;
 
 interface ViewHelperInterface {
 
-    public function setBlockToRender ( Block $block);
+    public function setBlockToRender (Block $block);
 
 }

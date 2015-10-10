@@ -8,6 +8,9 @@
     transition-property: margin-top, margin-bottom;
     transition-duration: .5s;
 }
+.layout-block.not-shown{
+    opacity: 0.6;
+}
 .layout-block .layout-block-path.open{
     margin-top: 10px;
     margin-bottom: 5px;

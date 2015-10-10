@@ -87,11 +87,6 @@ class Layout implements TagableResourceInterface{
         'meta'=>[],
     ];
 
-    /**
-     * @var string
-     */
-    public $currentBlockInRender;
-
     public function __construct () {
         $this->registry = new RegistryBlock();
         $this->block = 'root';
@@ -132,12 +127,14 @@ class Layout implements TagableResourceInterface{
         $this->emit('before_block_resolve', $id);
         $this->emit('before_resolve_' . $id);
         $block = $this->registry->get($id);
-        $currentBlockInRender = $this->currentBlockInRender;
-        $this->currentBlockInRender = $id;
         if ($block) {
             $block->resolve($this->fs, $this->context);
+            foreach($block->getDisplayedBlocksId() as $displayedBlockId) {
+                $displayedBlock = $this->registry->get($displayedBlockId);
+                if ($displayedBlock) $displayedBlock->setParentRenderBlock($block->id);
+
+            }
         }
-        $this->currentBlockInRender = $currentBlockInRender;
         $this->emit('after_block_resolve', $id);
         $this->emit('after_resolve_' . $id);
         return $block;
@@ -148,17 +145,14 @@ class Layout implements TagableResourceInterface{
         $block = $this->registry->get($id);
         if ($block) {
             if(!$block->resolved) {
-                $currentBlockInRender = $this->currentBlockInRender;
-                $this->currentBlockInRender = $id;
                 $block->resolve($this->fs, $this->context);
-                $this->currentBlockInRender = $currentBlockInRender;
             }
             $this->emit('before_block_render', $id);
             $this->emit('before_render_' . $id);
             $body = $block->body;
-            foreach($block->getDisplayedBlocksId() as $displayedBlock) {
-                $body = str_replace("<!-- placeholder for block $displayedBlock -->",
-                    $this->getContent($displayedBlock),
+            foreach($block->getDisplayedBlocksId() as $displayedBlockId) {
+                $body = str_replace("<!-- placeholder for block $displayedBlockId -->",
+                    $this->getContent($displayedBlockId),
                     $body);
             }
             $block->body = $body;
@@ -191,7 +185,6 @@ class Layout implements TagableResourceInterface{
     }
     public function render (){
         $this->emit('before_layout_resolve');
-//            $this->resolveAllBlocks ();
         $this->resolveInCascade($this->block);
         $this->emit('after_layout_resolve');
 

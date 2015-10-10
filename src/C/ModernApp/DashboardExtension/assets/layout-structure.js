@@ -1,4 +1,3 @@
-$(document).ready(function layoutStructure () {
 
   $('.dashboard-content').on('click.layout', function (ev) {
     var target = $(ev.target);
@@ -24,4 +23,3 @@ $(document).ready(function layoutStructure () {
     }
 
   })
-});

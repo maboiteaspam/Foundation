@@ -18,6 +18,14 @@ class RegistryBlock{
         if( isset($this->blocks[$id]))
             return $this->blocks[$id];
     }
+    public function getParent ($id){
+        foreach ($this->blocks as $block) {
+            /* @var $block Block */
+            if (in_array($id, $block->getDisplayedBlocksId()))
+                return $block;
+        }
+        return null;
+    }
 
     public function has ($id){
         return array_key_exists($id, $this->blocks);

@@ -246,7 +246,18 @@ class Transforms implements TransformsInterface{
             $block = $layout->registry->get($target);
             if ($block) {
                 $block->body = $block->body.$layout->getContent($id);
-                $block->registerDisplayedBlock($id, true);
+            } else {
+                // @todo issue warning
+            }
+            $parent = $layout->registry->getParent($target);
+            if ($parent) {
+                $parent->registerDisplayedBlockAfter($target, $id, true);
+                $block = $layout->registry->get($id);
+                if ($block) {
+                    $block->setParentRenderBlock($parent->id);
+                }
+            } else {
+                // @todo issue warning
             }
         });
         return $this;
@@ -258,10 +269,18 @@ class Transforms implements TransformsInterface{
             $layout->resolve($id);
         });
         $this->layout->afterBlockRender($beforeTarget, function ($ev, Layout $layout) use($beforeTarget, $id) {
-//            $layout->displayBlock($id);
             $block = $layout->registry->get($beforeTarget);
-            $block->body = $layout->getContent($id).$block->body;
-            $block->registerDisplayedBlock($id, true);
+            if ($block) {
+                $block->body = $layout->getContent($id).$block->body;
+            }
+            $parent = $layout->registry->getParent($beforeTarget);
+            if ($parent) {
+                $parent->registerDisplayedBlockAfter($beforeTarget, $id, true);
+                $block = $layout->registry->get($id);
+                if ($block) {
+                    $block->setParentRenderBlock($parent->id);
+                }
+            }
         });
         return $this;
     }

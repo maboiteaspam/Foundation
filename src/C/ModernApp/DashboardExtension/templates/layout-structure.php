@@ -9,7 +9,7 @@ $layoutData = $serialized['layout'];
 <b class="dashboard-title">Layout structure</b>
 <div class="dashboard-block-content">
     <?php foreach ($blocks as $blockPath=>$blockInfo) { ?>
-        <div class="layout-block">
+        <div class="layout-block <?php echo $blockInfo['exists']?'':'not-shown'; ?>">
             <div class="block-head">
                 <?php echo $blockInfo['cacheExcluded']?'&otimes;':($blockInfo['isCacheable']?'✓':'✖'); ?>
                 |<?php echo str_repeat("-", substr_count($blockPath, '/')-1); ?>&rsaquo;
@@ -45,6 +45,14 @@ $layoutData = $serialized['layout'];
                         <tr>
                             <td>Exists</td>
                             <td><?php echo $blockInfo['exists']?'Yes':'no'; ?></td>
+                        </tr>
+                        <tr>
+                            <td>Parent ID</td>
+                            <td><?php echo $blockInfo['parentId']; ?></td>
+                        </tr>
+                        <tr>
+                            <td>Displayed blocks</td>
+                            <td><?php echo join(', ', $blockInfo['displayedBlocks']); ?></td>
                         </tr>
                     </table>
 
