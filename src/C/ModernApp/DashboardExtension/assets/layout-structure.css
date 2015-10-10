@@ -57,7 +57,7 @@
 
 .preview-enabled *:not(input):not(textarea)
 {
-    background-color: lightgrey;
+    background-color: lightslategray;
     transition-property: background-color;
     transition-duration: .5s;
 }

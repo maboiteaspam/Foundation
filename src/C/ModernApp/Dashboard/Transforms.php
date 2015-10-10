@@ -28,7 +28,7 @@ class Transforms extends Base{
      * @return $this
      */
     public function show ($fromClass=__CLASS__, $showExtensions=[]){
-        $this->insertBeforeBlock('html_end', 'dashboard', [
+        $this->insertBeforeBlock('html_body_end', 'dashboard', [
             'options' => [
                 'template'=>'Dashboard:/dashboard.php'
             ]
