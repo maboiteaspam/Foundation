@@ -40,7 +40,7 @@ class Transforms extends base{
 
     public function ajaxify($target, $options=[]){
         $options = array_merge(['url'=>'',], $options);
-        return $this->forRequest('get')
+        return $this->forRequest('!ajax')
             ->then(function (Transforms $transform) use ($target, $options) {
                 $id = sha1($target.$options['url']);
 
