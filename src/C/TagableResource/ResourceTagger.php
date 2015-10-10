@@ -1,7 +1,6 @@
 <?php
 namespace C\TagableResource;
 
-use C\Misc\Utils;
 
 class ResourceTagger{
 

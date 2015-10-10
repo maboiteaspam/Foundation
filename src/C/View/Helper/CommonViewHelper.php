@@ -1,7 +1,7 @@
 <?php
 namespace C\View\Helper;
 
-use Silex\Translator;
+use C\Intl\Translator;
 use Symfony\Component\Config\Definition\Exception\Exception;
 
 class CommonViewHelper extends AbstractViewHelper {
@@ -10,6 +10,7 @@ class CommonViewHelper extends AbstractViewHelper {
     // vendor/twig/twig/lib/Twig/Extension/Core.php
 
 
+    #region twig backport
     public $escapers = [];
     public function getEscapers () {
         return $this->escapers;
@@ -17,7 +18,9 @@ class CommonViewHelper extends AbstractViewHelper {
     public function addEscaper ( \Closure $fn ) {
         $this->escapers[] = $fn;
     }
+    #endregion
 
+    #region Translator
     /**
      * @var Translator
      */
@@ -50,9 +53,9 @@ class CommonViewHelper extends AbstractViewHelper {
         if (!$this->translator) return $id;
         return call_user_func_array([$this->translator, 'transChoice'], func_get_args());
     }
+    #endregion
 
-    // formatting filters
-
+    #region formatting filters
     /**
      * Converts a date to the given format.
      *
@@ -274,9 +277,9 @@ class CommonViewHelper extends AbstractViewHelper {
 
         return $method($value * pow(10, $precision)) / pow(10, $precision);
     }
+    #endregion
 
-
-    // encoding
+    #region encoding
     /**
      * URL encodes (RFC 3986) a string as a path segment or an array as a query string.
      *
@@ -319,9 +322,9 @@ class CommonViewHelper extends AbstractViewHelper {
     public function convert_encoding($str, $to, $from) {
         return patched_convert_encoding($str, $to, $from);
     }
+    #endregion
 
-
-    // string filters
+    #region string filters
     /**
      * Returns a titlecased string.
      *
@@ -439,9 +442,9 @@ class CommonViewHelper extends AbstractViewHelper {
         }
         return $str;
     }
+    #endregion
 
-
-    // array helpers
+    #region array helpers
     /**
      * Joins the values to a string.
      *
@@ -606,9 +609,9 @@ class CommonViewHelper extends AbstractViewHelper {
 
         return $result;
     }
+    #endregion
 
-
-    // string/array filters
+    #region string/array filters
     /**
      * Reverses a variable.
      *
@@ -723,9 +726,9 @@ class CommonViewHelper extends AbstractViewHelper {
 
         return is_string($elements) ? $elements : current($elements);
     }
+    #endregion
 
-
-    // iteration and runtime
+    #region iteration and runtime
 
     /**
      * @param $value
@@ -772,10 +775,9 @@ class CommonViewHelper extends AbstractViewHelper {
 
         return array_keys($array);
     }
+    #endregion
 
-
-    // escaping
-
+    #region escaping
     /**
      * Escapes a string.
      *
@@ -928,8 +930,10 @@ class CommonViewHelper extends AbstractViewHelper {
 
     // @todo
 //    public abstract function e();
+    #endregion
 
-    // global functions
+
+    #region global functions
     /**
      * (PHP 4, PHP 5)<br/>
      * Find highest value
@@ -1068,8 +1072,9 @@ class CommonViewHelper extends AbstractViewHelper {
         }
         return '';
     }
+    #endregion
 
-    // tests
+    #region tests
     public function isEven($num) {
         $num = (string)$num;
         return in_array((int)substr($num,-1), [0,2,4,6,8]);
@@ -1148,11 +1153,12 @@ class CommonViewHelper extends AbstractViewHelper {
     {
         return $value instanceof \Traversable || is_array($value);
     }
+    #endregion
 
 
 
 }
-
+// pff this class is far too big...
 
 if (function_exists('mb_convert_encoding')) {
     function patched_convert_encoding($string, $to, $from)

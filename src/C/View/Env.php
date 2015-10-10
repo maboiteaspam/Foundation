@@ -1,8 +1,6 @@
 <?php
 namespace C\View;
 
-use Silex\Translator;
-
 class Env {
 
     public $dateFormat;
