@@ -97,15 +97,13 @@ class Transforms extends Base{
             $this->layout->beforeRenderAnyBlock(function ($ev, Layout $layout, $id) use($fromClass) {
                 $block = $layout->get($id);
                 if ($block) {
-                    $caller = Utils::findCaller($block->stack, $fromClass);
-                    $caller = \json_encode($caller);
                     $debug_with = isset($block->meta['debug_with'])
                         ?$block->meta['debug_with']
                         :"node";
-                    if ($debug_with==="node") {
-                        $block->body = "\n<c_block_node id='$id' caller='$caller'>\n".$block->body;
-                    } else {
-                        $block->body = "\n<!-- START id='$id' caller='$caller'  -->\n".$block->body;
+                    if ($debug_with==="node" && $block->body) {
+                        $block->body = "\n<c_block_node id='$id'>\n".$block->body;
+                    } else if($block->body) {
+                        $block->body = "\n<!-- START id='$id' -->\n".$block->body;
                     }
                 }
             });
@@ -116,10 +114,12 @@ class Transforms extends Base{
                     $debug_with = isset($block->meta['debug_with'])
                         ?$block->meta['debug_with']
                         :"node";
-                    if ($debug_with==="node") {
+                    if ($debug_with==="node" && $block->body) {
                         $block->body = $block->body."\n</c_block_node>\n";
-                    } else {
+                    } else if($block->body) {
                         $block->body = $block->body."\n<!-- END id='$id' -->\n";
+                    } else {
+                        $block->body = "\n<!-- BLOCK id='$id'  -->\n";
                     }
                     $block->body = trim($block->body)."\n";
                 }
