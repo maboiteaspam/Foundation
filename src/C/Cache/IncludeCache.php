@@ -46,4 +46,13 @@ class IncludeCache extends FileCache
         $content = array('data' => $var, 'ttl' => (int) $ttl);
         return (bool) file_put_contents($this->getFileName($key), "<?php return\n".var_export($content, true)."\n;");
     }
+
+    /**
+     * @param $key
+     * @return string
+     */
+    protected function getFileName($key)
+    {
+        return parent::getFileName($key).'.php';
+    }
 }
