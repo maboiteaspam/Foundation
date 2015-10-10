@@ -18,8 +18,6 @@ use C\View\Helper\RoutingViewHelper;
 use C\View\Helper\FormViewHelper;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use C\Watch\WatchedRegistry;
 
 class LayoutServiceProvider implements ServiceProviderInterface
@@ -41,11 +39,10 @@ class LayoutServiceProvider implements ServiceProviderInterface
             $layout->setFS($app['layout.fs']);
 
 
-            $locales = $app['layout.translator.available_languages'];
-            $request = $app['request'];
+            $localMngr = $app['locale.manager'];
 
             $requestMatcher = new RequestTypeMatcher();
-            $requestMatcher->setLang($request->getPreferredLanguage($locales));
+            $requestMatcher->setLang($localMngr->getLocale());
             $requestMatcher->setDevice('desktop');
             if (isset($app["mobile_detect"])) {
                 if ($app["mobile_detect"]->isTablet()) {
@@ -69,8 +66,6 @@ class LayoutServiceProvider implements ServiceProviderInterface
             return $app['layout.factory']();
         });
 
-        // @todo check and compare with translator module and it s available_languages config option
-        $app['layout.translator.available_languages'] = ['en', 'fr'];
         $app['layout.env.charset'] = 'utf-8';
         $app['layout.env.date_format'] = '';
         $app['layout.env.timezone'] = '';
@@ -176,13 +171,8 @@ class LayoutServiceProvider implements ServiceProviderInterface
             });
         }
 
-        $app->before(function (Request $request) use ($app) {
+        $app->before(function () use ($app) {
             $app['layout.fs']->registry->loadFromCache();
-            if (isset($app['translator'])) {
-                $app['translator']->setLocale(
-                    $request->getPreferredLanguage($app['layout.translator.available_languages'])
-                );
-            }
         });
 
         if (isset($app['httpcache.tagger'])) {

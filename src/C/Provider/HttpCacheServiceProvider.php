@@ -71,6 +71,29 @@ class HttpCacheServiceProvider implements ServiceProviderInterface
                     }
                     throw new \Exception("missing computer for repository {$value[0]}");
                 });
+
+
+                $tagger->tagDataWith('jit-locale', function ($value) use($app) {
+                    /* @var $localeMngr \C\Intl\LocaleManager */
+                    $localeMngr = $app['locale.manager'];
+                    return $localeMngr->getLocale();
+                });
+                $tagger->tagDataWith('jit-device', function ($value) use($app) {
+                    /* @var $layout \C\Layout\Layout */
+                    $layout = $app['layout'];
+                    return $layout->requestMatcher->deviceType;
+                });
+                $tagger->tagDataWith('jit-request-kind', function ($value) use($app) {
+                    /* @var $layout \C\Layout\Layout */
+                    $layout = $app['layout'];
+                    return $layout->requestMatcher->requestKind;
+                });
+                $tagger->tagDataWith('jit-accept', function ($value) use($app) {
+                    return null;
+                });
+                $tagger->tagDataWith('jit-debug', function ($value) use($app) {
+                    return $app['debug']?'with-debug':'without-debug';
+                });
             }
             Utils::stderr('-------------');
             Utils::stderr('receiving url '.$request->getUri());
@@ -175,6 +198,7 @@ class HttpCacheServiceProvider implements ServiceProviderInterface
             Utils::stderr('response code '.var_export($response->getStatusCode(), true));
             Utils::stderr('response is from cache '.var_export($response->headers->has("X-CACHED"), true));
 
+            /* @var $layout \C\Layout\Layout */
             $layout = $app['layout'];
             $TaggedResource = $layout->getTaggedResource();
 

@@ -316,9 +316,7 @@ class Layout implements TagableResourceInterface{
             $res = new TagedResource();
             $excluded = $this->excludedBlocksFromTagResource();
             try{
-                $res->addResource($this->debugEnabled?'with-debug':'without-debug');
                 $res->addResource($this->block);
-                $res->addResource($this->requestMatcher->getTaggedResource());
                 foreach($this->globalResourceTags as $extra) {
                     $res->addTaggedResource($extra);
                 }

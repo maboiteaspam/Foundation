@@ -30,6 +30,14 @@ class TaggedLayoutResponder extends LayoutResponder{
             // this layout contains resource which prevent from being cached.
             // we shall not let that happen.
         } else {
+
+            $requestMatcher = $layout->requestMatcher;
+            $TaggedResource->addResource($requestMatcher->langPreferred, 'jit-locale');
+            $TaggedResource->addResource($requestMatcher->deviceType, 'jit-device');
+            $TaggedResource->addResource($requestMatcher->requestKind, 'jit-request-kind');
+            $TaggedResource->addResource(null, 'jit-accept');
+            $TaggedResource->addResource(($layout->debugEnabled?'with':'without').'-debug', 'jit-debug');
+
             $etag = $this->tagger->sign($TaggedResource);
 
             Utils::stderr('response is tagged with '.$etag);
