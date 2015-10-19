@@ -6,6 +6,12 @@ use C\TagableResource\TagableResourceInterface;
 use C\TagableResource\UnwrapableResourceInterface;
 use C\TagableResource\TagedResource;
 
+/**
+ * Class FormBuilder
+ * to inject forms into layouts
+ *
+ * @package C\Form
+ */
 class FormBuilder implements TagableResourceInterface, UnwrapableResourceInterface {
 
     /**
@@ -37,6 +43,9 @@ class FormBuilder implements TagableResourceInterface, UnwrapableResourceInterfa
     }
 
     /**
+     * It ensures form are not taggable
+     * because of their csrf protection
+     *
      * @param null $asName
      * @return TagedResource
      * @throws \Exception
