@@ -1,11 +1,13 @@
 <?php
 namespace C\Layout;
 
+/**
+ * Class VoidTransforms
+ * will cancel all attempts to modify the layout.
+ *
+ * @package C\Layout
+ */
 class VoidTransforms implements TransformsInterface{
-
-    public function __construct(){
-    }
-
     /**
      * @var \C\Layout\Layout
      */
@@ -51,7 +53,25 @@ class VoidTransforms implements TransformsInterface{
         return $this;
     }
 
+    /**
+     * Magic method which cancel everything else.
+     *
+     * @param $a
+     * @param $b
+     * @return $this
+     */
     public function __call ($a, $b) {
+        return $this;
+    }
+
+    /**
+     * voided method.
+     *
+     * @param $id
+     * @param array $data
+     * @return $this
+     */
+    public function setDefaultData ($id, $data=[]) {
         return $this;
     }
 }
