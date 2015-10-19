@@ -116,14 +116,22 @@ class IntlServiceProvider implements ServiceProviderInterface
             });
         }
 
+        /**
+         * Prepare and configure Translation service to consume.
+         */
         $app->before(function (Request $request) use ($app) {
+            // load all translations from cache.
             $app['intl.fs']->registry->loadFromCache();
-            if (isset($app['locale.manager'])) {
 
+            if (isset($app['locale.manager'])) {
+                // configure the locale manager
                 $localMngr = $app['locale.manager'];
                 /* @var $localMngr \C\Intl\LocaleManager */
                 $localMngr->setFallbackLocales($app['locale_fallbacks']);
 
+                // compute the best locale between
+                // available locales in the system
+                // and user locale provided in his request.
                 /* @var $jitLoader \C\Intl\IntlJitLoader */
                 $jitLoader = $app['intl.jitloader'];
                 $knownLocales = $jitLoader->fetchWellKnownLocales();
