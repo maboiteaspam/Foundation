@@ -4,6 +4,7 @@ namespace C\Provider;
 use C\FS\KnownFs;
 use C\FS\LocalFs;
 use C\FS\Registry;
+use C\Misc\ArrayHelpers;
 use C\Watch\WatchedModernLayout;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
@@ -47,25 +48,24 @@ class ModernAppServiceProvider implements ServiceProviderInterface
         });
         $app['modern.layout.helpers'] = $app->share(function (Application $app) {
             // @todo this should probably be moved away into separate service providers, for now on it s only inlined
-            $helpers = [];
-            $helpers[] = new \C\ModernApp\File\Helpers\LayoutHelper();
-            $helpers[] = new \C\ModernApp\File\Helpers\AssetsHelper();
-            $helpers[] = new \C\ModernApp\File\Helpers\jQueryHelper();
+            $helpers = new ArrayHelpers();
+            $helpers->append(new \C\ModernApp\File\Helpers\LayoutHelper());
+            $helpers->append(new \C\ModernApp\File\Helpers\AssetsHelper());
+            $helpers->append(new \C\ModernApp\File\Helpers\jQueryHelper());
             $helper = new \C\ModernApp\File\Helpers\FormViewHelper();
             $helper->setFactory($app['form.factory']);
-            $helpers[] = $helper;
-            $helpers[] = new \C\ModernApp\File\Helpers\FileHelper();
+            $helper->setUrlGenerator($app['url_generator']);
+            $helpers->append($helper);
+            $helpers->append(new \C\ModernApp\File\Helpers\FileHelper());
             $helper = new \C\ModernApp\File\Helpers\DashboardHelper();
             $helper->setExtensions($app['modern.dashboard.extensions']);
-            $helpers[] = $helper;
-            $helpers[] = new \C\ModernApp\File\Helpers\RequestHelper();
+            $helpers->append($helper);
+            $helpers->append(new \C\ModernApp\File\Helpers\RequestHelper());
             return $helpers;
         });
 
         $app['modern.dashboard.extensions'] = $app->share(function (Application $app) {
-            // @todo this should probably be moved away into separate service providers, for now on it s only inlined
-            $helpers = [];
-            return $helpers;
+            return [];
         });
     }
     /**
@@ -122,14 +122,14 @@ class ModernAppServiceProvider implements ServiceProviderInterface
         }, Application::EARLY_EVENT);
 
         if (isset($app['watchers.watched'])) {
-            $app['watchers.watched'] = $app->extend('watchers.watched', function($watched, Application $app) {
+            $app['watchers.watched'] = $app->share($app->extend('watchers.watched', function($watched, Application $app) {
                 $w = new WatchedModernLayout();
                 $w->setStore($app['modern.layout.store']);
                 $w->setRegistry($app['modern.fs']->registry);
                 $w->setName("modern.fs");
                 $watched[] = $w;
                 return $watched;
-            });
+            }));
         }
 
     }

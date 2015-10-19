@@ -132,13 +132,13 @@ class CapsuleServiceProvider implements ServiceProviderInterface
         });
 
         if (isset($app['watchers.watched'])) {
-            $app['watchers.watched'] = $app->extend('watchers.watched', function($watched, Application $app) {
+            $app['watchers.watched'] = $app->share($app->extend('watchers.watched', function($watched, Application $app) {
                 $w = new WatchedCapsule();
                 $w->setSchemaLoader($app['capsule.schema']);
                 $w->setName("capsule.schema");
                 $watched[] = $w;
                 return $watched;
-            });
+            }));
         }
 
     }

@@ -105,7 +105,7 @@ class IntlServiceProvider implements ServiceProviderInterface
 
 
         if (isset($app['watchers.watched'])) {
-            $app['watchers.watched'] = $app->extend('watchers.watched', function($watched, Application $app) {
+            $app['watchers.watched'] = $app->share($app->extend('watchers.watched', function($watched, Application $app) {
                 $w = new WatchedIntl();
                 $w->setRegistry($app['intl.fs']->registry);
                 $w->setLoader($app['intl.loader']);
@@ -113,7 +113,7 @@ class IntlServiceProvider implements ServiceProviderInterface
                 $w->setName("intl");
                 $watched[] = $w;
                 return $watched;
-            });
+            }));
         }
 
         /**

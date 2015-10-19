@@ -83,10 +83,10 @@ class LayoutServiceProvider implements ServiceProviderInterface
             return new Context();
         });
 
-        $app['layout.view'] = $app->extend("layout.view", function(Context $view, Application $app) {
+        $app['layout.view'] = $app->share($app->extend("layout.view", function(Context $view, Application $app) {
             $view->helpers->append($app['layout.helper.common']);
             return $view;
-        });
+        }));
 
         $app['layout.helper.common'] = $app->share(function(Application $app) {
             $commonHelper = new CommonViewHelper();
@@ -98,21 +98,21 @@ class LayoutServiceProvider implements ServiceProviderInterface
             return $commonHelper;
         });
 
-        $app['layout.view'] = $app->extend("layout.view", function(Context $view, Application $app) {
+        $app['layout.view'] = $app->share($app->extend("layout.view", function(Context $view, Application $app) {
             $routingHelper = new RoutingViewHelper();
             $routingHelper->setEnv($app['layout.env']);
             $routingHelper->setUrlGenerator($app["url_generator"]);
             $view->helpers->append($routingHelper);
             return $view;
-        });
+        }));
 
-        $app['layout.view'] = $app->extend("layout.view", function(Context $view, Application $app) {
+        $app['layout.view'] = $app->share($app->extend("layout.view", function(Context $view, Application $app) {
             $formHelper = new FormViewHelper();
             $formHelper->setEnv($app['layout.env']);
             $formHelper->setCommonHelper($app['layout.helper.common']);
             $view->helpers->append($formHelper);
             return $view;
-        });
+        }));
 
         $app['layout.responder'] = $app->share(function(Application $app) {
             $responder = new LayoutResponder();
@@ -162,13 +162,13 @@ class LayoutServiceProvider implements ServiceProviderInterface
     public function boot(Application $app)
     {
         if (isset($app['watchers.watched'])) {
-            $app['watchers.watched'] = $app->extend('watchers.watched', function($watched, Application $app) {
+            $app['watchers.watched'] = $app->share($app->extend('watchers.watched', function($watched, Application $app) {
                 $w = new WatchedRegistry();
                 $w->setRegistry($app['layout.fs']->registry);
                 $w->setName("layout.fs");
                 $watched[] = $w;
                 return $watched;
-            });
+            }));
         }
 
         $app->before(function () use ($app) {

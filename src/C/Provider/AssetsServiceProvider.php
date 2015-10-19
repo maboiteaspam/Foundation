@@ -138,13 +138,13 @@ class AssetsServiceProvider implements ServiceProviderInterface
         }
 
         if (isset($app['watchers.watched'])) {
-            $app['watchers.watched'] = $app->extend('watchers.watched', function($watched, Application $app) {
+            $app['watchers.watched'] = $app->share($app->extend('watchers.watched', function($watched, Application $app) {
                 $w = new WatchedRegistry();
                 $w->setRegistry($app['assets.fs']->registry);
                 $w->setName("assets.fs");
                 $watched[] = $w;
                 return $watched;
-            });
+            }));
         }
 
     }

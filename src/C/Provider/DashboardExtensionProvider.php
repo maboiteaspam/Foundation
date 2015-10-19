@@ -14,10 +14,10 @@ class DashboardExtensionProvider implements ServiceProviderInterface
     public function register(Application $app)
     {
         if (isset($app['modern.dashboard.extensions'])) {
-            $app['modern.dashboard.extensions'] = $app->extend('modern.dashboard.extensions', function ($extensions) use($app) {
+            $app['modern.dashboard.extensions'] = $app->share($app->extend('modern.dashboard.extensions', function ($extensions) use($app) {
                 $extensions[] = Transforms::transform()->setLayout($app['layout']);
                 return $extensions;
-            });
+            }));
         }
     }
     /**
