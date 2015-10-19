@@ -58,11 +58,11 @@ class LayoutServiceProvider implements ServiceProviderInterface
             $layoutViewHelper = new LayoutViewHelper();
             $layoutViewHelper->setEnv($app['layout.env']);
             $layoutViewHelper->setLayout($layout);
-            $layout->context->addHelper($layoutViewHelper);
+            $layout->context->helpers->append($layoutViewHelper);
 
             return $layout;
         });
-        $app['layout'] = $app->share(function(Application $app) {
+        $app['layout'] = $app->share(function() use($app) {
             return $app['layout.factory']();
         });
 
@@ -84,7 +84,7 @@ class LayoutServiceProvider implements ServiceProviderInterface
         });
 
         $app['layout.view'] = $app->extend("layout.view", function(Context $view, Application $app) {
-            $view->addHelper($app['layout.helper.common']);
+            $view->helpers->append($app['layout.helper.common']);
             return $view;
         });
 
@@ -102,7 +102,7 @@ class LayoutServiceProvider implements ServiceProviderInterface
             $routingHelper = new RoutingViewHelper();
             $routingHelper->setEnv($app['layout.env']);
             $routingHelper->setUrlGenerator($app["url_generator"]);
-            $view->addHelper($routingHelper);
+            $view->helpers->append($routingHelper);
             return $view;
         });
 
@@ -110,7 +110,7 @@ class LayoutServiceProvider implements ServiceProviderInterface
             $formHelper = new FormViewHelper();
             $formHelper->setEnv($app['layout.env']);
             $formHelper->setCommonHelper($app['layout.helper.common']);
-            $view->addHelper($formHelper);
+            $view->helpers->append($formHelper);
             return $view;
         });
 
