@@ -85,29 +85,26 @@ class AssetsInjector {
         foreach ($assets as $asset) {
             $a = $assetsFS->get($asset);
             if ($a) {
-                if ($a) {
-                    if ($a['isRelative']) {
-                        $assetName = $a['dir'].$a['name'];
-                    } else {
-                        $assetName = $asset;
-                    }
-                    $assetUrl = "$assetName?t=".$a['sha1'];
-
-                    if ($ext==="js")
-                        $html .= sprintf(
-                            '<script src="/%s" type="text/javascript"></script>',
-                            str_replace("\\", "/", $assetUrl));
-                    else
-                        $html .= sprintf(
-                            '<link href="/%s" rel="stylesheet" />',
-                            str_replace("\\", "/", $assetUrl));
-
-                    $html .= "\n";
+                if ($a['isRelative']) {
+                    $assetName = $a['dir'].$a['name'];
                 } else {
-                    // @todo add log
-                    // missing asset
-//                    var_dump($assetsFS);
+                    $assetName = $asset;
                 }
+                $assetUrl = "$assetName?t=".$a['sha1'];
+
+                if ($ext==="js")
+                    $html .= sprintf(
+                        '<script src="/%s" type="text/javascript"></script>',
+                        str_replace("\\", "/", $assetUrl));
+                else
+                    $html .= sprintf(
+                        '<link href="/%s" rel="stylesheet" />',
+                        str_replace("\\", "/", $assetUrl));
+
+                $html .= "\n";
+            } else {
+                $html .= sprintf('<!-- File asset not found %s -->', $asset);
+                $html .= "\n";
             }
         }
         return $html;
