@@ -1,11 +1,9 @@
 <?php
 namespace C\ModernApp\File;
 
-interface FileTransformsInterface{
-    /**
-     * @return \C\Layout\Layout
-     */
-    public function getLayout();
+use C\Layout\TransformsInterface;
+
+interface FileTransformsInterface extends TransformsInterface{
     public function then($fn);
     public function forFacets($options);
     public function forDevice($device);
