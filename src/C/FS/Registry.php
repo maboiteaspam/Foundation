@@ -215,6 +215,14 @@ class Registry {
             : $item['dir'].$item['name'];
         return $item;
     }
+
+    /**
+     * Transforms a path to an absolute path.
+     * It can be relative to the CWD, or a module name (Module:/path/file.ext)
+     *
+     * @param $itemPath
+     * @return bool|string
+     */
     public function get($itemPath){
         if (!$itemPath) return false;
 
@@ -304,6 +312,8 @@ function rp($path) {
 }
 
 function reliablePath($path) {
+    $path = str_replace("//", "/", $path);
+    $path = str_replace("\\\\", "\\", $path);
     $path = str_replace("/", DIRECTORY_SEPARATOR, $path);
     $path = str_replace("\\", DIRECTORY_SEPARATOR, $path);
     return $path;
