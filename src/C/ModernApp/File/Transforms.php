@@ -19,13 +19,39 @@ class Transforms extends BaseTransforms implements FileTransformsInterface{
      */
     protected $store;
 
+    /**
+     * Helpers are responsible to declare and implement
+     * actions to apply on layout, structure, or blocks.
+     *
+     * @var array
+     */
     protected $helpers = [];
 
+    /**
+     * @param StaticLayoutHelperInterface $helper
+     * @return $this
+     */
     public function addHelper (StaticLayoutHelperInterface $helper) {
         $this->helpers[] = $helper;
         return $this;
     }
 
+    /**
+     * @param $helpers array
+     * @return $this
+     */
+    public function setHelpers($helpers) {
+        $this->helpers = $helpers;
+        return $this;
+    }
+
+    /**
+     * Store is the object responsible
+     * to resolve layout file path.
+     *
+     * @param Store $store
+     * @return $this
+     */
     public function setStore(Store $store) {
         $this->store = $store;
         return $this;
@@ -45,10 +71,12 @@ class Transforms extends BaseTransforms implements FileTransformsInterface{
             ->setLayout($this->getLayout())
             ->setInnerTransform($this);
     }
-
     /**
-     * switch to a device type
-     * desktop, mobile, tablet
+     * Switch the current transform depending on the device type attached to the request being processed.
+     * $device can be any, mobile, desktop, tablet
+     *
+     * When the device mismatch, a void transform is returned.
+     *
      * default is desktop
      *
      * @param $device
@@ -65,12 +93,19 @@ class Transforms extends BaseTransforms implements FileTransformsInterface{
             ->setInnerTransform($this);
     }
     /**
-     * switch to a request kind
-     * ajax, get
+     * Switch the current transform depending on the kind of request being processed.
+     * $kind can be any, get, esi-slave, esi-master, ajax
+     *
+     * When the kind of request mismatch, a void transform is returned.
+     *
      * default is get
-     * esi-slave, esi-master are esi internals.
-     * it can also receive negate kind such
-     * !ajax !esi-master !esi-slave !get
+     * esi-slave, esi-master are internals for esi processing.
+     *
+     * It is possible to use negation such
+     * !ajax
+     * !esi-master
+     * !esi-slave
+     * !get
      *
      * @param $kind
      * @return $this|VoidFileTransforms
@@ -84,6 +119,11 @@ class Transforms extends BaseTransforms implements FileTransformsInterface{
             ->setLayout($this->getLayout())
             ->setInnerTransform($this);
     }
+
+    /**
+     * @param $lang
+     * @return $this
+     */
     public function forLang ($lang) {
         if (call_user_func_array([$this->layout->requestMatcher, 'isLang'], func_get_args())) {
             return $this;
@@ -94,14 +134,13 @@ class Transforms extends BaseTransforms implements FileTransformsInterface{
             ->setInnerTransform($this);
     }
 
-    public function setHelpers(array $helpers) {
-        $this->helpers = [];
-        foreach ($helpers as $helper) {
-            $this->addHelper($helper);
-        }
-        return $this;
-    }
-
+    /**
+     * Imports the given file and process it on the current layout.
+     *
+     * @param $filePath
+     * @return $this
+     * @throws \Exception
+     */
     public function importFile ($filePath) {
         $layoutStruct = $this->store->get($filePath);
 
@@ -117,13 +156,20 @@ class Transforms extends BaseTransforms implements FileTransformsInterface{
             }
         }
 
+        // is there reason to create a new transform object
+        // where $this is already a transform ?
         $structure = Transforms::transform()
             ->setLayout($this->getLayout())
             ->setStore($this->store)
             ->setHelpers($this->helpers);
-        if (isset($layoutStruct['structure'])) {
-            foreach ($layoutStruct['structure'] as $actions) {
+        // $structure = $this;
+        // @todo give it a check
 
+
+
+        if (isset($layoutStruct['structure'])) {
+
+            foreach ($layoutStruct['structure'] as $actions) {
                 foreach ($actions as $action => $options) {
 
                     $structure->then(function (FileTransformsInterface $T) use(&$structure, $action, $options) {
@@ -132,6 +178,7 @@ class Transforms extends BaseTransforms implements FileTransformsInterface{
                         if ($sub instanceof TransformsInterface) {
                             $structure = $sub;
                         } else if($sub===false) {
+
                             $subject = $action;
                             $nodeActions = $options;
                             $structure->then(function (FileTransformsInterface $T) use($subject, $nodeActions) {
@@ -141,14 +188,23 @@ class Transforms extends BaseTransforms implements FileTransformsInterface{
                                     }
                                 }
                             });
+
                         }
                     });
+
                 }
             }
         }
         return $this;
     }
 
+    /**
+     * Executes a meta node, one that affects layout object properties.
+     *
+     * @param $nodeAction
+     * @param $nodeContent
+     * @return bool
+     */
     public function executeMetaNode ($nodeAction, $nodeContent) {
         foreach ($this->helpers as $helper) {
             /* @var $helper StaticLayoutHelperInterface */
@@ -159,6 +215,19 @@ class Transforms extends BaseTransforms implements FileTransformsInterface{
         return false;
     }
 
+    /**
+     * Execute a structural layout node.
+     * For examples,
+     * - importing a file
+     * - active / void transform switch
+     * - dashboard insertion
+     * are considered as a structural action
+     *
+     * @param FileTransformsInterface $T
+     * @param $nodeAction
+     * @param $nodeContent
+     * @return bool|FileTransformsInterface
+     */
     public function executeStructureNode (FileTransformsInterface $T, $nodeAction, $nodeContent) {
         foreach ($this->helpers as $helper) {
             /* @var $helper StaticLayoutHelperInterface */
@@ -168,6 +237,16 @@ class Transforms extends BaseTransforms implements FileTransformsInterface{
         return false;
     }
 
+    /**
+     * Executes an action on a block level.
+     * Add assets, set template, change data are actions that concerns blocks.
+     *
+     * @param FileTransformsInterface $T
+     * @param $subject
+     * @param $nodeAction
+     * @param $nodeContent
+     * @return bool
+     */
     public function executeBlockNode (FileTransformsInterface $T, $subject, $nodeAction, $nodeContent) {
         foreach ($this->helpers as $helper) {
             /* @var $helper StaticLayoutHelperInterface */
