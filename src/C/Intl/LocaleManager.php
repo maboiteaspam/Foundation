@@ -23,9 +23,9 @@ class LocaleManager {
     private $fallbackLocales = array();
 
     /**
-     * {@inheritdoc}
+     * Set preferred locale for translations.
      *
-     * @api
+     * @param $locale
      */
     public function setLocale($locale)
     {
@@ -34,9 +34,7 @@ class LocaleManager {
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @api
+     * @return string
      */
     public function getLocale()
     {
