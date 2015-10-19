@@ -8,6 +8,16 @@ use C\View\Context;
 use C\FS\KnownFs;
 use Symfony\Component\Config\Definition\Exception\Exception;
 
+/**
+ * Class Block
+ * represents a render-able element of a layout.
+ * It has a template, options, data(s), meta, and can be attached assets.
+ * It is being executed to render a portion of the whole page.
+ * It can declare and render sub blocks.
+ *
+ *
+ * @package C\Layout
+ */
 class Block implements TagableResourceInterface{
 
     public $id;
@@ -33,10 +43,30 @@ class Block implements TagableResourceInterface{
     ];
 
 
+    /**
+     * @param $id string
+     */
     public function __construct($id) {
         $this->id = $id;
     }
 
+    /**
+     * clear some settings of the block.
+     *
+     * $what can be one of
+     * - all
+     * - template
+     * - data
+     * - options
+     * - assets
+     * - meta
+     *
+     * You can also pass in a string such
+     * template, options
+     * to clear multiple elements at once.
+     *
+     * @param string $what
+     */
     public function clear ($what='all') {
         if ($what==='all' || $what==='') {
             $this->body = "";
@@ -46,21 +76,30 @@ class Block implements TagableResourceInterface{
                 'template' => ''
             ];
         } else {
-            if (strpos($what, "template")) {
+            if (strpos($what, "template")!==false) {
                 $this->options['template'] = '';
             }
-            if (strpos($what, "data")) {
+            if (strpos($what, "data")!==false) {
                 $this->data = [];
             }
-            if (strpos($what, "options")) {
+            if (strpos($what, "options")!==false) {
                 $this->options = ["template" => ""];
             }
-            if (strpos($what, "assets")) {
+            if (strpos($what, "assets")!==false) {
                 $this->assets = [];
+            }
+            if (strpos($what, "meta")!==false) {
+                $this->meta = [];
             }
         }
     }
 
+    /**
+     * Resolves the view within the block settings.
+     *
+     * @param KnownFs $fs
+     * @param Context $context
+     */
     public function resolve (KnownFs $fs, Context $context){
         if (!$this->resolved) {
             $this->resolved = true;
@@ -94,6 +133,12 @@ class Block implements TagableResourceInterface{
         }
     }
 
+    /**
+     * $template can be a file path
+     * or a module file target (My/Module:/path/file.ext)
+     *
+     * @param $template string
+     */
     public function setTemplate($template){
         $this->options['template'] = $template;
     }
@@ -101,16 +146,23 @@ class Block implements TagableResourceInterface{
         return $this->options['template'];
     }
 
+    /**
+     * @param $parentId string
+     */
     public function setParentRenderBlock($parentId){
         $this->parentId = $parentId;
     }
+
+    /**
+     * @return string
+     */
     public function getParentBlockId(){
         return $this->parentId;
     }
 
     /**
      * adds a block content of a script/css inline.
-     * $target is first head foot last
+     * $target is first/head/foot/last
      * @param $target
      * @param $type
      * @param $content
@@ -123,11 +175,36 @@ class Block implements TagableResourceInterface{
             'content'=>$content,
         ];
     }
+
+    /**
+     * @return array
+     */
     public function getInline(){
         return $this->inline;
     }
 
     /**
+     * Attach a new asset to this block.
+     * $assets is an array such
+     * [
+     *  'target'=>[
+     *      assets1.css,
+     *      assets2.jpeg,
+     *  ]
+     * ]
+     *
+     * target is a block id relate to your base template.
+     * It is probably something of
+     * - template_head_css
+     * - page_head_css
+     * - template_head_js
+     * - page_head_js
+     * ----
+     * - template_footer_css
+     * - page_footer_css
+     * - template_footer_js
+     * - page_footer_js
+     *
      * @param array $assets
      * @param bool|false $first
      */
@@ -142,6 +219,9 @@ class Block implements TagableResourceInterface{
     }
 
     /**
+     * Compute involved resources of the block
+     * as a resource tag.
+     *
      * @return TagedResource
      * @throws \Exception
      */
@@ -182,15 +262,17 @@ class Block implements TagableResourceInterface{
         return $res;
     }
 
+    /**
+     * Get all data attached to this block unwrapped.
+     * @param array $notNames
+     * @return array
+     * @throws \Exception
+     */
     public function unwrapData ($notNames=[]) {
         $unwrapped = [];
         foreach($this->data as $name => $data){
             if (!in_array($name, $notNames)) {
-                if ($data instanceof UnwrapableResourceInterface) {
-                    $unwrapped[$name] = $data->unwrap();
-                } else {
-                    $unwrapped[$name] = $data;
-                }
+                $unwrapped[$name] = $this->getData($name);
             } else {
                 throw new \Exception("Forbidden data name '$name' is forbidden and can t be overwritten");
             }
@@ -198,6 +280,25 @@ class Block implements TagableResourceInterface{
         return $unwrapped;
     }
 
+    /**
+     * Get an unwrapped data attached to this block.
+     *
+     * @param $name
+     * @return mixed
+     */
+    public function getData ($name) {
+        $data = $this->data[$name];
+        if ($data instanceof UnwrapableResourceInterface) {
+            $data = $data->unwrap();
+        }
+        return $data;
+    }
+
+    /**
+     * Returns the list of blocks the view has tried to display.
+     *
+     * @return array
+     */
     public function getDisplayedBlocksId () {
         $displayed = [];
         foreach ($this->displayed_blocks as $d) {
@@ -206,10 +307,23 @@ class Block implements TagableResourceInterface{
         return $displayed;
     }
 
+    /**
+     * Register the id of a block the view has displayed.
+     *
+     * @param $id
+     * @param bool $shown
+     */
     public function registerDisplayedBlock($id, $shown=true) {
         $this->displayed_blocks[] = ["id"=>$id, "shown"=>$shown];
     }
 
+    /**
+     * Update the list of displayed block to register a new id after $afterId.
+     *
+     * @param $afterId
+     * @param $id
+     * @param bool $shown
+     */
     public function registerDisplayedBlockAfter($afterId, $id, $shown=true) {
         $index = array_keys($this->getDisplayedBlocksId(), $afterId);
         if (count($index)) {
@@ -220,6 +334,13 @@ class Block implements TagableResourceInterface{
         }
     }
 
+    /**
+     * Update the list of displayed block to register a new id before $beforeId.
+     *
+     * @param $beforeId
+     * @param $id
+     * @param bool $shown
+     */
     public function registerDisplayedBlockBefore($beforeId, $id, $shown=true) {
         $index = array_keys($this->getDisplayedBlocksId(), $beforeId);
         if (count($index)) {
