@@ -4,6 +4,12 @@ namespace C\Intl;
 
 use Moust\Silex\Cache\CacheInterface;
 
+/**
+ * Class IntlJitLoader
+ * helps to store, fetch translations from/into cache.
+ *
+ * @package C\Intl
+ */
 class IntlJitLoader {
 
     /**
