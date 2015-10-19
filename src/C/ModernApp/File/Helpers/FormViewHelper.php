@@ -7,6 +7,14 @@ use C\ModernApp\File\AbstractStaticLayoutHelper;
 use C\ModernApp\File\FileTransformsInterface;
 use Symfony\Component\Form\FormFactory;
 
+/**
+ * Class FormViewHelper
+ *
+ * Add new node action 'create_form' to create form object
+ * and inject them in the view as default data
+ *
+ * @package C\ModernApp\File\Helpers
+ */
 class FormViewHelper extends  AbstractStaticLayoutHelper{
 
     /**
@@ -18,6 +26,17 @@ class FormViewHelper extends  AbstractStaticLayoutHelper{
         $this->formFactory = $factory;
     }
 
+    /**
+     * Looks for 'create_form' node actions,
+     * create a form object and populate it with provided fields,
+     * inject the form into the default view data.
+     *
+     * @param FileTransformsInterface $T
+     * @param $blockSubject
+     * @param $nodeAction
+     * @param $nodeContents
+     * @return bool
+     */
     public function executeBlockNode (FileTransformsInterface $T, $blockSubject, $nodeAction, $nodeContents) {
         if ($nodeAction==="create_form") {
 
