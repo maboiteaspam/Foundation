@@ -289,5 +289,4 @@ class AssetsInjector {
         return $content;
     }
 
-
 }
