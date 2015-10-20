@@ -58,6 +58,7 @@
 }
 
 
+.preview-enabled,
 .preview-enabled *:not(input):not(textarea)
 {
     background-color: lightslategray;
