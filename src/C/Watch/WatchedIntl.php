@@ -4,6 +4,7 @@ namespace C\Watch;
 
 use C\Intl\IntlJitLoader;
 use C\Intl\IntlFileLoader;
+use Symfony\Component\Config\Definition\Exception\Exception;
 
 class WatchedIntl extends WatchedRegistry {
 
@@ -50,9 +51,13 @@ class WatchedIntl extends WatchedRegistry {
                 $domain = $intl['domain'];
                 if (!isset($all[$locale])) $all[$locale] = [];
                 if (!isset($all[$locale][$domain])) $all[$locale][$domain] = [];
-                $all[$locale] = array_merge($all[$locale][$domain], [
-                    $domain=> $loader->loadFile($item['absolute_path'], $item['extension'], $locale, $domain)
-                ]);
+                try{
+                    $all[$locale] = array_merge($all[$locale][$domain], [
+                        $domain=> $loader->loadFile($item['absolute_path'], $item['extension'], $locale, $domain)
+                    ]);
+                }catch(\Exception $ex) {
+                    throw new \Exception("Failed to parse file ".$item['absolute_path'], 0, $ex);
+                }
             }
         });
         foreach ($all as $locale=>$domainTranslations) {
