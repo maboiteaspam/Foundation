@@ -44,7 +44,9 @@ class IncludeCache extends FileCache
     public function store($key, $var = null, $ttl = 0)
     {
         $content = array('data' => $var, 'ttl' => (int) $ttl);
-        return (bool) file_put_contents($this->getFileName($key), "<?php return\n".var_export($content, true)."\n;");
+        $content = "<?php return\n".var_export($content, true)."\n;";
+        $content = str_replace("stdClass::__set_state", "", $content); // see http://php.net/manual/en/function.var-export.php#114094
+        return (bool) file_put_contents($this->getFileName($key), $content);
     }
 
     /**
