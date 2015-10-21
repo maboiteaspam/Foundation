@@ -5,7 +5,7 @@ namespace C\FS;
 /**
  * Class KnownFs
  *
- * A cache-try-passtrough FS.
+ * A cache-try - pass-through FS.
  * Give it a base path,
  * Register absolute Paths,
  * Use it to execute the File System actions.
@@ -37,28 +37,59 @@ class KnownFs {
         $this->fs = new LocalFs();
     }
 
+    /**
+     * Add a new base path to the registry.
+     * The path can have an alias,
+     * which makes you able to call file
+     * with path likes Alias:/path/file.ext
+     *
+     * @param $path
+     * @param null $as
+     */
     public function register ($path, $as=null) {
         $this->registry->registerPath($path, $as);
     }
 
+    /**
+     * @param $bp string
+     */
     public function setBasePath ($bp) {
         $this->registry->setBasePath($bp);
     }
 
+    /**
+     * @return string
+     */
     public function getBasePath () {
         return $this->registry->getBasePath();
     }
 
-    public function setFS ($fs) {
+    /**
+     * An underlying FS object to deal with actual real File System.
+     * @param LocalFs $fs
+     */
+    public function setFS (LocalFs $fs) {
         $this->fs = $fs;
     }
 
 
-
+    /**
+     * this gets an item from the internal registry,
+     * if it does not exists, return null.
+     *
+     * @param $path
+     * @return bool|string
+     */
     public function get ($path) {
         return $this->registry->get($path);
     }
 
+    /**
+     * same as php.
+     *
+     * @param $dir
+     * @return bool
+     */
     public function mkdir ($dir) {
         $knownItem = $this->registry->get($dir);
         if ($knownItem!==false) {
@@ -68,8 +99,13 @@ class KnownFs {
         if ($res) {
             $this->registry->addItem($dir);
         }
+        return $res;
     }
 
+    /**
+     * @param $dir string
+     * @return bool
+     */
     public function rmdir ($dir) {
         $knownItem = $this->registry->get($dir);
         if ($knownItem===false) {
@@ -79,8 +115,13 @@ class KnownFs {
         if ($res) {
             $this->registry->removeItem($dir);
         }
+        return $res;
     }
 
+    /**
+     * @param $dir string
+     * @return bool
+     */
     public function is_dir ($dir) {
         $knownItem = $this->registry->get($dir);
         if ($knownItem!==false) {
@@ -93,6 +134,10 @@ class KnownFs {
         return $res;
     }
 
+    /**
+     * @param $path string
+     * @return bool
+     */
     public function touch ($path) {
         $res = call_user_func_array([$this->fs, 'touch'], func_get_args());
         if ($res) {
@@ -101,6 +146,10 @@ class KnownFs {
         return $res;
     }
 
+    /**
+     * @param $path string
+     * @return bool
+     */
     public function unlink ($path) {
         $knownItem = $this->registry->get($path);
         if ($knownItem===false) {
@@ -113,6 +162,10 @@ class KnownFs {
         return $res;
     }
 
+    /**
+     * @param $path string
+     * @return bool
+     */
     public function file_exists ($path) {
         $knownItem = $this->registry->get($path);
         if ($knownItem!==false) {
@@ -125,6 +178,10 @@ class KnownFs {
         return $res;
     }
 
+    /**
+     * @param $path string
+     * @return bool|int
+     */
     public function file_get_contents ($path) {
         $knownItem = $this->registry->get($path);
         if ($knownItem===false) {
@@ -137,6 +194,10 @@ class KnownFs {
         return $res;
     }
 
+    /**
+     * @param $path string
+     * @return int
+     */
     public function file_put_contents ($path) {
         $res = call_user_func_array([$this->fs, 'file_put_contents'], func_get_args());
         if ($res) {
@@ -145,6 +206,10 @@ class KnownFs {
         return $res;
     }
 
+    /**
+     * @param $path string
+     * @return string
+     */
     public function realpath ($path) {
         $knownItem = $this->registry->get($path);
         if ($knownItem!==false) {
@@ -153,6 +218,10 @@ class KnownFs {
         return call_user_func_array([$this->fs, 'realpath'], func_get_args());
     }
 
+    /**
+     * @param $path string
+     * @return bool|int
+     */
     public function file_mtime ($path) {
         $knownItem = $this->registry->get($path);
         if ($knownItem===false) {
@@ -161,6 +230,10 @@ class KnownFs {
         return $knownItem['file_mtime'];
     }
 
+    /**
+     * @param $path string
+     * @return bool|int
+     */
     public function file_atime ($path) {
         $knownItem = $this->registry->get($path);
         if ($knownItem===false) {
@@ -169,6 +242,10 @@ class KnownFs {
         return $knownItem['file_atime'];
     }
 
+    /**
+     * @param $path string
+     * @return bool|int
+     */
     public function file_ctime ($path) {
         $knownItem = $this->registry->get($path);
         if ($knownItem===false) {
@@ -177,6 +254,10 @@ class KnownFs {
         return $knownItem['file_ctime'];
     }
 
+    /**
+     * @param $path string
+     * @return bool|string
+     */
     public function sha1 ($path) {
         $knownItem = $this->registry->get($path);
         if ($knownItem===false) {
