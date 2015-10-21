@@ -6,7 +6,6 @@ use C\ModernApp\File\AbstractStaticLayoutHelper;
 use C\ModernApp\File\FileTransformsInterface;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\Routing\Generator\UrlGenerator;
-use Symfony\Component\Validator\Constraints\Length;
 
 /**
  * Class FormViewHelper
@@ -94,13 +93,13 @@ class FormViewHelper extends  AbstractStaticLayoutHelper{
     public function executeBlockNode (FileTransformsInterface $T, $blockSubject, $nodeAction, $nodeContents) {
         if ($nodeAction==="create_form") {
 
-            $formId         = isset($nodeContents['name']) ? $nodeContents['name'] : 'form';
-            $formContent    = isset($nodeContents['children']) ? $nodeContents['children'] : [];
+            $formId         = isset($nodeContents['name'])      ? $nodeContents['name'] : 'form';
+            $formType       = isset($nodeContents['type'])      ? $nodeContents['type'] : null;
+            $formContent    = isset($nodeContents['children'])  ? $nodeContents['children'] : [];
 
-            $builder = $this->formFactory->createBuilder();
-
-            if ($this->defaultMethod) $builder->setMethod($this->defaultMethod);
-            if ($this->defaultRoute) $builder->setAction(
+            $builder = $this->formFactory->createBuilder('form', $formType? new $formType : null);
+            if ($this->defaultMethod)   $builder->setMethod($this->defaultMethod);
+            if ($this->defaultRoute)    $builder->setAction(
                 $this->urlGenerator->generate($this->defaultRoute, array_merge([],$this->defaultRouteParameters,[
                     "block"     => $blockSubject,
                     "formId"    => $formId,
@@ -108,10 +107,15 @@ class FormViewHelper extends  AbstractStaticLayoutHelper{
             );
 
             foreach ($formContent as $elName=>$elData) {
-                $type = isset($elData['type']) ? $elData['type'] : 'text';
-                $options = isset($elData['options']) ? $elData['options'] : [];
-                $attr = isset($elData['attr']) ? $elData['attr'] : [];
+
+                $type       = isset($elData['type'])        ? $elData['type'] : 'text';
+                $options    = isset($elData['options'])     ? $elData['options'] : [];
+                $attr       = isset($elData['attr'])        ? $elData['attr'] : [];
+                $validation = isset($elData['validation'])  ? $this->createRealConstraintObjects($elData['validation']) : [];
+
                 $options['attr'] = isset($options['attr']) ? array_merge($attr, $options['attr']) : $attr;
+                if (count($validation)) $options['constraints'] = $validation;
+
                 $builder->add($elName, $type, $options);
             }
 
@@ -119,5 +123,37 @@ class FormViewHelper extends  AbstractStaticLayoutHelper{
 
             return true;
         }
+    }
+
+    /**
+     * It transforms an array describing constraint validation
+     * and their options into an array of constraint objects.
+     *
+     * [
+     *  'ConstraintClass'=>[
+     *      // constraint options
+     *  ]
+     * ]
+     *
+     * When constraint class contains a backslash,
+     * it considers it as FQClassName.
+     * Otherwise, it will prepend the default symfony constraint namespace,
+     *  \Symfony\Component\Validator\Constraints\...
+     * before attempting to create the constraint object.
+     *
+     * @param $constraints
+     * @return array
+     */
+    protected function createRealConstraintObjects ($constraints) {
+        $ret = [];
+        foreach ($constraints as $constraint) {
+            $constraintClass = array_keys($constraint)[0];
+            $options = $constraint[$constraintClass];
+            if (strpos($constraintClass, '\\')===false) {
+                $constraintClass = "\\Symfony\\Component\\Validator\\Constraints\\$constraintClass";
+            }
+            $ret[] = new $constraintClass($options);
+        }
+        return $ret;
     }
 }
