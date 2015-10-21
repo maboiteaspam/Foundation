@@ -28,7 +28,11 @@ class Store {
 
     public function storeFile ($filePath) {
         $layoutFile     = $this->getFileMeta($filePath);
-        $layoutStruct   = Yaml::parse (LocalFs::file_get_contents ($layoutFile['absolute_path']), true, false, true);
+        try{
+            $layoutStruct   = Yaml::parse (LocalFs::file_get_contents ($layoutFile['absolute_path']), true, false, true);
+        }catch(\Exception $ex) {
+            throw new \Exception("Failed to parse file ".$layoutFile['absolute_path'], 0, $ex);
+        }
         $this->cache->store($layoutFile['dir'].'/'.$layoutFile['name'], $layoutStruct);
         return $layoutStruct;
     }
