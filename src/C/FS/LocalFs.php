@@ -9,7 +9,7 @@ use C\Misc\Utils;
  * is a facade to php FS functions.
  * It  s main purpose is to record calls and there stack trace.
  *
- * For convenience some methods are explictly delcared,
+ * For convenience some methods are explicitly declared,
  * otherwise it relies on the magic calls.
  *
  * @package C\FS

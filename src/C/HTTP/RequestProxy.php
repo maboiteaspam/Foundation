@@ -7,6 +7,15 @@ use C\TagableResource\TagedResource;
 use C\TagableResource\UnwrapableResourceInterface;
 use Symfony\Component\HttpFoundation\Request;
 
+// @todo rename it to RequestBagsProxy.
+
+/**
+ * Class RequestProxy
+ * helps to make request bags parameters cache-able via tag resource.
+ *
+ *
+ * @package C\HTTP
+ */
 class RequestProxy implements TagableResourceInterface, UnwrapableResourceInterface {
 
     /**
@@ -15,19 +24,28 @@ class RequestProxy implements TagableResourceInterface, UnwrapableResourceInterf
     public $request;
 
     /**
+     * The repository from which the value should be read.
+     * Can be one of _GET _POST _COOKIE _SESSION _HEADER _FILES
+     *
      * @var string
      */
     public $repository;
     /**
+     * The name of the value to read from the repository.
+     *
      * @var string
      */
     public $param;
 
+    /**
+     * @param Request $request
+     */
     public function __construct ( Request $request ) {
         $this->request = $request;
     }
 
     /**
+     *
      * @return mixed
      */
     public function unwrap() {

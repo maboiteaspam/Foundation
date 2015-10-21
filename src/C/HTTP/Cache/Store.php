@@ -4,39 +4,76 @@ namespace C\HTTP\Cache;
 use C\TagableResource\TagedResource;
 use Moust\Silex\Cache\CacheInterface;
 
+/**
+ * Class Store
+ *
+ *
+ * @package C\HTTP\Cache
+ */
 class Store{
 
-    public $prefix = 'prefix-';
     /**
      * @var CacheInterface
      */
     public $cache;
+    /**
+     * @var string
+     */
     public $storeName;
 
+    /**
+     * @param $storeName string
+     * @param CacheInterface $cache
+     */
     public function __construct ($storeName, CacheInterface $cache) {
-        $this->cache = $cache;
+        $this->cache    = $cache;
         $this->storeName = $storeName;
     }
 
+    /**
+     * Store a tagged resource into the cache.
+     *
+     * @param TagedResource $resource
+     * @param $url
+     * @param $content
+     */
     public function store (TagedResource $resource, $url, $content) {
         $surl = sha1($url);
         $etag = $resource->originalTag;
-        $this->cache->store("{$this->storeName}resource-{$etag}.php", $resource);
-        $this->cache->store("{$this->storeName}content-{$etag}.php", $content);
-        $this->cache->store("{$this->storeName}url-{$surl}.php", $etag);
+        $this->cache->store("{$this->storeName}resource-{$etag}.php",   $resource);
+        $this->cache->store("{$this->storeName}content-{$etag}.php",    $content);
+        $this->cache->store("{$this->storeName}url-{$surl}.php",        $etag);
     }
 
+    /**
+     * Given an url, returns the etag computed for it.
+     *
+     * @param $url
+     * @return mixed
+     */
     public function getEtag ($url) {
-        $surl = sha1($url);
-        $f = "{$this->storeName}url-{$surl}.php";
+        $surl   = sha1($url);
+        $f      = "{$this->storeName}url-{$surl}.php";
         return $this->cache->fetch($f);
     }
 
+    /**
+     * Given an etag, returns the resource tag associated with it.
+     *
+     * @param $etag
+     * @return mixed
+     */
     public function getResource ($etag) {
         $f = "{$this->storeName}resource-{$etag}.php";
         return $this->cache->fetch($f);
     }
 
+    /**
+     * Given an etag, returns the content associated with it.
+     *
+     * @param $etag
+     * @return mixed
+     */
     public function getContent ($etag) {
         $f = "{$this->storeName}content-{$etag}.php";
         return ($this->cache->fetch($f));

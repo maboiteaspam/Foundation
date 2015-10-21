@@ -4,17 +4,60 @@ namespace C\FS;
 
 use Moust\Silex\Cache\CacheInterface;
 
+/**
+ * Class Registry
+ * Walks through and dump content
+ * of a file system directory.
+ * It has a base path,
+ * and can have multiple path alias.
+ *
+ * It can dump their content into an array such
+ * [
+ *  file path => [
+ *      (meta data)
+ *  ]
+ * ]
+ *
+ * It is useful to
+ * avoid file systems calls
+ * reduce a number of computation
+ * keep reliable filemtime information across multiple machines.
+ *
+ * @package C\FS
+ */
 class Registry {
 
+    /**
+     * the store name used to into the key for caching.
+     *
+     * @var string
+     */
     public $storeName;
+    /**
+     * The cache store object.
+     *
+     * @var CacheInterface
+     */
     public $cache;
+    /**
+     * The overall signature of the dumped contents.
+     * @var string
+     */
     public $signature;
 
+    /**
+     * @var array
+     */
     public $config = [
         'basePath' => '/', // must always be an absolute path
         'paths' => [],
         'alias' => [],
     ];
+    /**
+     * dumped content.
+     *
+     * @var array
+     */
     public $items = [
         'relative/file/path'=>[
             'type'          =>'file',
@@ -34,28 +77,59 @@ class Registry {
         ]
     ];
 
+    /**
+     * @param $storeName
+     * @param CacheInterface $cache
+     * @param array $config
+     */
     public function __construct ($storeName, CacheInterface $cache, $config=[]) {
         $this->config = array_merge($this->config, $config);
         $this->items = [];
         $this->storeName = $storeName;
         $this->cache = $cache;
         foreach($this->config['paths'] as $i => $path) {
-            $this->config['paths'][$i] = reliablePath($path);
+            $this->config['paths'][$i] = cleanPath($path);
         }
     }
 
+    /**
+     * Register a path with an alias.
+     * So later you can call the file prefixed
+     * by its alias instead of its absolute path.
+     *
+     * @param $path
+     * @param null $as string
+     * @return mixed
+     */
     public function registerPath($path, $as=null){
-            $this->config['paths'][] = rp($path);
-            if($as) $this->config['alias']["$as:"] = rp($path);
+        $this->config['paths'][] = rp($path);
+        if($as) $this->config['alias']["$as:"] = rp($path);
         return $path;
     }
+
+    /**
+     * The bae path for relative files path.
+     * @param $path string
+     * @return string
+     */
     public function setBasePath($path){
         $this->config['basePath'] = $path;
         return $path;
     }
+
+    /**
+     * @return string
+     */
     public function getBasePath(){
         return $this->config['basePath'];
     }
+
+    /**
+     * Given a path, return the alias.
+     *
+     * @param $path string
+     * @return bool|string
+     */
     public function getAliasFromPath ($path) {
         foreach ($this->config['alias'] as $a=>$p) {
             if ($p===$path) return $a;
@@ -63,15 +137,36 @@ class Registry {
         return false;
     }
 
+    /**
+     * Tells if the registry is fresh.
+     *
+     * After a change on the registry, the signature will change,
+     * the registry will be stall.
+     *
+     * @return bool
+     */
     public function isFresh(){
         return $this->signature && $this->signature===$this->sign();
     }
 
+    /**
+     * Generate and save the signature of the registry.
+     *
+     * @return $this
+     */
     public function createSignature(){
         $this->signature = $this->sign();
         return $this;
     }
 
+    /**
+     * sign the registry.
+     * if $some is provided,
+     * only items found into it are used.
+     *
+     * @param null $some array
+     * @return string
+     */
     public function sign($some=null){
         $signature = '';
         $this->each(function ($item, $localPath) use(&$signature, $some) {
@@ -82,6 +177,11 @@ class Registry {
         return $signature;
     }
 
+    /**
+     * dump and save the resgistry to cache.
+     *
+     * @return array
+     */
     public function saveToCache(){
         $dump = $this->dump();
         $this->cache->store("{$this->storeName}dump", ($dump));
@@ -91,20 +191,50 @@ class Registry {
         $this->cache->delete('dump');
     }
 
+    /**
+     * load the registry from the cache.
+     *
+     * @return bool
+     */
     public function loadFromCache(){
         $dump = $this->cache->fetch("{$this->storeName}dump");
         if ($dump) return $this->loadFromDump(($dump));
         return false;
     }
+
+    /**
+     * Given a dump, an array such
+     * [
+     *  config=> []
+     *  items=> []
+     *  signature=> []
+     * ]
+     * rebuild the registry.
+     *
+     * @param $dump
+     * @return bool
+     */
     public function loadFromDump($dump){
         $this->config = $dump['config'];
         $this->items = $dump['items'];
         $this->signature = $dump['signature'];
         return true;
     }
+
+    /**
+     * recursive browse paths and sign the registry.
+     *
+     * @return $this
+     */
     public function build(){
         return $this->recursiveReadPath()->createSignature();
     }
+
+    /**
+     * Dump the content of this registry in an array.
+     *
+     * @return array
+     */
     public function dump(){
         return [
             'items'=>$this->items,
@@ -116,15 +246,25 @@ class Registry {
             'signature'=>$this->signature,
         ];
     }
+
+    /**
+     * Returns universal version of a path.
+     * Universal version of a path, ideally, is a path relative to basePath.
+     * But sometimes, because of links or junctions, they must be absolute-d.
+     *
+     * @param array $paths
+     * @return array
+     */
     protected function getUniversalPath (array $paths) {
         $basePath = $this->config['basePath'];
         $ret = [];
         foreach( $paths as $index=>$path) {
             $rp = new \SplFileInfo($path);
+
             if ($rp->isLink()) {
                 $ret[$index] = $rp->getLinkTarget();
-            } else if ($rp->isDir()) {
 
+            } else if ($rp->isDir()) {
                 $rp = $rp->getRealPath();
                 if (substr($rp, 0, strlen($basePath))===$basePath) {
                     $rp = substr($rp, strlen($basePath)+1);
@@ -138,6 +278,13 @@ class Registry {
         }
         return $ret;
     }
+
+    /**
+     * Recursively read path contents
+     * and save their items.
+     *
+     * @return $this
+     */
     protected function recursiveReadPath () {
         $paths = $this->getUniversalPath($this->config['paths']);
         $this->items = [];
@@ -159,6 +306,12 @@ class Registry {
         return $this;
     }
 
+    /**
+     * Helper method to add a class as a path.
+     *
+     * @param $className string
+     * @param bool $onlyIfNew
+     */
     public function addClassFile ($className, $onlyIfNew=true) {
         $reflector = new \ReflectionClass($className);
         $path = $reflector->getFileName();
@@ -167,6 +320,15 @@ class Registry {
             $this->addItem($path);
         }
     }
+
+    /**
+     * dump a file item or a directory into an array of metadata.
+     *
+     * You ll find in there a number of computed information such
+     * type, name, isRelative, dir, sha1, extension, file_mtime, file_ctime.
+     *
+     * @param $path string
+     */
     public function addItem ($path) {
         $basePath = $this->config['basePath'];
 
@@ -196,6 +358,10 @@ class Registry {
         $key = $fp.($path->isFile()?'':DIRECTORY_SEPARATOR);
         $this->items[$key] = $item;
     }
+
+    /**
+     * @param $path string
+     */
     public function removeItem ($path) {
         $basePath = $this->config['basePath'];
         if (is_string($path)) {
@@ -205,9 +371,23 @@ class Registry {
         $key = $fp.($path->isFile()?'':DIRECTORY_SEPARATOR);
         unset($this->items[$key]);
     }
+
+    /**
+     * Force an item to re compute.
+     * if the item is not already in the registry, it is added.
+     *
+     * @param $path
+     */
     public function refreshItem ($path) {
         $this->addItem($path);
     }
+
+    /**
+     * Build and return the absolute path of a file.
+     *
+     * @param $item
+     * @return mixed
+     */
     protected function absolutePath ($item) {
         $basePath = $this->config['basePath'];
         $item['absolute_path'] = $item['isRelative']
@@ -240,7 +420,7 @@ class Registry {
             return $this->absolutePath($item);
         }
 
-        $itemPath = reliablePath($itemPath);
+        $itemPath = cleanPath($itemPath);
 
         if (isset($this->items[$itemPath])) {
             $item = $this->items[$itemPath];
@@ -283,12 +463,24 @@ class Registry {
         }
         return false;
     }
+
+    /**
+     * iterator helper.
+     * @param $callback
+     */
     public function each ($callback) {
         foreach($this->items as $i=>$item) {
             $callback($this->absolutePath($item), $i);
         }
     }
 
+    /**
+     * Helper method to know if a given path
+     * belongs to one of the registered paths.
+     *
+     * @param $file
+     * @return bool
+     */
     public function isInRegisteredPaths ($file) {
         $paths = $this->config['paths'];
         $d = realpath(dirname($file));
@@ -302,6 +494,12 @@ class Registry {
 
 }
 
+/**
+ * make a path string reliable where [.] and [..] are resolved.
+ *
+ * @param $path
+ * @return string
+ */
 function rp($path) {
     $out=array();
     foreach(explode(DIRECTORY_SEPARATOR, $path) as $i=>$fold){
@@ -311,7 +509,14 @@ function rp($path) {
     } return ($path{0}==DIRECTORY_SEPARATOR?DIRECTORY_SEPARATOR:'').join(DIRECTORY_SEPARATOR, $out);
 }
 
-function reliablePath($path) {
+/**
+ * Make a path value clean where double-d
+ * slashes and backslashes and single-d.
+ *
+ * @param $path
+ * @return mixed
+ */
+function cleanPath($path) {
     $path = str_replace("//", "/", $path);
     $path = str_replace("\\\\", "\\", $path);
     $path = str_replace("/", DIRECTORY_SEPARATOR, $path);
