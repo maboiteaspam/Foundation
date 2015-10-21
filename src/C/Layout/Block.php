@@ -271,7 +271,7 @@ class Block implements TagableResourceInterface{
     public function unwrapData ($notNames=[]) {
         $unwrapped = [];
         foreach($this->data as $name => $data){
-            if (!in_array($name, $notNames)) {
+            if (!in_array($name, $notNames, true)) {
                 $unwrapped[$name] = $this->getData($name);
             } else {
                 throw new \Exception("Forbidden data name '$name' is forbidden and can t be overwritten");
