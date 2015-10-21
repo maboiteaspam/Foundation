@@ -44,11 +44,15 @@ class HttpCacheServiceProvider implements ServiceProviderInterface
     public function boot(Application $app)
     {
 
+        // This handler register tag computer to be used for http caching.
         $app->before(function (Request $request, Application $app) {
             if (isset($app['httpcache.tagger'])) {
                 $tagger = $app['httpcache.tagger'];
+
                 /* @var $fs \C\FS\KnownFs */
                 /* @var $tagger \C\TagableResource\ResourceTagger */
+
+                // inject parsed parameters from request object.
                 $tagger->tagDataWith('request', function ($value) use($request) {
                     if ($value[0]==='_GET') {
                         return $request->query->get($value[1], null, true);
@@ -72,36 +76,48 @@ class HttpCacheServiceProvider implements ServiceProviderInterface
                     throw new \Exception("missing computer for repository {$value[0]}");
                 });
 
-
+                // inject the computed user locale.
                 $tagger->tagDataWith('jit-locale', function ($value) use($app) {
                     /* @var $localeMngr \C\Intl\LocaleManager */
                     $localeMngr = $app['locale.manager'];
                     return $localeMngr->getLocale();
                 });
+
+                // inject the user device.
                 $tagger->tagDataWith('jit-device', function ($value) use($app) {
                     /* @var $layout \C\Layout\Layout */
                     $layout = $app['layout'];
                     return $layout->requestMatcher->deviceType;
                 });
+
+                // inject the request kind (ajax, esi, get, ect)
                 $tagger->tagDataWith('jit-request-kind', function ($value) use($app) {
                     /* @var $layout \C\Layout\Layout */
                     $layout = $app['layout'];
                     return $layout->requestMatcher->requestKind;
                 });
+
+                // inject accept content type negotiation.
                 $tagger->tagDataWith('jit-accept', function ($value) use($app) {
+                    // @todo, check how to deal with HTTP accept request header.
                     return null;
                 });
+
+                // inject debug value.
                 $tagger->tagDataWith('jit-debug', function ($value) use($app) {
                     return $app['debug']?'with-debug':'without-debug';
                 });
             }
+
             Utils::stderr('-------------');
             Utils::stderr('receiving url '.$request->getUri());
+
         }, Application::EARLY_EVENT);
 
         // before the app is executed, we should check the cache
         // and try to take a shortcut.
         $app->before(function (Request $request, Application $app) {
+            // it is not good to cache a non GET method.
             if ($request->isMethodSafe()) {
                 /* @var $tagger ResourceTagger */
                 /* @var $store Store */
@@ -112,11 +128,11 @@ class HttpCacheServiceProvider implements ServiceProviderInterface
 
                 $respondEtagedResource = function ($etag) use($store, $tagger, $checkFreshness) {
                     $res = $store->getResource($etag);
-                    if ($res) {
+                    if ($res) { // a corresponding resoruce was found for sent etag.
                         Utils::stderr('found resource for etag: '.$etag);
                         $originalTag = $res->originalTag;
                         $fresh = !$checkFreshness || $checkFreshness && $tagger->isFresh($res);
-                        if ($fresh) {
+                        if ($fresh) { // and it happens to be cache-fresh.
                             $content = $store->getContent($etag);
                             $body = $content['body'];
                             $response = new Response();
@@ -129,14 +145,14 @@ class HttpCacheServiceProvider implements ServiceProviderInterface
                             Utils::stderr('require fresh:'.json_encode($checkFreshness));
                             return $response;
 
-                        } else {
+                        } else { // that is unfortunate, the cache it not fresh....
                             Utils::stderr('is etag fresh:'.json_encode($fresh));
                             Utils::stderr('original Tag:'.json_encode($originalTag));
                             Utils::stderr('new Tag:'.json_encode($res->originalTag));
                             Utils::stderr('require fresh:'.json_encode($checkFreshness));
                         }
                     } else {
-                        Utils::stderr("etag $etag does not exists in cache");
+                        Utils::stderr("etag $etag does not exists in cache"); // badass browser ?
                     }
                     return false;
                 };
@@ -144,10 +160,10 @@ class HttpCacheServiceProvider implements ServiceProviderInterface
 
                 // when the request is sent by user
                 // it may contain an if-none-match: header
-                // which means the user is looking for an url page he already seensbefore,
+                // which means the user is looking for an url page he already saw before,
                 // he knows its etag.
                 // We should check the cache to know how to handle this request
-                // in the best response time possible.
+                // within the best response time possible.
                 foreach ($etags as $etag) {
                     if (!in_array($etag, ['*'])) {
                         $etag = str_replace(['"',"'"], '', $etag);
@@ -188,10 +204,14 @@ class HttpCacheServiceProvider implements ServiceProviderInterface
 
 
         // once app has finished,
-        // let s check if the response is cache-able,
-        // not a cached response itself,
-        // and using safe method.
-        // in that case, lets record that into the cache store.
+        // let s check if the response is cache-able.
+        // It must not be
+        // a cached response itself,
+        // neither use an unsafe method (POST)
+        // neither be 304 response code
+        // and the system should have resource tager enabled.
+        // If everything looks good,
+        // lets record that into the cache store.
         $app->after(function (Request $request, Response $response, Application $app) {
 
             Utils::stderr('is response cache-able '.var_export($response->isCacheable(), true));
@@ -212,7 +232,7 @@ class HttpCacheServiceProvider implements ServiceProviderInterface
                 if ($etag) {
                     Utils::stderr('saving resource '.$request->getUri());
                     $headers = $response->headers->all();
-                    // those are headers to save into cahce.
+                    // those are headers to save into cache.
                     // later when the cache is served, they are re injected.
                     $headers = Utils::arrayPick($headers, [
                         'cache-control', 'etag', 'last-modified', 'expires',

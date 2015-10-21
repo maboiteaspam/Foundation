@@ -4,6 +4,14 @@ namespace C\Cache;
 
 use Moust\Silex\Cache\FileCache;
 
+/**
+ * Class IncludeCache
+ * is a new cache driver for moust/silex-cache module
+ * it use var_export instead of serialize for storage format.
+ * Improving the debug experience for developers.
+ *
+ * @package C\Cache
+ */
 class IncludeCache extends FileCache
 {
     static function isSupported()
@@ -19,7 +27,6 @@ class IncludeCache extends FileCache
         $filename = $this->getFileName($key);
 
         try{
-
             $content = include($filename);
             if ($content===null) return false;
 
