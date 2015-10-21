@@ -9,7 +9,7 @@ use C\Layout\Layout;
 
 /**
  * Class AssetsInjector
- * walks through layout's blocks
+ * Walks through layout's blocks
  * - generate HTML block containing
  *   script and link nodes
  * - it can also generates merged files
