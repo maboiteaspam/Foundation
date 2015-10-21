@@ -11,20 +11,46 @@ use Symfony\Component\Config\Definition\Exception\Exception;
 /**
  * Class Block
  * represents a render-able element of a layout.
- * It has a template, options, data(s), meta, and can be attached assets.
+ * It has a template, options, data(s), meta, and can get attached assets.
  * It is being executed to render a portion of the whole page.
  * It can declare and render sub blocks.
+ * It has an id, its id is unique across the whole render operation.
  *
  *
  * @package C\Layout
  */
 class Block implements TagableResourceInterface{
 
+    /**
+     * Unique id of the block.
+     *
+     * @var string
+     */
     public $id;
+    /**
+     * The HTML content of the block.
+     * If it is set, template option is ignored for rendering.
+     *
+     * @var string
+     */
     public $body;
-    public $parentId;
+    /**
+     * Id of the parent block which rendered the current instance.
+     *
+     * @var string
+     */
+    protected $parentId;
+
+    /**
+     * Yet resolved or not.
+     *
+     * @var bool
+     */
     public $resolved = false;
 
+    /**
+     * @var array
+     */
     public $options = [
     ];
     public $data = [];
@@ -95,7 +121,14 @@ class Block implements TagableResourceInterface{
     }
 
     /**
-     * Resolves the view within the block settings.
+     * Resolves the view within the block context.
+     *
+     * if template is defined,
+     * it s included within the context of ViewContext object.
+     *
+     * if body is not empty, it is used as the rendered result,
+     * in that case, template value is ignored.
+     *
      *
      * @param KnownFs $fs
      * @param Context $context
@@ -103,31 +136,27 @@ class Block implements TagableResourceInterface{
     public function resolve (KnownFs $fs, Context $context){
         if (!$this->resolved) {
             $this->resolved = true;
-            if (isset($this->options['template'])
-                && $this->options['template']) {
 
-                $fn = $this->options['template'];
-                if(!is_callable($this->options['template'])) {
-                    $fn = function (Block $block) use($fs) {
+            $template = $this->getTemplate();
+            if ($template!==false) {
+                if(!is_callable($template)) {
+                    $templateStr = $template;
+                    $template = function (Block $block) use($fs, $templateStr) {
                         ob_start();
                         extract($block->unwrapData(['block']), EXTR_SKIP);
-                        $template = $fs->get($block->options['template']);
-                        if ($template!==false) require ($template['absolute_path']);
-                        else require ($block->options['template']);
+                        $templateItem = $fs->get($templateStr);
+                        if ($templateItem!==false) require ($templateItem['absolute_path']);
+                        else require ($templateStr);
                         $block->body = ob_get_clean();
                     };
                 }
 
-                if ($fn) {
-                    $context->setBlockToRender($this);
-                    $boundFn = \Closure::bind($fn, $context);
-                    try{
-                        $boundFn($this);
-                    }catch(\Exception $ex) {
-                        throw new Exception("'{$this->id}' has failed to execute: {$ex->getMessage()}", 0, $ex);
-                    }
-                } else {
-                    // weird stuff in template.
+                $context->setBlockToRender($this);
+                $boundFn = \Closure::bind($template, $context);
+                try{
+                    $boundFn($this);
+                }catch(\Exception $ex) {
+                    throw new Exception("'{$this->id}' has failed to execute: {$ex->getMessage()}", 0, $ex);
                 }
             }
         }
@@ -142,8 +171,17 @@ class Block implements TagableResourceInterface{
     public function setTemplate($template){
         $this->options['template'] = $template;
     }
+
+    /**
+     * The template value of the block.
+     * @return bool|string
+     */
     public function getTemplate(){
-        return $this->options['template'];
+        $template = false;
+        if (isset($this->options['template']))
+            if ($this->options['template'])
+                $template = $this->options['template'];
+        return $template;
     }
 
     /**
@@ -161,8 +199,10 @@ class Block implements TagableResourceInterface{
     }
 
     /**
-     * adds a block content of a script/css inline.
-     * $target is first/head/foot/last
+     * Add inline asset content of JS / CSS to
+     * one of available $target block
+     * $target is one of first/head/foot/last
+     *
      * @param $target
      * @param $type
      * @param $content
@@ -177,6 +217,8 @@ class Block implements TagableResourceInterface{
     }
 
     /**
+     * Get inline asset contents.
+     *
      * @return array
      */
     public function getInline(){
@@ -263,7 +305,8 @@ class Block implements TagableResourceInterface{
     }
 
     /**
-     * Get all data attached to this block unwrapped.
+     * Get all unwrapped data attached to this block.
+     *
      * @param array $notNames
      * @return array
      * @throws \Exception
@@ -281,7 +324,8 @@ class Block implements TagableResourceInterface{
     }
 
     /**
-     * Get an unwrapped data attached to this block.
+     * Get a specific unwrapped data
+     * attached to this block.
      *
      * @param $name
      * @return mixed
@@ -295,7 +339,8 @@ class Block implements TagableResourceInterface{
     }
 
     /**
-     * Returns the list of blocks the view has tried to display.
+     * Returns the list of blocks
+     * this view has tried to display.
      *
      * @return array
      */
@@ -308,7 +353,8 @@ class Block implements TagableResourceInterface{
     }
 
     /**
-     * Register the id of a block the view has displayed.
+     * Register the id of a block
+     * this view has displayed.
      *
      * @param $id
      * @param bool $shown
@@ -318,7 +364,8 @@ class Block implements TagableResourceInterface{
     }
 
     /**
-     * Update the list of displayed block to register a new id after $afterId.
+     * Update the list of displayed block
+     * to register a new id after $afterId.
      *
      * @param $afterId
      * @param $id
@@ -328,7 +375,7 @@ class Block implements TagableResourceInterface{
         $index = array_keys($this->getDisplayedBlocksId(), $afterId);
         if (count($index)) {
             $index = $index[0];
-            array_splice($this->displayed_blocks, $index, 0, [["id"=>$id, "shown"=>$shown]]);
+            array_splice($this->displayed_blocks, $index+1, 0, [["id"=>$id, "shown"=>$shown]]);
         } else {
             $this->displayed_blocks[] = ["id"=>$id, "shown"=>$shown];
         }
