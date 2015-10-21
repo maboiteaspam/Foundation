@@ -8,7 +8,11 @@ use C\TagableResource\TagedResource;
 
 /**
  * Class FormBuilder
- * to inject forms into layouts
+ * helps to delay effective
+ * form creation to the latest time possible.
+ *
+ * It also prevents a response to be cached
+ * when it contains a block with a form attached to it.
  *
  * @package C\Form
  */
@@ -60,6 +64,6 @@ class FormBuilder implements TagableResourceInterface, UnwrapableResourceInterfa
      * @return mixed
      */
     public function unwrap () {
-        return $this->form->createView();
+        return $this->form->createView(); // this is the reason of this class....!
     }
 }
