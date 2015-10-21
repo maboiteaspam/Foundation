@@ -137,10 +137,9 @@ class AssetsInjector {
             }
         }
 
-        // for debug purpose
+        // for dev purpose of this file, add this to force refresh on change.
 //        if ($layout->debugEnabled)
-            $h = sha1($h.Utils::fileToEtag(__FILE__));
-//        else
+//            $h = sha1($h.Utils::fileToEtag(__FILE__));
         $h = sha1($h);
 
         $concatAssetName = "$target-$h.$ext";
@@ -185,8 +184,8 @@ class AssetsInjector {
     }
 
     /**
-     * walks through blocks and generate
-     * an array of all inline detected.
+     * Walks through blocks and generate
+     * an array of all inline assets detected.
      *
      * @param Layout $layout
      * @return array
