@@ -3,7 +3,11 @@ namespace C\View\Helper;
 
 use Symfony\Component\Form\FormView;
 
-// @todo import from SF/Silex.
+// form
+// vendor/symfony/twig-bridge/Extension/FormExtension.php
+// vendor/symfony/twig-bridge/Resources/views/Form/form_div_layout.html.twig
+// http://stackoverflow.com/a/30054764
+
 class FormViewHelper extends AbstractViewHelper {
 
     /**
@@ -15,9 +19,6 @@ class FormViewHelper extends AbstractViewHelper {
     }
 
 
-    // form
-    // vendor/symfony/twig-bridge/Extension/FormExtension.php
-    // vendor/symfony/twig-bridge/Resources/views/Form/form_div_layout.html.twig
     public function form(FormView $form, $variables=[]) {
         $str = '';
         $str .= $this->form_start($form);
@@ -38,12 +39,10 @@ class FormViewHelper extends AbstractViewHelper {
         $method = $this->commons->upper($vars['method']);
         $name = ($vars['name']);
         $action = ($vars['action']);
-        $form_method = '';
 
+        $form_method = 'POST';
         if (in_array($method, ['GET', 'POST',])) {
             $form_method = $method;
-        } else {
-            $form_method = 'POST';
         }
 
         $str = '';
@@ -60,10 +59,11 @@ class FormViewHelper extends AbstractViewHelper {
     }
     public function form_widget (FormView $form, $variables=[]) {
         $str = '';
+        $type = $this->getTypeFromVars($form->vars);
         $vars = array_merge([
             'compound' => false,
             'type' => 'text',
-        ], $form->vars, $variables);
+        ], $form->vars, ['type'=>$type], $variables);
 
         if ($vars['compound']) {
             $str .= $this->form_widget_compound($form, $vars);
@@ -83,17 +83,18 @@ class FormViewHelper extends AbstractViewHelper {
             $str .= $this->form_errors($form);
         }
         $str .= ">";
-        $str .= $this->form_rows($form, $variables);
+        $str .= $this->form_rows($form);
         $str .= "</div>";
         $form->setRendered();
         return $str;
     }
     public function form_widget_simple (FormView $form, $variables=[]) {
         $str = '';
+        $type = $this->getTypeFromVars($form->vars);
         $vars = array_merge([
             'type'=>'text',
             'value'=>null,
-        ], $form->vars, $variables);
+        ], $form->vars, ['type'=>$type], $variables);
 
         $type = $vars['type'];
         $val = $vars['value'];
@@ -187,7 +188,9 @@ class FormViewHelper extends AbstractViewHelper {
         ], $form->vars, $variables);
 
         $id = ($vars['id']);
+        $full_name = ($vars['full_name']);
 
+        $str .= "name='$full_name' ";
         $str .= "id='$id' ";
         if ($vars['read_only'] && !array_key_exists('readonly', $vars['attr'])) $str .= "readonly='readonly'";
         if ($vars['disabled']) $str .= "disabled='disabled'";
@@ -325,11 +328,56 @@ class FormViewHelper extends AbstractViewHelper {
     }
     public function form_row (FormView $form, $variables=[]) {
         $str = '';
-        $str .= "<div>";
-        $str .= $this->form_label($form, null, $variables);
-        $str .= $this->form_errors($form, $variables);
-        $str .= $this->form_widget($form, $variables);
-        $str .= "</div>";
+        $type = $this->getTypeFromVars($form->vars);
+
+        if (in_array($type, ['submit',])) {
+            $str .= "<div>";
+            $str .= $this->submit_widget($form, $variables);
+            $str .= "</div>";
+
+        } else if (in_array($type, ['collection',])) {
+            $str .= "<div>";
+            $str .= $this->collection_widget($form, $variables);
+            $str .= "</div>";
+
+        } else if (in_array($type, ['button',])) {
+            $str .= "<div>";
+            $str .= $this->button_widget($form, $variables);
+            $str .= "</div>";
+
+        } else if (in_array($type, ['hidden',])) {
+            $str .= "<div>";
+            $str .= $this->form_errors($form, $variables);
+            $str .= $this->form_widget($form, $variables);
+            $str .= "</div>";
+
+        } else if (in_array($type, ['checkbox',])) {
+            $str .= $this->form_label($form, null, ['label_attr'=>['for'=>$form->vars['id']]]);
+            $str .= $this->checkbox_widget($form);
+
+        } else if (in_array($type, ['radio',])) {
+            $str .= $this->form_label($form, null, ['label_attr'=>['for'=>$form->vars['id']]]);
+            $str .= $this->radio_widget($form);
+
+        } else if (in_array($type, ['date',])) {
+            $str .= $this->form_label($form, null, ['label_attr'=>['for'=>$form->vars['id']]]);
+            $str .= $this->date_widget($form);
+
+        } else if (in_array($type, ['datetime',])) {
+            $str .= $this->form_label($form, null, ['label_attr'=>['for'=>$form->vars['id']]]);
+            $str .= $this->datetime_widget($form);
+
+        } else if (in_array($type, ['time',])) {
+            $str .= $this->form_label($form, null, ['label_attr'=>['for'=>$form->vars['id']]]);
+            $str .= $this->time_widget($form);
+
+        } else {
+            $str .= "<div>";
+            $str .= $this->form_label($form, null, $variables);
+            $str .= $this->form_errors($form, $variables);
+            $str .= $this->form_widget($form, $variables);
+            $str .= "</div>";
+        }
         $form->setRendered();
         return $str;
     }
@@ -362,7 +410,13 @@ class FormViewHelper extends AbstractViewHelper {
 {%- endblock collection_widget -%}
          */
         $str = '';
-        $str .= $this->form_widget ($form, $variables);
+        $str .= $this->form_label($form, $variables);
+        foreach ($form->children as $child) {
+            $str .= "<div>";
+            $str .= $this->form_errors($child, $variables);
+            $str .= $this->form_widget($child, $variables);
+            $str .= "</div>";
+        }
         return $str;
     }
     public function textarea_widget (FormView $form, $variables=[]) {
@@ -382,6 +436,7 @@ class FormViewHelper extends AbstractViewHelper {
         $vars = array_merge([
             'expanded'=>false,
         ], $form->vars, $variables);
+
         if ($vars['expanded']) {
             $str .= $this->choice_widget_expanded ($form, $vars);
         } else {
@@ -496,10 +551,10 @@ class FormViewHelper extends AbstractViewHelper {
 
         $str .= "<input type='checkbox' ";
         $str .= $this->widget_attributes ($form, $vars);
-        if ($vars['value']) {
+        if (array_key_exists("value", $vars)) {
             $str .= "value='".$vars['value']."' ";
         }
-        if ($vars['checked']) {
+        if (array_key_exists("checked", $vars) && $vars['checked']) {
             $str .= "checked='checked' ";
         }
         $str .= " />";
@@ -535,10 +590,10 @@ class FormViewHelper extends AbstractViewHelper {
             $str .= "<div ";
             $str .= $this->widget_container_attributes($form, $vars);
             $str .= ">";
-            $str .= $this->form_errors($form['date']);
-            $str .= $this->form_errors($form['time']);
-            $str .= $this->form_widget($form['date']);
-            $str .= $this->form_widget($form['time']);
+            $str .= $this->form_errors($form->children['date']);
+            $str .= $this->form_errors($form->children['time']);
+            $str .= $this->form_widget($form->children['date']);
+            $str .= $this->form_widget($form->children['time']);
             $str .= "</div>";
         }
         return $str;
@@ -557,16 +612,17 @@ class FormViewHelper extends AbstractViewHelper {
             $str .= $this->widget_container_attributes($form, $vars);
             $str .= ">";
             $str .= str_replace([
-                "%year%", "%month%", "%day%",
+                "{{ year }}", "{{ month }}", "{{ day }}",
             ],[
-                $this->form_widget($form['year'], $vars),
-                $this->form_widget($form['month'], $vars),
-                $this->form_widget($form['day'], $vars)
+                $this->form_widget($form->children['year']),
+                $this->form_widget($form->children['month']),
+                $this->form_widget($form->children['day'])
             ], $vars['date_pattern']);
-            $str .= $this->form_errors($form['date']);
-            $str .= $this->form_errors($form['time']);
-            $str .= $this->form_widget($form['date']);
-            $str .= $this->form_widget($form['time']);
+            // @todo check this part.
+//            $str .= $this->form_errors($form->children['date']);
+//            $str .= $this->form_errors($form->children['time']);
+//            $str .= $this->form_widget($form->children['date']);
+//            $str .= $this->form_widget($form->children['time']);
             $str .= "</div>";
         }
         return $str;
@@ -588,12 +644,12 @@ class FormViewHelper extends AbstractViewHelper {
             $str .= "<div ";
             $str .= $this->widget_container_attributes($form, $vars);
             $str .= ">";
-            $str .= $this->form_widget($form['hour'], $vars);
+            $str .= $this->form_widget($form->children['hour']);
             if ($with_minutes) {
-                $str .= $this->form_widget($form['minute'], $vars);
+                $str .= $this->form_widget($form->children['minute']);
             }
             if ($with_seconds) {
-                $str .= $this->form_widget($form['second'], $vars);
+                $str .= $this->form_widget($form->children['second']);
             }
             $str .= "</div>";
         }
@@ -602,7 +658,7 @@ class FormViewHelper extends AbstractViewHelper {
     public function number_widget (FormView $form, $variables=[]) {
         $str = '';
         $vars = array_merge($form->vars, $variables, [
-            'type'=>'text',
+            'type' => 'text',
         ]);
         // {# type="number" doesn't work with floats #}
         $str .= $this->form_widget_simple($form, $vars);
@@ -676,6 +732,7 @@ class FormViewHelper extends AbstractViewHelper {
     }
     public function button_widget (FormView $form, $variables=[]) {
         $str = '';
+        $type = $this->getTypeFromVars($form->vars);
         $vars = array_merge([
             'translation_domain'=>null,
             'label'=>'',
@@ -684,7 +741,6 @@ class FormViewHelper extends AbstractViewHelper {
         ], $form->vars, $variables);
         $id = $vars['id'];
         $label = $vars['label'];
-        $type = $vars['type'];
         $label_format = $vars['label_format'];
         $name = $vars['name']?$vars['name']:$id;
         $translation_domain = $vars['translation_domain'];
@@ -697,7 +753,7 @@ class FormViewHelper extends AbstractViewHelper {
                 ]);
             } else {
                 // @todo check with twig original
-                $str .= $this->commons->humanize($name);
+                $label = $this->commons->humanize($name);
             }
         }
 
@@ -738,6 +794,19 @@ class FormViewHelper extends AbstractViewHelper {
 
     public function csrf_token() {
         // @todo must return the token value.
+    }
+
+
+    /**
+     * This method extract the field type from $vars array.
+     *
+     * @see http://stackoverflow.com/a/30054764
+     *
+     * @param $vars
+     * @return mixed
+     */
+    protected function getTypeFromVars ($vars) {
+        return array_slice($vars['block_prefixes'], -2, 1)[0];
     }
 
 }
