@@ -360,16 +360,22 @@ class FormViewHelper extends AbstractViewHelper {
             $str .= $this->radio_widget($form);
 
         } else if (in_array($type, ['date',])) {
+            $str .= "<div>";
             $str .= $this->form_label($form, null, ['label_attr'=>['for'=>$form->vars['id']]]);
             $str .= $this->date_widget($form);
+            $str .= "</div>";
 
         } else if (in_array($type, ['datetime',])) {
+            $str .= "<div>";
             $str .= $this->form_label($form, null, ['label_attr'=>['for'=>$form->vars['id']]]);
             $str .= $this->datetime_widget($form);
+            $str .= "</div>";
 
         } else if (in_array($type, ['time',])) {
+            $str .= "<div>";
             $str .= $this->form_label($form, null, ['label_attr'=>['for'=>$form->vars['id']]]);
             $str .= $this->time_widget($form);
+            $str .= "</div>";
 
         } else {
             $str .= "<div>";
