@@ -608,7 +608,8 @@ interface ConcreteContext {
 
     /**
      * Starts an inline script / css block
-     * $target is top / bottom
+     * $target is
+     * first / head / foot / last
      * @param $target
      * @return mixed
      */
