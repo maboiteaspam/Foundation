@@ -413,6 +413,8 @@ class Registry {
 
         if ($aliasPos>2 && array_key_exists($alias, $this->config['alias'])) {
             $itemPath = str_replace($alias, $this->config['alias'][$alias], $itemPath);
+            $itemPath = cleanPath($itemPath);
+            $itemPath = rp($itemPath);
         }
 
         if (isset($this->items[$itemPath])) {
