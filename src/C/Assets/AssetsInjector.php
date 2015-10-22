@@ -85,6 +85,14 @@ class AssetsInjector {
         foreach ($assets as $asset) {
             $a = $assetsFS->get($asset);
             if ($a) {
+                // this is a trick for linux file system
+                // get more information at here https://bugs.php.net/bug.php?id=46260
+                // as the file is not relative to the project path,
+                // it is injected as a virtual path
+                //      module:/path/file.ext
+                // into the html asset.
+                // Later the bridge can do its job.
+                // in production it would not be advised to link your vendors modules.
                 if ($a['isRelative']) {
                     $assetName = $a['dir'].$a['name'];
                 } else {
@@ -164,6 +172,12 @@ class AssetsInjector {
     /**
      * Appropriately parse, transform and injects
      * assets as files.
+     * if concatenate is true,
+     *      then it will merge assets of each block into one file.
+     * otherwise, foreach asset
+     *      it translate into appropriate js / css tag
+     *      with the expected path.
+     *
      * @param Layout $layout
      */
     public function applyFileAssets (Layout $layout) {
@@ -185,7 +199,8 @@ class AssetsInjector {
 
     /**
      * Walks through blocks and generate
-     * an array of all inline assets detected.
+     * an array of all inline assets
+     * for each inline assets target blocks.
      *
      * @param Layout $layout
      * @return array
