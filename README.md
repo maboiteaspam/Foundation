@@ -104,5 +104,4 @@ Find a list and an introduction of each modules of the Foundations.
     
     
 
-** Note: They will probably be moved out to their own repository later if things goes well and their size needs it.
 

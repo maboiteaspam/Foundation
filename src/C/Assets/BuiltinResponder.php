@@ -5,6 +5,13 @@ use C\FS\LocalFs;
 use C\FS\KnownFs;
 use C\Misc\Utils;
 
+/**
+ * Class BuiltinResponder
+ * helps to respond to static assets requests
+ * for a built in php web server
+ *
+ * @package C\Assets
+ */
 class BuiltinResponder {
 
     /**

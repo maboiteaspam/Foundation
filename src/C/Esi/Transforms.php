@@ -5,7 +5,7 @@ use C\Layout\Transforms as base;
 
 /**
  * Class Transforms
- * block to esi render engine.
+ * ESI renderer and layout modifier
  *
  * See varnish documentation for more help and information.
  *
