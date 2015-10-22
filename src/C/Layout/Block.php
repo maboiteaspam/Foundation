@@ -211,8 +211,8 @@ class Block implements TagableResourceInterface{
         if (!isset($this->inline[$target]))
             $this->inline[$target] = [];
         $this->inline[$target][] = [
-            'type'=>$type,
-            'content'=>$content,
+            'type'      => $type,
+            'content'   => $content,
         ];
     }
 
