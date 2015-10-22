@@ -80,6 +80,7 @@ class ModernAppServiceProvider implements ServiceProviderInterface
         if (isset($app['assets.fs'])) {
             $app['assets.fs']->register(__DIR__.'/../ModernApp/Dashboard/assets/', 'Dashboard');
             $app['assets.fs']->register(__DIR__.'/../ModernApp/jQuery/assets/', 'jQuery');
+            $app['assets.fs']->register(__DIR__.'/../ModernApp/HTML/assets/', 'HTML');
         }
         if (isset($app['layout.fs'])) {
             $app['layout.fs']->register(__DIR__.'/../ModernApp/HTML/templates/', 'HTML');
