@@ -10,10 +10,18 @@ class LayoutViewHelper extends AbstractViewHelper {
      */
     public $layout;
 
+    /**
+     * @param Layout $layout
+     */
     public function setLayout ( Layout $layout) {
         $this->layout = $layout;
     }
 
+    /**
+     * Call to display a sub block.
+     * @param $blockId
+     * @param bool $force
+     */
     public function display ($blockId, $force=false) {
         $layout = $this->layout;
         $shown = $layout->registry->has($blockId);
