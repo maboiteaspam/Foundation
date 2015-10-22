@@ -13,5 +13,9 @@ $allcalls = \C\FS\LocalFs::$allcalls;
             <?php } ?>
             <br/><br/>
         <?php } ?>
+        <?php if (!count($allcalls)) { ?>
+            Empty, great job !
+            <br/><br/>
+        <?php } ?>
     </div>
 </div>
