@@ -93,11 +93,12 @@ class FormViewHelper extends  AbstractStaticLayoutHelper{
     public function executeBlockNode (FileTransformsInterface $T, $blockSubject, $nodeAction, $nodeContents) {
         if ($nodeAction==="create_form") {
 
-            $formId         = isset($nodeContents['name'])      ? $nodeContents['name'] : 'form';
-            $formType       = isset($nodeContents['type'])      ? $nodeContents['type'] : null;
-            $formContent    = isset($nodeContents['children'])  ? $nodeContents['children'] : [];
+            $formId         = isset($nodeContents['name'])      ? $nodeContents['name']         : 'form';
+            $formType       = isset($nodeContents['type'])      ? $nodeContents['type']         : null;
+            $formContent    = isset($nodeContents['children'])  ? $nodeContents['children']     : [];
+            $formAttrs      = isset($nodeContents['attr'])      ? $nodeContents['attr']         : [];
 
-            $builder = $this->formFactory->createBuilder('form', $formType? new $formType : null);
+            $builder = $this->formFactory->createBuilder('form', $formType? new $formType : null, ['attr'=>$formAttrs]);
             if ($this->defaultMethod)   $builder->setMethod($this->defaultMethod);
             if ($this->defaultRoute)    $builder->setAction(
                 $this->urlGenerator->generate($this->defaultRoute, array_merge([],$this->defaultRouteParameters,[
