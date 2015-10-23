@@ -298,9 +298,9 @@ structure:
 ```yml
 structure:
   - register_assets:
-    alias: js-normalizer
-    path: HTML:/normalizer.js
-    version: 1.1.1
+        alias: js-normalizer
+        path: HTML:/normalizer.js
+        version: 1.1.1
 ```
 
 `require` keyword to require a vendor asset on the given block.
