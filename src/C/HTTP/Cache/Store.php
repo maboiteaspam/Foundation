@@ -6,6 +6,18 @@ use Moust\Silex\Cache\CacheInterface;
 
 /**
  * Class Store
+ * is responsible to know how to
+ * store / fetch an http cached resource.
+ *
+ * An HTTP cached resource needs a specific Store object
+ * as it will record it s data into various keys.
+ *
+ * - Resource
+ *      A serialized TagResource object. It can be used to know if a cache entry is stall or fresh.
+ * - Data
+ *      A serialized string, usually HTML, containing the actual response of the cached HTTP request.
+ * - Url
+ *      A raw url value referring it s etag. It is sued to do reverse identification of a cached item from an url, as opposite to using an etag value.
  *
  *
  * @package C\HTTP\Cache
