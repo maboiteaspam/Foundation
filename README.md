@@ -6,6 +6,8 @@ C framework is a lightweight framework dedicated to frontend development for php
 
 Based on top of silex and symfony.
 
+Please see more at https://github.com/maboiteaspam/Foundation/blob/master/doc/1-Introduction.md
+
 ## Modules provided
 
 Find a list and an introduction of each modules of the Foundations.

@@ -60,7 +60,7 @@ grunt v0.4.5
 
 C framework tries its best to give you the right tool, the right configuration, and the right methods out-of-the-box.
 
-Let s generate a first module and see what s inside.
+Let s generate a first module so the later we can see and study a module composition.
 
 For that matter, open a command line, make a new folder, and let s invoke `c2-bin generate`.
 
@@ -96,9 +96,60 @@ please choose __design-component__ at that moment.
 
 - `c2-bin` will need you to give a name to your module, please follow `composer` convention `ProjectName\ModuleName`.
 
-The module will then use a template module to generate the files and structure.
+    The module will then use a template module to generate the files and structure.
 
 - Finally, `c2-bin` will invite you to run `composer install` command. Which will install the `php` components dependencies.
+
+
+## Starting your module
+
+We are all set and ready, let s start the module now !
+
+Open a terminal, browse to your module folder and use `c2-bin run`.
+
+```
+shell > cd /to/my/work/folder/a-new-folder/
+shell > c2-bin
+
+Running "check-module-install" task
+>> Module is installed, let s move on !
+
+Running "classes-dump" task
+
+php -d opcache.enable_cli=0  composer.phar dumpautoload
+>> Generating autoload files
+
+Running "cache-init" task
+
+[... and many more output like this ... ]
+
+Running "start" task
+
+php -S localhost:8000 -t www app.php
+```
+
+That`s it! Your system should now be spawning a new browser window and get you on your first C web application endpoint.
+
+
+## Module overview
+
+In order to get things done right, C framework is very opiniated.
+
+Every time you ll create a module, a structure like this will be created :
+
+```
+ |   run/                   # Contains runtime data such cache
+ |   vendor/                # Contains all composer dependencies.
+ |   www/                   # The www root folder for a web application.
+ |   src/                   # Your local source code !
+ |  .gitignore              # get things done right.
+ |  .editorconfig           # get things done right.
+ |   app.php                # Web application entry point.
+ |   bootstrap.php          # Application modules registration and configuration.
+ |   cli.php                # Cli application entry point.
+```
+
+
 
 
 
