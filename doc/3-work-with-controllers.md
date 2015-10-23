@@ -1,3 +1,3 @@
 ## TBD
 
-Give me hand to get it down by proving a PR !
+Give me hand to get it done by proving a PR !
