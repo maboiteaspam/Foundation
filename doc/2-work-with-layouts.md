@@ -89,6 +89,59 @@ structure:
             Hello the world !
 ```
 
+##### Layout file structure
+
+The layout file takes root nodes
+
+```yml
+meta:
+    # describe the layout object properties
+structure:
+    # describe the layout content structure
+```
+
+The `meta:` node takes an array of property nodes.
+
+```yml
+meta:
+    id: layout-id
+    description: description
+```
+
+The `structure:` node takes an array of action nodes.
+
+```yml
+structure:
+    - action_node1
+    - action_node2
+    action_node3
+    action_node4
+```
+
+Each action node can describe either
+a structural change or select a block.
+
+```yml
+structure:
+    - change_layout: [arguments]
+    - change_layout2: [arguments]
+    [block_id1]: [arguments]
+    [block_id2]: [arguments]
+```
+
+When a block is selected, it is then possible
+to apply it a series of block action nodes.
+
+```yml
+structure:
+    - change_layout: [arguments]
+    - change_layout2: [arguments]
+    [block_id1]:
+        set_template: /some/file.php
+    [block_id2]:
+        set_data: {some_data: "indeed"}
+```
+
 ##### Describing a layout
 
 To describe a layout, the system
@@ -219,6 +272,7 @@ structure:
 ##### Working with assets
 ##### Working with forms
 ##### Working with validation
+##### Loading your own
 
 
 
