@@ -14,6 +14,22 @@ use C\FS\KnownFs;
 
 /**
  * Class Layout
+ * represents the layout object with block definitions
+ * to render a page.
+ *
+ * It can hold a list of block via is BlockRegistry
+ * It can add, or remove blocks.
+ * It can render the layout appropriately by traversing them in cascade.
+ * It can provide a tag resource object for http caching.
+ *
+ * Block content are produced in two steps : resolve then render.
+ *
+ * Resolve will invoke the view and process it,
+ * but it won t resolve sub blocks.
+ * The resulting content will contains placeholder for each sub block to display.
+ *
+ * Render operations, invoke the resolve operation of the block,
+ * It then replace placeholders of each block with their rendered content.
  *
  * @package C\Layout
  */
@@ -60,6 +76,8 @@ class Layout implements TagableResourceInterface{
     public $debugEnabled;
 
     /**
+     * The layout object is event-able.
+     *
      * @var \Symfony\Component\EventDispatcher\EventDispatcher
      */
     public $dispatcher;
@@ -69,24 +87,32 @@ class Layout implements TagableResourceInterface{
      */
     public $requestMatcher;
     /**
+     * the file system responsible to translate
+     * template virtual path to real file system path.
+     *
      * @var KnownFs
      */
     public $fs;
     /**
+     * The tag resource object
+     * to sign a layout object appropriately.
+     *
      * @var TagedResource
      */
     public $tagResource;
     /**
-     * this let you inject extra
-     * resources tags to apply on
-     * the layout level
+     * Use the global resource tag array
+     * to inject global values
+     * to the tag resource object.
+     *
      * @var array
      */
     public $globalResourceTags = [];
 
     /**
-     * The default options for each
-     * new block
+     * The default options applied
+     * by default to each new block.
+     *
      * @var array
      */
     public $defaultOptions = [
@@ -94,6 +120,9 @@ class Layout implements TagableResourceInterface{
         'meta'=>[],
     ];
 
+    /**
+     *
+     */
     public function __construct () {
         $this->registry = new RegistryBlock();
         $this->block = 'root';
@@ -116,19 +145,51 @@ class Layout implements TagableResourceInterface{
         $this->debugEnabled = $enabled;
     }
 
+    /**
+     * The ID of the layout.
+     *
+     * @param $layoutId
+     */
     public function setId ($layoutId) {
         $this->id = $layoutId;
     }
+
+    /**
+     * A description of the layout for human readers.
+     *
+     * @param $description
+     */
     public function setDescription ($description) {
         $this->description = $description;
     }
 
+    /**
+     * The context object within what views are rendered.
+     *
+     * @param Context $ctx
+     */
     public function setContext (Context $ctx) {
         $this->context = $ctx;
     }
     #endregion
 
     #region block rendering
+    /**
+     * Resolve the block to produce it s content.
+     *
+     * Returns the content of the block
+     * to be rendered within the layout.
+     *
+     * It emits those event in order,
+     *      before_block_resolve
+     *      before_resolve_[%blockId%]
+     *          --> resolve <--
+     *      after_resolve_[%blockId%]
+     *      after_block_resolve
+     *
+     * @param $id
+     * @return Block
+     */
     public function resolve ($id){
         $parentBlock = null;
         $this->emit('before_block_resolve', $id);
@@ -147,6 +208,22 @@ class Layout implements TagableResourceInterface{
         return $block;
     }
 
+    /**
+     * Renders a block and returns its content.
+     * It it tries to display sub block not yet resolved,
+     * it will resolve them JIT.
+     *
+     * Returns the final content of the block.
+     *
+     *      before_block_render
+     *      before_render_[%blockId%]
+     *          --> render <--
+     *      after_render_[%blockId%]
+     *      after_block_render
+     *
+     * @param $id
+     * @return mixed|string
+     */
     public function getContent ($id) {
         $body = "";
         $block = $this->registry->get($id);
@@ -174,12 +251,25 @@ class Layout implements TagableResourceInterface{
         }
         return $body;
     }
+
+    /**
+     * @deprecated Resolves all blocks of the layout.
+     * Most of the time it is not suitable.
+     *
+     */
     public function resolveAllBlocks (){
         $layout = $this;
         $this->registry->each(function ($block) use($layout) {
             $layout->resolve($block->id);
         });
     }
+
+    /**
+     * Resolve blocks in cascade given a starting block ID.
+     * This prevents to render and process block which are not part of the layout original start block.
+     *
+     * @param $startBlock
+     */
     public function resolveInCascade ($startBlock){
         $layout = $this;
         $layout->resolve($startBlock);
@@ -190,6 +280,22 @@ class Layout implements TagableResourceInterface{
             }
         }
     }
+
+    /**
+     * Renders a layout given it s starting block.
+     * Returns the content of the layout.
+     *
+     *      before_layout_resolve
+     *          --> resolve blocks <--
+     *      after_layout_resolve
+     *
+     *      before_layout_render
+     *          --> render blocks <--
+     *      after_layout_render
+     *
+     *
+     * @return string
+     */
     public function render (){
         $this->emit('before_layout_resolve');
         $this->resolveInCascade($this->block);
@@ -202,12 +308,24 @@ class Layout implements TagableResourceInterface{
         return $this->getRoot()->body;
     }
 
+    /**
+     * echo the content of a block.
+     * It always resolve / render a block and it s tree.
+     *
+     * @param $id
+     */
     public function displayBlock ($id){
         echo $this->getContent($id);
     }
     #endregion
 
     #region block manipulation
+    /**
+     * Get the root block of the layout.
+     * The block from which the render process in cascade occurs.
+     *
+     * @return Block
+     */
     public function getRoot (){
         return $this->get($this->block);
     }
@@ -215,10 +333,24 @@ class Layout implements TagableResourceInterface{
      * @param $id
      * @return Block
      */
+    /**
+     * Get a block object given it s ID.
+     * If it does not exists, it returns null.
+     *
+     * @param $id
+     * @return Block
+     */
     public function get ($id){
         return $this->registry->get($id);
     }
 
+    /**
+     * Configure a new block with
+     * the layout default block options.
+     *
+     * @param $block
+     * @param array $options
+     */
     function configureBlock ($block, $options=[]){
         foreach($this->defaultOptions as $n=>$v) {
             if (isset($options[$n]) && is_array($options[$n]) && is_array($v)) {
@@ -234,6 +366,12 @@ class Layout implements TagableResourceInterface{
         }
     }
 
+    /**
+     * Gets or creates a block configuration.
+     *
+     * @param $id
+     * @return Block
+     */
     function getOrCreate ($id){
         if (!($id instanceof Block)) {
             $block = $this->registry->get($id);
@@ -250,24 +388,46 @@ class Layout implements TagableResourceInterface{
         return $block;
     }
 
+    /**
+     * Configure the given block id with provided options.
+     *
+     * @param $id
+     * @param array $options
+     * @return Block
+     */
     function set ($id, $options=[]){
         $block = $id instanceof Block ? $id : $this->getOrCreate($id) ;
         $this->configureBlock($block, $options);
         return $block;
     }
 
+    /**
+     * Configure multiple blocks at once.
+     *
+     * @param array $options
+     */
     function setMultiple($options=[]){
         foreach($options as $target => $opts) {
             $this->set($target, $opts);
         }
     }
 
+    /**
+     * Remove given block id from the registry.
+     *
+     * @param $id
+     */
     function remove($id){
         $this->registry->remove($id);
     }
     #endregion
 
     #region bulk block manipulation
+    /**
+     * @deprecated.
+     *
+     * @param $pattern
+     */
     function keepOnly($pattern){
         $blocks = $this->registry->blocks;
         foreach($blocks as $block) {
@@ -281,23 +441,34 @@ class Layout implements TagableResourceInterface{
 
 
     #region resource tagging
+    /**
+     * Add a global resource tag on the layout tag object.
+     *
+     * @param TagedResource $resource
+     */
     public function addGlobalResourceTag (TagedResource $resource) {
         $this->globalResourceTags[] = $resource;
     }
+
+    /**
+     * Add a row tag on the layout tag object.
+     *
+     * @param $tag
+     * @param $type
+     * @throws \Exception
+     */
     public function addGlobalTag ($tag, $type) {
         $res = new TagedResource();
         $res->addResource($tag, $type);
         $this->globalResourceTags[] = $res;
     }
-    public function getDisplayedBlocksId($blockId) {
-        $displayed = [];
-        $block = $this->get($blockId);
-        $displayed = array_merge($displayed, $block->getDisplayedBlocksId());
-        foreach ($displayed as $d) {
-            $displayed = array_merge($displayed, $this->getDisplayedBlocksId($d));
-        }
-        return ($displayed);
-    }
+
+    /**
+     * Returns the list of block excluded
+     * from the tag resource object.
+     *
+     * @return array
+     */
     public function excludedBlocksFromTagResource() {
         $excluded = [];
         foreach($this->registry->blocks as $block /* @var $block Block */) {
@@ -309,7 +480,8 @@ class Layout implements TagableResourceInterface{
         return array_unique($excluded);
     }
     /**
-     * @return bool|TagedResource
+     * Compute all bocks tags to generate the layout tag object.
+     * @return bool|TagedResource.
      */
     public function getTaggedResource () {
         if ($this->tagResource===null) {
@@ -339,6 +511,12 @@ class Layout implements TagableResourceInterface{
 
 
     #region event dispatching
+    /**
+     * emit given ID.
+     * Arguments will be forwarded.
+     *
+     * @param $id
+     */
     public function emit ($id){
         $args = func_get_args();
         $id = array_shift($args);
@@ -360,12 +538,25 @@ class Layout implements TagableResourceInterface{
         if ($this->dispatcher)
             call_user_func_array([$this->dispatcher, ' removeListener'], func_get_args());
     }
+
+    /**
+     * Event emitted once the controller loose
+     * its hand on the layout and will stop to modify it.
+     * @param $fn
+     */
     public function onControllerBuildFinish ($fn){
         $layout = $this;
         $this->on('controller_build_finish', function($event) use($layout, $fn){
             $fn($event, $layout, $event->getArgument(0));
         });
     }
+
+    /**
+     * Event emitted once all transform operations are finished.
+     * It should occur before response forging.
+     *
+     * @param $fn
+     */
     public function onLayoutBuildFinish ($fn){
         $layout = $this;
         $this->on('layout_build_finish', function($event) use($layout, $fn){
@@ -463,17 +654,29 @@ class Layout implements TagableResourceInterface{
 
 
     #region serializer
+    // @todo move this out.
     /**
      * @var LayoutSerializer
      */
     public $serializer;
-
     public function setLayoutSerializer (LayoutSerializer $serializer) {
         $this->serializer = $serializer;
     }
     #endregion
 
     #region block iteration
+    /**
+     * Traverse block given their structure.
+     * This traverse implementation can occur only after the layout has been rendered.
+     * It will traverse the root block, and all its displayed blocks.
+     * And so on for each block found.
+     * It helps to escape non displayed block from your iteration.
+     *
+     * @param Block $block
+     * @param Layout $layout
+     * @param $then
+     * @param null $path
+     */
     function traverseBlocksWithStructure (Block $block, Layout $layout, $then, $path=null){
         $parentId = $block->id;
         if ($path===null) {
@@ -494,8 +697,20 @@ class Layout implements TagableResourceInterface{
             if ($sub) $this->traverseBlocksWithStructure($sub, $layout, $then, "$path/$subId");
         }
     }
+
+    /**
+     * Given a block ID, retrieve all displayed block objects.
+     * @param $blockId
+     * @return array
+     */
+    public function getDisplayedBlocksId($blockId) {
+        $displayed = [];
+        $block = $this->get($blockId);
+        $displayed = array_merge($displayed, $block->getDisplayedBlocksId());
+        foreach ($displayed as $d) {
+            $displayed = array_merge($displayed, $this->getDisplayedBlocksId($d));
+        }
+        return ($displayed);
+    }
     #endregion
 }
-
-
-

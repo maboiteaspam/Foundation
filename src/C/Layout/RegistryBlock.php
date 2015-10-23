@@ -2,6 +2,10 @@
 
 namespace C\Layout;
 
+/**
+ * Class RegistryBlock
+ * @package C\Layout
+ */
 class RegistryBlock{
 
     public $blocks = [];
@@ -17,6 +21,7 @@ class RegistryBlock{
     public function get ($id){
         if( isset($this->blocks[$id]))
             return $this->blocks[$id];
+        return null;
     }
     public function getParent ($id){
         foreach ($this->blocks as $block) {

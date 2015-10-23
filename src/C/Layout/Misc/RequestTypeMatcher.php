@@ -5,6 +5,10 @@ namespace C\Layout\Misc;
 use C\TagableResource\TagableResourceInterface;
 use C\TagableResource\TagedResource;
 
+
+// @notes it s not stable interface at all so far.
+
+
 class RequestTypeMatcher implements TagableResourceInterface{
 
     /**
