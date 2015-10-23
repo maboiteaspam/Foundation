@@ -142,7 +142,7 @@ Every time you ll create a module, a structure like this will be created :
  |   vendor/                        # Contains all composer dependencies.
  |   www/                           # The www root folder for a web application.
  |   src/                           # Your local source code !
- |   src/assets/                    # Your local source code !
+ |   src/assets/                    # Your front assets such as JS and CSS files.
  |   src/intl/                      # Intl files and translations lands here.
  |   src/layouts/                   # Layout files describing the view lands here.
  |   src/templates/                 # The view implementation files stand here.
