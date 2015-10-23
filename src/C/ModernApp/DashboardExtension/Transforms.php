@@ -1,9 +1,8 @@
 <?php
 namespace C\ModernApp\DashboardExtension;
 
-use C\Layout\Transforms as Base;
+use C\Layout\Transforms\Transforms as Base;
 use C\Layout\Layout;
-use C\Misc\Utils;
 
 class Transforms extends Base{
 
@@ -15,7 +14,7 @@ class Transforms extends Base{
     }
 
     /**
-     * @return \C\Layout\Transforms
+     * @return \C\Layout\Transforms\Transforms
      */
     public function time_travel (){
         $this->setTemplate('dashboard-time-travel',
@@ -31,7 +30,7 @@ class Transforms extends Base{
     }
 
     /**
-     * @return \C\Layout\Transforms
+     * @return \C\Layout\Transforms\Transforms
      */
     public function stats (){
 

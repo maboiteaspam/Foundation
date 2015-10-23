@@ -1,5 +1,7 @@
 <?php
-namespace C\Layout;
+namespace C\Layout\Transforms;
+
+use C\Layout\Layout;
 
 /**
  * Class VoidTransforms
@@ -19,7 +21,7 @@ class VoidTransforms implements TransformsInterface{
     }
 
     /**
-     * @var \C\Layout\TransformsInterface
+     * @var \C\Layout\Transforms\TransformsInterface
      */
     public $innerTransform;
 

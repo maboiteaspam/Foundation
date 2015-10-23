@@ -1,6 +1,6 @@
 <?php
 
-namespace C\Layout;
+namespace C\Layout\Misc;
 
 use C\TagableResource\TagableResourceInterface;
 use C\TagableResource\TagedResource;

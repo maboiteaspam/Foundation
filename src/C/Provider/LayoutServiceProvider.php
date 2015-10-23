@@ -6,10 +6,10 @@ use C\FS\LocalFs;
 use C\FS\Registry;
 
 use C\Layout\Layout;
-use C\Layout\LayoutResponder;
-use C\Layout\LayoutSerializer;
-use C\Layout\RequestTypeMatcher;
-use C\Layout\TaggedLayoutResponder;
+use C\Layout\Responder\LayoutResponder;
+use C\Layout\Responder\TaggedLayoutResponder;
+use C\Layout\Misc\LayoutSerializer;
+use C\Layout\Misc\RequestTypeMatcher;
 use C\View\Env;
 use C\View\Context;
 use C\View\Helper\CommonViewHelper;

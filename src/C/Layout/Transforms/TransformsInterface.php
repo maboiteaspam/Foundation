@@ -1,5 +1,7 @@
 <?php
-namespace C\Layout;
+namespace C\Layout\Transforms;
+
+use C\Layout\Layout;
 
 /**
  * Interface TransformsInterface

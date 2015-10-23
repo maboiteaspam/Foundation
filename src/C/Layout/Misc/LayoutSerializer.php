@@ -1,11 +1,26 @@
 <?php
 
-namespace C\Layout;
+namespace C\Layout\Misc;
 
 use C\FS\KnownFs;
+use C\Layout\Block;
+use C\Layout\Layout;
 use C\Misc\Utils;
 use Silex\Application;
 
+/**
+ * Class LayoutSerializer
+ * is an helper that knows how to serialize a layout.
+ * It s main purpose is to display the layout tree
+ * into the dashboard structure extension.
+ *
+ * It s a one way serializer, it does not attempt
+ * to provide a structure which is un-serializable to recover
+ * the original object.
+ *
+ *
+ * @package C\Layout\Misc
+ */
 class LayoutSerializer {
 
     /**
@@ -29,22 +44,64 @@ class LayoutSerializer {
      */
     public $app;
 
+    /**
+     * layoutFS is used to translate
+     * templates virtual path to real path.
+     *
+     * @param KnownFs $layoutFS
+     */
     public function setLayoutFS (KnownFs $layoutFS) {
         $this->layoutFS = $layoutFS;
     }
+
+    /**
+     * modernFS is used to translate
+     * templates virtual path to real path.
+     *
+     * @param KnownFs $modernFS
+     */
     public function setModernFS (KnownFs $modernFS) {
         $this->modernFS = $modernFS;
     }
+
+    /**
+     * assetsFS is used to translate
+     * assets virtual path to real path.
+     *
+     * @param KnownFs $assetsFS
+     */
     public function setAssetsFS (KnownFs $assetsFS) {
         $this->assetsFS = $assetsFS;
     }
+
+    /**
+     * intlFS is used to translate
+     * intl virtual path to real path.
+     *
+     * @param KnownFs $intlFS
+     */
     public function setIntlFS (KnownFs $intlFS) {
         $this->intlFS = $intlFS;
     }
+
+    /**
+     * The silex application
+     * It is used to discover class names of entity provider.
+     *
+     * @param Application $app
+     */
     public function setApp (Application $app) {
         $this->app = $app;
     }
 
+    /**
+     * Serialize transforms the given layout
+     * into an array where internal references
+     * are translated into real world human information.
+     *
+     * @param Layout $layout
+     * @return array
+     */
     public function serialize (Layout $layout) {
         //-
         $serialized = [
@@ -154,7 +211,6 @@ class LayoutSerializer {
                     'templateFile'=>$templateFile,
                     'assets'=>$assets,
                     'id'=>$blockId,
-                    'parentId'=>$parentId,
                     'displayedBlocks'=>$displayedBlocks,
                     'data'=>$data,
                     'exists'=>$options['exists'],

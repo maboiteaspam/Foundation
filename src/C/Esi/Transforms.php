@@ -1,7 +1,7 @@
 <?php
 namespace C\Esi;
 
-use C\Layout\Transforms as base;
+use C\Layout\Transforms\Transforms as base;
 
 /**
  * Class Transforms
@@ -35,7 +35,7 @@ class Transforms extends base{
      *
      * @param $target
      * @param array $options
-     * @return $this|\C\Layout\VoidTransforms
+     * @return $this|\C\Layout\Transforms\VoidTransforms
      */
     public function esify($target, $options=[]){
         $options = array_merge(['url'=>'',], $options);

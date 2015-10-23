@@ -1,10 +1,18 @@
 <?php
-namespace C\Layout;
+namespace C\Layout\Transforms;
 
+use C\Layout\Layout;
+
+/**
+ * Class Transforms
+ * helps to deal with layout transformation.
+ *
+ * Layout transformation is about
+ * declaring and configuring block structuring the layout object.
+ *
+ * @package C\Layout\Transforms
+ */
 class Transforms implements TransformsInterface{
-
-    public function __construct(){
-    }
 
     /**
      * @return Transforms
@@ -43,17 +51,52 @@ class Transforms implements TransformsInterface{
         return $this;
     }
 
+    /**
+     * Set options of a Block
+     *
+     * @param $id
+     * @param $options
+     * @return $this
+     */
     public function set($id, $options){
         $this->layout->set($id, $options);
         return $this;
     }
+
+    /**
+     * Set template file of a block.
+     *
+     * @param $id
+     * @param $template
+     * @return $this
+     */
     public function setTemplate($id, $template){
         $block = $this->layout->getOrCreate($id);
         if ($block) {
-            $block->options['template'] = $template;
+            $block->setTemplate($template);
         }
         return $this;
     }
+
+    /**
+     * Clear options of a block.
+     *
+     * $what can be one of
+     * - all
+     * - template
+     * - data
+     * - options
+     * - assets
+     * - meta
+     *
+     * You can also pass in a string such
+     * template, options
+     * to clear multiple elements at once.
+     *
+     * @param $id
+     * @param string $what
+     * @return $this
+     */
     public function clearBlock($id, $what='all'){
         $block = $this->layout->getOrCreate($id);
         if ($block) {
@@ -61,10 +104,28 @@ class Transforms implements TransformsInterface{
         }
         return $this;
     }
+
+    /**
+     * Deletes and remove a block from the layout,
+     * cancelling it s processing.
+     *
+     * @param $id
+     * @return $this
+     */
     public function deleteBlock($id){
         $this->layout->remove($id);
         return $this;
     }
+
+    /**
+     * Sets the body content of a block.
+     *
+     * When you do so, the block won t execute any template file.
+     *
+     * @param $id
+     * @param $body
+     * @return $this
+     */
     public function setBody($id, $body){
         $block = $this->layout->getOrCreate($id);
         if ($block) {
@@ -73,6 +134,16 @@ class Transforms implements TransformsInterface{
         }
         return $this;
     }
+
+    /**
+     * Exclude a block from resource tagging.
+     *
+     * It is useful for blocks such dashboard
+     * which are part of the developer toolbox.
+     *
+     * @param $id
+     * @return $this
+     */
     public function excludeFromTagResource($id){
         $block = $this->layout->getOrCreate($id);
         if ($block) {
@@ -80,17 +151,41 @@ class Transforms implements TransformsInterface{
         }
         return $this;
     }
+
+    /**
+     * Update options of a block with an array_merge.
+     *
+     * @param $id
+     * @param array $options
+     * @return $this
+     */
     public function updateOptions($id, $options=[]){
         $block = $this->layout->getOrCreate($id);
         $block->options = array_merge($options, $block->options);
         return $this;
     }
 
+    /**
+     * Attach an assets to the given block id for rendering.
+     *
+     * @param $id
+     * @param array $assets
+     * @param bool $first
+     * @return $this
+     */
     public function addAssets($id, $assets=[], $first=false){
         $block = $this->layout->getOrCreate($id);
         $block->addAssets($assets, $first);
         return $this;
     }
+
+    /**
+     * Remove an asset of the given block id.
+     *
+     * @param $id
+     * @param array $assets
+     * @return $this
+     */
     public function removeAssets($id, $assets=[]){
         $block = $this->layout->getOrCreate($id);
         foreach($assets as $targetAssetGroupName => $files) {
@@ -105,6 +200,23 @@ class Transforms implements TransformsInterface{
         }
         return $this;
     }
+
+    /**
+     * Performs a strict search on the given block id assets
+     * in order to replace it in place with the new given asset.
+     *
+     * $replacements is an array such
+     * [
+     *  search => replacement,
+     *  search2 => replacement2,
+     *  search3 => replacement3,
+     * ]
+     *
+     *
+     * @param $id
+     * @param array $replacements
+     * @return $this
+     */
     public function replaceAssets($id, $replacements=[]){
         $block = $this->layout->getOrCreate($id);
         foreach($replacements as $search => $replacement) {
@@ -119,23 +231,52 @@ class Transforms implements TransformsInterface{
         return $this;
     }
 
+    /**
+     * Sets default data of a block.
+     * It won t override existing data.
+     *
+     * @param $id
+     * @param array $data
+     * @return $this
+     */
     public function setDefaultData($id, $data=[]){
         $block = $this->layout->getOrCreate($id);
         $block->data = array_merge($data, $block->data);
         return $this;
     }
 
+    /**
+     * Sets default meta of a block.
+     * It won t override existing meta.
+     *
+     * @param $id
+     * @param array $meta
+     * @return $this
+     */
     public function setDefaultMeta($id, $meta=[]){
         $block = $this->layout->getOrCreate($id);
         $block->meta = array_merge($meta, $block->meta);
         return $this;
     }
+
+    /**
+     * Update data of the given block.
+     * $data will override block data.
+     *
+     * @param $id
+     * @param array $data
+     * @return $this
+     */
     public function updateData($id, $data=[]){
         $block = $this->layout->getOrCreate($id);
         $block->data = array_merge($block->data, $data);
         return $this;
     }
 
+    /**
+     * @deprecated
+     * @todo remove it.
+     */
     public function addIntl($id, $intl, $locale, $domain=null){
         $block = $this->layout->getOrCreate($id);
         $block->intl[] = [
@@ -145,7 +286,10 @@ class Transforms implements TransformsInterface{
         ];
         return $this;
     }
-
+    /**
+     * @deprecated
+     * @todo remove it.
+     */
     public function replaceIntl($search, $replace){
         foreach ($this->layout->registry->blocks as $i=>$block) {
             foreach ($block->intl as $e=>$intl) {
@@ -156,7 +300,10 @@ class Transforms implements TransformsInterface{
         }
         return $this;
     }
-
+    /**
+     * @deprecated
+     * @todo remove it.
+     */
     public function removeIntl($search){
         foreach ($this->layout->registry->blocks as $i=>$block) {
             foreach ($block->intl as $e=>$intl) {
@@ -168,12 +315,30 @@ class Transforms implements TransformsInterface{
         return $this;
     }
 
+    /**
+     * Update meta of the given block.
+     * $meta will override block meta.
+     *
+     * @param $id
+     * @param array $meta
+     * @return $this
+     */
     public function updateMeta($id, $meta=[]){
         $block = $this->layout->getOrCreate($id);
         $block->meta = array_merge($block->meta, $meta);
         return $this;
     }
 
+    /**
+     * helper method to block
+     * option, meta, data in one call.
+     *
+     * @param $id
+     * @param array $meta
+     * @param array $data
+     * @param array $options
+     * @return $this
+     */
     public function updateBlock($id, $meta=[], $data=[], $options=[]){
         $block = $this->layout->getOrCreate($id);
         $block->meta = array_merge($block->meta, $meta);
@@ -182,6 +347,16 @@ class Transforms implements TransformsInterface{
         return $this;
     }
 
+    /**
+     * This method erases all block
+     * which id does not match given pattern
+     *
+     * @deprecated
+     * @todo remove it
+     *
+     * @param $pattern
+     * @return $this
+     */
     public function keepOnly($pattern){
         $this->layout->keepOnly($pattern);
         return $this;
@@ -192,6 +367,10 @@ class Transforms implements TransformsInterface{
      * switch to a device type
      * desktop, mobile, tablet
      * default is desktop
+     *
+     * When the current request device
+     * does not match the expected $device,
+     * a void transform is provided.
      *
      * @param $device
      * @return $this|VoidTransforms
@@ -237,6 +416,14 @@ class Transforms implements TransformsInterface{
             ->setInnerTransform($this);
     }
 
+    /**
+     * Insert given block $id after $target.
+     *
+     * @param $target
+     * @param $id
+     * @param array $options
+     * @return $this
+     */
     public function insertAfterBlock ($target, $id, $options=[]){
         $this->layout->set($id, $options);
         $this->layout->afterBlockResolve($target, function ($ev, Layout $layout) use($target, $id) {
@@ -263,6 +450,14 @@ class Transforms implements TransformsInterface{
         return $this;
     }
 
+    /**
+     * Insert given block $id before $target.
+     *
+     * @param $beforeTarget
+     * @param $id
+     * @param array $options
+     * @return $this
+     */
     public function insertBeforeBlock ($beforeTarget, $id, $options=[]){
         $this->layout->set($id, $options);
         $this->layout->beforeBlockResolve($beforeTarget, function ($ev, Layout $layout) use($beforeTarget, $id) {

@@ -1,7 +1,7 @@
 <?php
 namespace C\ModernApp\Dashboard;
 
-use C\Layout\Transforms as Base;
+use C\Layout\Transforms\Transforms as Base;
 
 class Transforms extends Base{
 

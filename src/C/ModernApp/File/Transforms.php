@@ -1,8 +1,8 @@
 <?php
 namespace C\ModernApp\File;
 
-use C\Layout\Transforms as BaseTransforms;
-use C\Layout\TransformsInterface;
+use C\Layout\Transforms\Transforms as BaseTransforms;
+use C\Layout\Transforms\TransformsInterface;
 use C\TagableResource\TagedResource;
 
 class Transforms extends BaseTransforms implements FileTransformsInterface{

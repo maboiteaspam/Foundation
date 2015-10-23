@@ -1,7 +1,7 @@
 <?php
 namespace C\ModernApp\File;
 
-use C\Layout\TransformsInterface;
+use C\Layout\Transforms\TransformsInterface;
 
 interface FileTransformsInterface extends TransformsInterface{
     public function then($fn);

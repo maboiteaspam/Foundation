@@ -1,19 +1,47 @@
 <?php
-namespace C\Layout;
+namespace C\Layout\Responder;
 
+use C\Layout\Layout;
 use C\TagableResource\ResourceTagger;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use C\Misc\Utils;
 
+/**
+ * Class TaggedLayoutResponder
+ * Renders and responds a tagged layout.
+ * A tagged layout expose a TagResource object
+ * and can thus be cached.
+ *
+ * @package C\Layout\Responder
+ */
 class TaggedLayoutResponder extends LayoutResponder{
     /**
      * @var ResourceTagger
      */
     public $tagger;
+
+    /**
+     * @param ResourceTagger $tagger
+     */
     public function setTagger(ResourceTagger $tagger){
         $this->tagger = $tagger;
     }
+
+    /**
+     * Renders and respond a layout.
+     * If the layout is taggable,
+     *  it will add extra global resources (device, language, request kind) on the tag
+     *  It will then generate the signature of the layout,
+     *      in order to set the etag value of the response object.
+     *  Finally, if this layout is cache-able, it will set shared-maxage and set the response as public.
+     *
+     * @param Layout $layout
+     * @param Request $request
+     * @param Response $response
+     * @return Response
+     * @throws \Exception
+     */
     public function respond(Layout $layout, Request $request, Response $response=null){
 
         Utils::stderr('rendering layout');

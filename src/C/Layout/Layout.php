@@ -2,6 +2,7 @@
 
 namespace C\Layout;
 
+use C\Layout\Misc\RequestTypeMatcher;
 use C\TagableResource\TagedResource;
 use C\TagableResource\TagableResourceInterface;
 use C\View\Context;
@@ -10,6 +11,11 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 use C\Misc\Utils;
 use C\FS\KnownFs;
 
+/**
+ * Class Layout
+ *
+ * @package C\Layout
+ */
 class Layout implements TagableResourceInterface{
 
     /**
@@ -457,7 +463,7 @@ class Layout implements TagableResourceInterface{
 
     #region serializer
     /**
-     * @var LayoutSerializer
+     * @var LayoutSerialize
      */
     public $serializer;
 

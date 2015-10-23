@@ -1,7 +1,7 @@
 <?php
 namespace C\ModernApp\File\Helpers;
 
-use C\Layout\Transforms;
+use C\Layout\Transforms\Transforms;
 use C\ModernApp\File\AbstractStaticLayoutHelper;
 use C\ModernApp\File\FileTransformsInterface;
 

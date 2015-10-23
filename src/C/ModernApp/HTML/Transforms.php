@@ -1,7 +1,7 @@
 <?php
 namespace C\ModernApp\HTML;
 
-use C\Layout\Transforms as BaseTransforms;
+use C\Layout\Transforms\Transforms as BaseTransforms;
 use Silex\Application;
 
 class Transforms extends BaseTransforms{

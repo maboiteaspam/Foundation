@@ -1,7 +1,7 @@
 <?php
 namespace C\ModernApp\File;
 
-use C\Layout\VoidTransforms;
+use C\Layout\Transforms\VoidTransforms;
 
 class VoidFileTransforms extends VoidTransforms implements FileTransformsInterface{
 

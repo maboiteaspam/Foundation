@@ -1,7 +1,7 @@
 <?php
 namespace C\ModernApp\jQuery;
 
-use C\Layout\Transforms as base;
+use C\Layout\Transforms\Transforms as base;
 
 class Transforms extends base{
 

@@ -49,24 +49,77 @@ class Block implements TagableResourceInterface{
     public $resolved = false;
 
     /**
+     * a mixin array of options
      * @var array
      */
     public $options = [
+        // template
     ];
+    /**
+     * A mixin array of data to inject
+     * in the view as regular php variable.
+     * @var array
+     */
     public $data = [];
+    /**
+     * An array of target => (file) assets attached to this block.
+     * [
+     *  header => [ assets1, assets2, ],
+     *  footer => [ assets1, assets2, ],
+     * ]
+     *
+     * @var array
+     */
     public $assets = [];
+    /**
+     * An array of target => (inline) assets attached to this block.
+     * [
+     *  header => [ inlineAssets1, inlineAssets2, ],
+     *  footer => [ inlineAssets1, inlineAssets2, ],
+     * ]
+     *
+     * @var array
+     */
     public $inline = [];
+
+    /**
+     * @deprecated
+     * @todo to remove
+     * @var array
+     */
     public $intl = [];
+
+    /**
+     * A mixin array of meta to attach to the block.
+     *
+     * @var array
+     */
     public $meta = [
         'from' => false,
         'etag' => '',
     ];
 
-    // this are runtime data to help debug and so on.
-    public $stack = [];
+    /**
+     * holds a list of blocks this
+     * block has attempted to render.
+     *
+     * @var array
+     */
     public $displayed_blocks = [
         /* [array,of,block,id,displayed]*/
     ];
+
+    // this are runtime data to help debug and so on.
+    /**
+     * Stack should be a stack trace representation.
+     * This should help to find out which transforms
+     * made which changes at which location in the code.
+     *
+     * @notes to be improved...
+     *
+     * @var array
+     */
+    public $stack = [];
 
 
     /**
@@ -185,6 +238,7 @@ class Block implements TagableResourceInterface{
     }
 
     /**
+     * Set the parent block id whom display that instance.
      * @param $parentId string
      */
     public function setParentRenderBlock($parentId){
@@ -192,6 +246,8 @@ class Block implements TagableResourceInterface{
     }
 
     /**
+     * Get teh parent block id whom displayed that instance.
+     *
      * @return string
      */
     public function getParentBlockId(){
@@ -261,8 +317,8 @@ class Block implements TagableResourceInterface{
     }
 
     /**
-     * Compute involved resources of the block
-     * as a resource tag.
+     * Compute attached resources to that block
+     * as a resource tag object.
      *
      * @return TagedResource
      * @throws \Exception
@@ -306,6 +362,9 @@ class Block implements TagableResourceInterface{
 
     /**
      * Get all unwrapped data attached to this block.
+     *
+     * $notNames is an array of string of the data
+     * to exclude.
      *
      * @param array $notNames
      * @return array
