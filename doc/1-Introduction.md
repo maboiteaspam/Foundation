@@ -2,7 +2,7 @@
 
 Welcome, C is a frontend framework wrote in php.
 Based on top of symfony and silex components, it aims to provide
-alternative tools to help in maintaining a complex frontend application.
+alternative tools to help in creating and maintaining a complex frontend application.
 
 ## Getting started
 
