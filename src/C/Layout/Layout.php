@@ -2,6 +2,7 @@
 
 namespace C\Layout;
 
+use C\Layout\Misc\LayoutSerializer;
 use C\Layout\Misc\RequestTypeMatcher;
 use C\TagableResource\TagedResource;
 use C\TagableResource\TagableResourceInterface;
@@ -463,7 +464,7 @@ class Layout implements TagableResourceInterface{
 
     #region serializer
     /**
-     * @var LayoutSerialize
+     * @var LayoutSerializer
      */
     public $serializer;
 
