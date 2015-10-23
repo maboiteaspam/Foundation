@@ -264,8 +264,6 @@ cancelling its display and all of its children.
 
 It does not take any value.
 
-or a mixin `data options`
-
 ```yml
 structure:
     [block_id]:
@@ -273,6 +271,48 @@ structure:
 ```
 
 ##### Working with assets
+
+`add_assets` keyword to attach assets on the given block.
+Assets are injected according to the specified targets.
+
+```yml
+structure:
+    [block_id]:
+      add_assets:
+        template_head_js:
+            - HTML:/normalizer.js
+```
+
+`remove_assets` keyword to attach assets on the given block.
+Assets are injected according to the specified targets.
+
+```yml
+structure:
+    [block_id]:
+      remove_assets:
+        template_head_js:
+            - HTML:/normalizer.js
+```
+
+`register_assets` keyword to attach register a vendor asset.
+
+```yml
+structure:
+  - register_assets:
+    alias: js-normalizer
+    path: HTML:/normalizer.js
+    version: 1.1.1
+```
+
+`require` keyword to require a vendor asset on the given block.
+
+```yml
+structure:
+    [block_id]:
+      require:
+        - {"js-normalizer:1.x": "template_head_js"}
+```
+
 ##### Working with forms
 ##### Working with validation
 ##### Loading your own
