@@ -26,13 +26,13 @@ Request
 
 It describes the page to render as a tree of named block.
 ```
-    Root>
+    VISUAL                  TREE
     __________________
-    |   HEADER       |
-    |________________|
-    |         |      |
-    |  MAIN   |  RB  |
-    |         |      |
+    |   HEADER       |      | Root
+    |________________|      | Root/HEADER
+    |         |      |      | Root/MAIN
+    |  MAIN   |  RB  |      | Root/RB
+    |         |      |      | Root/FOOTER
     |_________|______|
     |   FOOTER       |
     |________________|
