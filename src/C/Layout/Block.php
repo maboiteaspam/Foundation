@@ -81,6 +81,17 @@ class Block implements TagableResourceInterface{
      * @var array
      */
     public $inline = [];
+    /**
+     * An array of assets requirements such
+     * vendor-asset-alias:semver => target asset block id
+     * [
+     *  jquery:2.x => footer,
+     *  normalize.css:1.x => header,
+     * ]
+     *
+     * @var array
+     */
+    public $requires = [];
 
     /**
      * @deprecated
@@ -185,6 +196,7 @@ class Block implements TagableResourceInterface{
      *
      * @param KnownFs $fs
      * @param Context $context
+     * @throws \Exception
      */
     public function resolve (KnownFs $fs, Context $context){
         if (!$this->resolved) {
@@ -209,7 +221,7 @@ class Block implements TagableResourceInterface{
                 try{
                     $boundFn($this);
                 }catch(\Exception $ex) {
-                    throw new Exception("'{$this->id}' has failed to execute: {$ex->getMessage()}", 0, $ex);
+                    throw new \Exception("'{$this->id}' has failed to execute: {$ex->getMessage()}", 0, $ex);
                 }
             }
         }
@@ -317,6 +329,21 @@ class Block implements TagableResourceInterface{
     }
 
     /**
+     * Add an asset requirement on the block
+     *
+     * $require is expected to be of the form
+     * vendor-asset-alias:semver
+     *
+     * $preferred_block_target is the block asset target id.
+     *
+     * @param $require
+     * @param $preferred_block_target
+     */
+    public function addAssetRequire($require, $preferred_block_target){
+        $this->requires[$require] = $preferred_block_target;
+    }
+
+    /**
      * Compute attached resources to that block
      * as a resource tag object.
      *
@@ -384,7 +411,6 @@ class Block implements TagableResourceInterface{
 
     /**
      * Get a specific unwrapped data
-     * attached to this block.
      *
      * @param $name
      * @return mixed

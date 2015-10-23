@@ -104,11 +104,14 @@ class AssetsServiceProvider implements ServiceProviderInterface
                 $injector->buildDir = $app['assets.build_dir'];
                 $layout = $app['layout'];
                 /* @var $layout \C\Layout\Layout */
-                $layout->beforeRender(function () use($injector, $app) {
-                    $injector->applyFileAssets($app['layout']);
-                });
                 $layout->afterResolve(function () use($injector, $app) {
                     $injector->applyInlineAssets($app['layout']);
+                });
+                $layout->afterResolve(function () use($injector, $app) {
+                    $injector->applyAssetsRequirements($app['layout']);
+                });
+                $layout->beforeRender(function () use($injector, $app) {
+                    $injector->applyFileAssets($app['layout']);
                 });
                 if ($injector->concatenate) {
                     $app->after(function() use($injector, $app){

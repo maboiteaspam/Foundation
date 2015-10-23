@@ -4,12 +4,15 @@ namespace C\Assets;
 
 use C\FS\KnownFs;
 use C\FS\LocalFs;
-use C\Misc\Utils;
 use C\Layout\Layout;
+use vierbergenlars\SemVer\version;
+use vierbergenlars\SemVer\expression;
+
 
 /**
  * Class AssetsInjector
  * Walks through layout's blocks
+ * - resolves assets requirements against referenced assets on the layout
  * - generate HTML block containing
  *   script and link nodes
  * - it can also generates merged files
@@ -51,6 +54,7 @@ class AssetsInjector {
         return strpos($target, 'js')===false?"css":"js";
     }
 
+    #region apply file assets on target asset blocks
     /**
      * walks through blocks and generate
      * an array of all assets detected.
@@ -198,49 +202,6 @@ class AssetsInjector {
     }
 
     /**
-     * Walks through blocks and generate
-     * an array of all inline assets
-     * for each inline assets target blocks.
-     *
-     * @param Layout $layout
-     * @return array
-     */
-    public function mergeAllInline (Layout $layout) {
-        $blockInline = [];
-        foreach ($layout->registry->blocks as $block) {
-            /* @var $block \C\Layout\Block */
-            foreach ($block->inline as $target=>$inline) {
-                if (!isset($blockInline[$target])) {
-                    $blockInline[$target] = [];
-                }
-                $blockInline[$target] = array_merge($blockInline[$target], $inline);
-            }
-        }
-        return $blockInline;
-    }
-
-    /**
-     * Appropriately parse, transform and injects
-     * assets as inline contents.
-     * @param Layout $layout
-     */
-    public function applyInlineAssets (Layout $layout) {
-        foreach ($layout->registry->blocks as $block) {
-            /* @var $block \C\Layout\Block */
-            $blockId = $block->id;
-            foreach ($block->inline as $target=>$inline_items) {
-                foreach ($inline_items as $inline) {
-                    $content = $inline['content'];
-                    $type = $inline['type'];
-                    $targetBlock = $layout->getOrCreate("{$target}_inline_{$type}");
-                    $targetBlock->body .= "\n<!-- {$blockId} -->\n";
-                    $targetBlock->body .= "\n{$content}\n";
-                }
-            }
-        }
-    }
-
-    /**
      * this method create appropriate merged file given blocks and their assets
      * @param Layout $layout
      */
@@ -302,5 +263,77 @@ class AssetsInjector {
 
         return $content;
     }
+    #endregion
 
+
+    #region apply inline assets on target asset blocks
+    /**
+     * Appropriately parse, transform and injects
+     * assets as inline contents.
+     * @param Layout $layout
+     */
+    public function applyInlineAssets (Layout $layout) {
+        foreach ($layout->registry->blocks as $block) {
+            /* @var $block \C\Layout\Block */
+            $blockId = $block->id;
+            foreach ($block->inline as $target=>$inline_items) {
+                foreach ($inline_items as $inline) {
+                    $content = $inline['content'];
+                    $type = $inline['type'];
+                    $targetBlock = $layout->getOrCreate("{$target}_inline_{$type}");
+                    $targetBlock->body .= "\n<!-- {$blockId} -->\n";
+                    $targetBlock->body .= "\n{$content}\n";
+                }
+            }
+        }
+    }
+    #endregion
+
+    #region apply assets requirements
+    public function applyAssetsRequirements (Layout $layout) {
+        $allRequirements = [];
+        foreach ($layout->registry->blocks as $block) {
+            /* @var $block \C\Layout\Block */
+            $requirements = $block->requires;
+            foreach ($requirements as $requirement) {
+                $require = $requirement[0];
+                $target = $requirement[1];
+                $require = explode(':', $require);
+                $requireAlias = $require[0];
+                $requireVersion = $require[1];
+                $allRequirements[$requireAlias] = [
+                    'version'=>$requireVersion,
+                    'target'=>$target,
+                    'block'=>$block->id,
+                ];
+            }
+        }
+        foreach ($allRequirements as $requireAlias=>$require) {
+            $requireVersion = $require['version'];
+            $target = $require['target'];
+            $blockId = $require['block'];
+            $found = false;
+            foreach ($layout->referencedAssets as $availableAsset) {
+                $alias      = $availableAsset[0];
+                if ($alias===$requireAlias) {
+                    $found = true;
+                    $version    = $availableAsset[2];
+                    $semver     = new version($version);
+                    $satisfy    = $semver->satisfies(new expression($requireVersion));
+                    if ($satisfy) {
+                        $path       = $availableAsset[1];
+                        $layout->get($blockId)->addAssets([$target=>[$path]]);
+                    }
+                }
+            }
+
+            if (!$found) {
+                $block = $layout->get($blockId);
+                if (!isset($block->meta['alias-not-found-requirements']))
+                    $block->meta['alias-not-found-requirements'] = [];
+                $block->meta['alias-not-found-requirements'][] = $require;
+            }
+        }
+    }
+    #endregion
 }

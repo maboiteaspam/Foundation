@@ -9,10 +9,38 @@ use C\ModernApp\File\FileTransformsInterface;
  * Class AssetsHelper
  * Provide new block actions to add / remove / replace assets.
  *
+ * It can also register and require assets
+ *
  *
  * @package C\ModernApp\File\Helpers
  */
 class AssetsHelper extends AbstractStaticLayoutHelper{
+
+    /**
+     * Provide a new structure action
+     * to reference an asset on the layout
+     *
+     * $nodeContents is an array such [
+     *  alias => jquery,
+     *  path => jquery,
+     *  version => jquery,
+     * ]
+     *
+     * @param FileTransformsInterface $T
+     * @param $nodeAction
+     * @param $nodeContents
+     * @return bool
+     */
+    public function executeStructureNode (FileTransformsInterface $T, $nodeAction, $nodeContents) {
+        if ($nodeAction==="register_assets") {
+            Transforms::transform()
+                ->setLayout($T->getLayout())
+                ->registerAssets($nodeContents['alias'], $nodeContents['path'], $nodeContents['version']);
+            return true;
+
+        }
+        return false;
+    }
 
     /**
      *
@@ -57,6 +85,12 @@ class AssetsHelper extends AbstractStaticLayoutHelper{
             Transforms::transform()
                 ->setLayout($T->getLayout())
                 ->replaceAssets($blockSubject, $nodeContents);
+            return true;
+
+        } else if ($nodeAction==="require") {
+            Transforms::transform()
+                ->setLayout($T->getLayout())
+                ->requireAssets($blockSubject, $nodeContents);
             return true;
 
         }

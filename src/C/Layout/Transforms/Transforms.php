@@ -182,6 +182,13 @@ class Transforms implements TransformsInterface{
     /**
      * Remove an asset of the given block id.
      *
+     * $assets is an array such
+     * [
+     *  $targetAssetGroupName => [
+     *      $files
+     *  ]
+     * ]
+     *
      * @param $id
      * @param array $assets
      * @return $this
@@ -228,6 +235,66 @@ class Transforms implements TransformsInterface{
                 }
             }
         }
+        return $this;
+    }
+
+    /**
+     * Attach an asset require on the given block id.
+     *
+     * $requires is an array such
+     * [
+     *  vendor-asset-alias:semver => $preferred_block_target,
+     * ]
+     *
+     * vendor-asset-alias is alias of the vendor asset,
+     * jquery, bootstrap, jquery-mobile, zepto ect
+     *
+     * semver pattern follows semver rules to compute
+     * the validity of the require.
+     *
+     * $preferred_block_target is the preferred block asset target
+     * of this require.
+     * in case multiple requires overlap, the last require win
+     *
+     * @param $id
+     * @param array $requires
+     * @return $this
+     */
+    public function requireAssets($id, $requires=[]){
+        $block = $this->layout->getOrCreate($id);
+        foreach($requires as $require => $preferred_block_target) {
+            $block->addAssetRequire($require, $preferred_block_target);
+        }
+        return $this;
+    }
+
+    /**
+     * @todo
+     *
+     * @param $id
+     * @param string $require
+     * @return $this
+     */
+    public function removeAssetRequirement($id, $require){
+
+        return $this;
+    }
+
+    /**
+     * Register an asset on the layout.
+     *
+     * $alias is the name of the vendor asset
+     * $path to the asset
+     * $version is the version of this asset
+     *
+     *
+     * @param $alias
+     * @param $path
+     * @param $version
+     * @return $this
+     */
+    public function registerAssets($alias, $path, $version){
+        $this->layout->registerAsset($alias, $path, $version);
         return $this;
     }
 

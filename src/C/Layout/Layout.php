@@ -664,6 +664,17 @@ class Layout implements TagableResourceInterface{
     }
     #endregion
 
+
+    #region reference-able assets
+    /**
+     * @var array
+     */
+    public $referencedAssets;
+    public function registerAsset ($alias, $path, $version) {
+        $this->referencedAssets[] = [$alias, $path, $version];
+    }
+    #endregion
+
     #region block iteration
     /**
      * Traverse block given their structure.
