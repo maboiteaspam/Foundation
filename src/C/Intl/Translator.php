@@ -1,27 +1,20 @@
 <?php
-
-// again, imported rom symfony. But it is stripped of its original loader / cache capabilities.
-
-/*
- * This file is part of the Symfony package.
- *
- * (c) Fabien Potencier <fabien@symfony.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace C\Intl;
 
+use C\Intl\Loader\IntlJitLoader;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Translation\MessageSelector;
 
 /**
- * Translator.
+ * Class Translator
+ * Is the main facade object to translate messages.
+ * Given a message id, it translate it to the best locale available.
  *
- * @author Fabien Potencier <fabien@symfony.com>
+ * For that matter it consumes the JITLoader to read translations from cache,
+ * It consumes the LocaleManager to identify the best locale,
+ * It finally relies on message selector to select the best messages when a number of items is involved.
  *
- * @api
+ * @package C\Intl
  */
 class Translator implements TranslatorInterface
 {
@@ -54,9 +47,9 @@ class Translator implements TranslatorInterface
 
 
     /**
-     * {@inheritdoc}
+     * Sets the preferred locale.
      *
-     * @api
+     * @param string $locale
      */
     public function setLocale($locale)
     {
@@ -64,9 +57,9 @@ class Translator implements TranslatorInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Get preferred locale.
      *
-     * @api
+     * @return mixed
      */
     public function getLocale()
     {
@@ -77,6 +70,10 @@ class Translator implements TranslatorInterface
      * @var IntlJitLoader
      */
     public $jitLoader;
+
+    /**
+     * @param IntlJitLoader $jitLoader
+     */
     public function setJitLoader (IntlJitLoader $jitLoader) {
         $this->jitLoader = $jitLoader;
     }

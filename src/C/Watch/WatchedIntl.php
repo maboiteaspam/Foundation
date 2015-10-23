@@ -2,9 +2,8 @@
 
 namespace C\Watch;
 
-use C\Intl\IntlJitLoader;
-use C\Intl\IntlFileLoader;
-use Symfony\Component\Config\Definition\Exception\Exception;
+use C\Intl\Loader\IntlJitLoader;
+use C\Intl\Loader\IntlFileLoader;
 
 class WatchedIntl extends WatchedRegistry {
 

@@ -2,6 +2,12 @@
 
 namespace C\Intl;
 
+/**
+ * Class AbstractIntlFileLoader
+ * A convenience class.
+ *
+ * @package C\Intl
+ */
 abstract class AbstractIntlFileLoader implements IntlFileLoaderInterface {
 
     /**

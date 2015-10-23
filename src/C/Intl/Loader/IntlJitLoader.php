@@ -1,12 +1,16 @@
 <?php
 
-namespace C\Intl;
+namespace C\Intl\Loader;
 
+use C\Intl\LocaleManager;
 use Moust\Silex\Cache\CacheInterface;
 
 /**
  * Class IntlJitLoader
  * helps to store, fetch translations from/into cache.
+ *
+ * Unlike IntlFileLoaderInterface it does not know about the formats.
+ * It read and store pre translated file formats into php array.
  *
  * @package C\Intl
  */
@@ -24,10 +28,17 @@ class IntlJitLoader {
      * @var LocaleManager
      */
     public $localeMngr;
+
+    /**
+     * @param LocaleManager $localeMngr
+     */
     public function setLocaleManager (LocaleManager $localeMngr) {
         $this->localeMngr = $localeMngr;
     }
 
+    /**
+     * @return LocaleManager
+     */
     public function getLocaleManager(){
         return $this->localeMngr;
     }

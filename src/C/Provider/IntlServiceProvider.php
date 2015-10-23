@@ -5,12 +5,12 @@ use C\FS\KnownFs;
 use C\FS\LocalFs;
 use C\FS\Registry;
 
-use C\Intl\IntlFileLoader;
-use C\Intl\IntlJitLoader;
+use C\Intl\Format\XliffIntlLoader;
+use C\Intl\Format\YmlIntlLoader;
+use C\Intl\Loader\IntlFileLoader;
+use C\Intl\Loader\IntlJitLoader;
 use C\Intl\LocaleManager;
 use C\Intl\Translator;
-use C\Intl\XliffIntlLoader;
-use C\Intl\YmlIntlLoader;
 
 use Moust\Silex\Cache\CacheInterface;
 use Silex\Application;
