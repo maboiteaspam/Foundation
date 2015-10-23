@@ -138,15 +138,21 @@ In order to get things done right, C framework is very opiniated.
 Every time you ll create a module, a structure like this will be created :
 
 ```
- |   run/                   # Contains runtime data such cache
- |   vendor/                # Contains all composer dependencies.
- |   www/                   # The www root folder for a web application.
- |   src/                   # Your local source code !
- |  .gitignore              # get things done right.
- |  .editorconfig           # get things done right.
- |   app.php                # Web application entry point.
- |   bootstrap.php          # Application modules registration and configuration.
- |   cli.php                # Cli application entry point.
+ |   run/                           # Contains runtime data such cache
+ |   vendor/                        # Contains all composer dependencies.
+ |   www/                           # The www root folder for a web application.
+ |   src/                           # Your local source code !
+ |   src/assets/                    # Your local source code !
+ |   src/intl/                      # Intl files and translations lands here.
+ |   src/layouts/                   # Layout files describing the view lands here.
+ |   src/templates/                 # The view implementation files stand here.
+ |   src/Controllers.php            # A Controller example implementation, for your convenience.
+ |   src/ControllersProvider.php    # Your application controller provider, to declare your module as a service.
+ |  .gitignore                      # get things done right.
+ |  .editorconfig                   # get things done right.
+ |   app.php                        # Web application entry point.
+ |   bootstrap.php                  # Application modules registration and configuration.
+ |   cli.php                        # Cli application entry point.
 ```
 
 
