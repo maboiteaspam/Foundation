@@ -160,9 +160,9 @@ Every time you ll create a module, a structure like this will be created :
 That's it for this introduction about C framework.
 To continue your tour and experience, please choose one of the following topic,
 
-- I'm front end designer, get to know how to work with layouts .
-- I'm back end developer, get to know how to work with controllers, entities, cache .
-- I'm senior project developer, get to know how to work with framework internals and advanced topics .
+- I'm front end designer, get to know how to work with layouts https://github.com/maboiteaspam/Foundation/blob/master/doc/2-work-with-layouts.md.
+- I'm back end developer, get to know how to work with controllers, entities, cache https://github.com/maboiteaspam/Foundation/blob/master/doc/3-work-with-controllers.md.
+- I'm senior project developer, get to know how to work with framework internals and advanced topics https://github.com/maboiteaspam/Foundation/blob/master/doc/4-advanced-topics.md.
 
 
 
