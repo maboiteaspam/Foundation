@@ -283,8 +283,7 @@ structure:
             - HTML:/normalizer.js
 ```
 
-`remove_assets` keyword to attach assets on the given block.
-Assets are injected according to the specified targets.
+`remove_assets` keyword to remove an asset from the given block.
 
 ```yml
 structure:
@@ -294,7 +293,7 @@ structure:
             - HTML:/normalizer.js
 ```
 
-`register_assets` keyword to attach register a vendor asset.
+`register_assets` keyword to register a vendor asset.
 
 ```yml
 structure:
