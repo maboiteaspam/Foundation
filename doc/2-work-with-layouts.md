@@ -39,6 +39,9 @@ It describes the page to render as a tree of named block.
 ```
 It has a root block, and many sub blocks.
 
+Each block can render its part
+of the layout by invoking other blocks.
+
 __Each block id is unique within the layout__
 
 Each block hold information such template file,
