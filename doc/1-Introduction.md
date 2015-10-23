@@ -155,6 +155,38 @@ Every time you ll create a module, a structure like this will be created :
  |   cli.php                        # Cli application entry point.
 ```
 
+C framework tries not to re invent the wheel when it exits and looks good.
+
+In that regard, please check and get to know about those underlying tools and their documentation.
+
+- __Composer__
+
+    Composer is the dependency manager C consumes to wires php module dependencies.
+
+    https://getcomposer.org/
+
+- __Symfony Foundation__
+
+    All the foundation framework including HTTP request / response parsing, CLI console interface, Session management, conventions, good practices and more are coming from this framework.
+
+    Its documentation is awesome, get to know it.
+
+    http://symfony.com/doc/current/index.html
+
+    See also http://www.symfony2cheatsheet.com/
+
+- __Silex Foundation__
+
+    Silex is the backbone of a C project, it s the container where dependencies are injected in.
+
+    Its documentation is also awesome, get to know it.
+
+    http://silex.sensiolabs.org/documentation
+
+
+
+
+
 ## What's next ?
 
 That's it for this introduction about C framework.
