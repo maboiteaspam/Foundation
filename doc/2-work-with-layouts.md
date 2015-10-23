@@ -91,7 +91,7 @@ structure:
 
 ##### Describing a layout
 
-To describe the layout, the system
+To describe a layout, the system
 gives you access to `action keywords`.
 
 Those actions can affect the layout structure,
