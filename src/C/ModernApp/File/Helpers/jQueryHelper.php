@@ -6,6 +6,16 @@ use C\ModernApp\File\FileTransformsInterface;
 use C\ModernApp\jQuery\Transforms as jQuery;
 
 class jQueryHelper extends  AbstractStaticLayoutHelper{
+
+    /**
+     * Provide a new block action to inject jquery in your view.
+     *
+     * @param FileTransformsInterface $T
+     * @param $blockTarget
+     * @param $nodeAction
+     * @param $nodeContents
+     * @return bool
+     */
     public function executeBlockNode (FileTransformsInterface $T, $blockTarget, $nodeAction, $nodeContents) {
         if ($nodeAction==="inject_jquery") {
             if (is_string($nodeContents)) {

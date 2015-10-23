@@ -4,19 +4,28 @@ namespace C\ModernApp\DashboardExtension;
 use C\Layout\Transforms\Transforms as Base;
 use C\Layout\Layout;
 
+/**
+ * Class Transforms
+ * the layout to provide
+ * the dashboard extensions to display.
+ *
+ * @package C\ModernApp\DashboardExtension
+ */
 class Transforms extends Base{
 
     /**
      * @return Transforms
      */
-    public static function transform(){
+    public static function transform () {
         return new self();
     }
 
     /**
+     * Display a time travel extension to change date of browsing.
+     *
      * @return \C\Layout\Transforms\Transforms
      */
-    public function time_travel (){
+    public function time_travel () {
         $this->setTemplate('dashboard-time-travel',
             'DashboardExtension:/time-travel.php'
         )->addAssets('dashboard-time-travel', [
@@ -30,9 +39,12 @@ class Transforms extends Base{
     }
 
     /**
+     * Displays a stats extension to show information.
+     *
+     *
      * @return \C\Layout\Transforms\Transforms
      */
-    public function stats (){
+    public function stats () {
 
         $this->set('dashboard-stats', [
             'options' => [
@@ -48,10 +60,12 @@ class Transforms extends Base{
     }
 
     /**
+     * Display a tree representation of the layout.
+     *
      * @param string $fromClass
      * @return $this
      */
-    public function structure_visualizer ($fromClass=__CLASS__){
+    public function structure_visualizer ($fromClass=__CLASS__) {
         if ($this->layout->serializer) {
             $serializer = $this->layout->serializer;
 
@@ -78,7 +92,7 @@ class Transforms extends Base{
 
                     $this->set('dashboard-structure', [
                         'options' => [
-                            'template'=>'DashboardExtension:/layout-structure.php'
+                            'template'  => 'DashboardExtension:/layout-structure.php'
                         ],
                         'data' => [
                             'serialized'=> $serializer->serialize($layout)

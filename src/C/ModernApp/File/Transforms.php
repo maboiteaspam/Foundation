@@ -5,6 +5,12 @@ use C\Layout\Transforms\Transforms as BaseTransforms;
 use C\Layout\Transforms\TransformsInterface;
 use C\TagableResource\TagedResource;
 
+/**
+ * Class Transforms
+ *
+ *
+ * @package C\ModernApp\File
+ */
 class Transforms extends BaseTransforms implements FileTransformsInterface{
 
     /**

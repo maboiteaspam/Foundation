@@ -6,8 +6,28 @@ use C\Layout\Transforms\Transforms;
 use C\ModernApp\File\AbstractStaticLayoutHelper;
 use C\ModernApp\File\FileTransformsInterface;
 
+/**
+ * Class LayoutHelper
+ * Provides the basics transforms to apply on layout.
+ *
+ * @package C\ModernApp\File\Helpers
+ */
 class LayoutHelper extends  AbstractStaticLayoutHelper{
 
+    /**
+     * Provides meta node to set/update id and description of the layout
+     *
+     * ---
+     *
+     * meta:
+     *  id: LayoutID
+     *  description: As you like.
+     *
+     * @param Layout $layout
+     * @param $nodeAction
+     * @param $nodeContents
+     * @return bool
+     */
     public function executeMetaNode (Layout $layout, $nodeAction, $nodeContents) {
         if ($nodeAction==="id") {
             $layout->setId($nodeContents);
@@ -19,6 +39,31 @@ class LayoutHelper extends  AbstractStaticLayoutHelper{
         }
     }
 
+    /**
+     * Provides basic block action node such
+     *
+     * structure:
+     *  block_id:
+     *      set_template: Module:/path/to/template.php
+     *      body: |
+     *          Content of the body as HTML.
+     *      set_default_data:
+     *          key: value
+     *          pair: of data
+     *      update_meta:
+     *          key: value
+     *          pair: of meta
+     *      insert_before: target_block_id to insert before
+     *      insert_after: target_block_id to insert after
+     *      clear: <what> all / options / meta / data
+     *      delete: ~
+     *
+     * @param FileTransformsInterface $T
+     * @param $blockSubject
+     * @param $nodeAction
+     * @param $nodeContents
+     * @return bool
+     */
     public function executeBlockNode (FileTransformsInterface $T, $blockSubject, $nodeAction, $nodeContents) {
         if ($nodeAction==="set_template") {
             Transforms::transform()
@@ -42,13 +87,6 @@ class LayoutHelper extends  AbstractStaticLayoutHelper{
             Transforms::transform()
                 ->setLayout($T->getLayout())
                 ->updateMeta($blockSubject, $nodeContents);
-            return true;
-
-        } else if ($nodeAction==="set_form") {
-//            Transforms::transform($T->getOptions())
-//                ->sefDefaultData($blockSubject, [
-//                'form'=> new FormView()
-//            ]);
             return true;
 
         } else if ($nodeAction==="insert_before") {

@@ -4,12 +4,19 @@ namespace C\Layout;
 
 /**
  * Class RegistryBlock
+ *
  * @package C\Layout
  */
 class RegistryBlock{
 
     public $blocks = [];
 
+    /**
+     * Record a block on the registry.
+     *
+     * @param $id
+     * @param Block $block
+     */
     public function set ($id, Block $block){
         $this->blocks[$id] = $block;
     }
@@ -23,6 +30,13 @@ class RegistryBlock{
             return $this->blocks[$id];
         return null;
     }
+
+    /**
+     * Returns parent block if it exists.
+     *
+     * @param $id
+     * @return Block|null
+     */
     public function getParent ($id){
         foreach ($this->blocks as $block) {
             /* @var $block Block */
@@ -32,14 +46,33 @@ class RegistryBlock{
         return null;
     }
 
+    /**
+     * @param $id
+     * @return bool
+     */
     public function has ($id){
         return array_key_exists($id, $this->blocks);
     }
 
+    /**
+     * True if it succeeds.
+     *
+     * @param $id
+     * @return bool
+     */
     public function remove ($id){
-        unset($this->blocks[$id]);
+        if (isset($this->blocks[$id])) {
+            unset($this->blocks[$id]);
+            return true;
+        }
+        return false;
     }
 
+    /**
+     * Iterate blocks.
+     *
+     * @param $fn
+     */
     public function each ($fn){
         foreach ($this->blocks as $id=>$block) {
             $fn($block, $id);

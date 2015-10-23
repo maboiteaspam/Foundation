@@ -10,8 +10,10 @@ use Symfony\Component\Routing\Generator\UrlGenerator;
 /**
  * Class FormViewHelper
  *
- * Add new node action 'create_form' to create form object
- * and inject them in the view as default data
+ * Add new node action 'create_form' to create form objects
+ * and inject them in the view as default data.
+ * Because they are injected as default data
+ * it gives capability to backend controller to rewrite it.
  *
  * @package C\ModernApp\File\Helpers
  */
@@ -22,6 +24,9 @@ class FormViewHelper extends  AbstractStaticLayoutHelper{
      */
     public $formFactory;
 
+    /**
+     * @param FormFactory $factory
+     */
     public function setFactory ( FormFactory $factory) {
         $this->formFactory = $factory;
     }
@@ -75,6 +80,10 @@ class FormViewHelper extends  AbstractStaticLayoutHelper{
      * @var UrlGenerator
      */
     protected $urlGenerator;
+
+    /**
+     * @param UrlGenerator $g
+     */
     public function setUrlGenerator ( UrlGenerator $g) {
         $this->urlGenerator = $g;
     }
@@ -83,6 +92,20 @@ class FormViewHelper extends  AbstractStaticLayoutHelper{
      * Looks for 'create_form' node actions,
      * create a form object and populate it with provided fields,
      * inject the form into the default view data.
+     *
+     *  structure:
+     *      block_id:
+     *          create_form:
+     *              name: FormName
+     *              attr: {some: "attr"}
+     *              children:
+     *                  element_name:
+     *                      type: email|text
+     *                      options: {label: "Your email", data: "some"}
+     *                      validation:
+     *                          - NotBlank: ~
+     *                          - Email:
+     *                              pattern: /valid email/
      *
      * @param FileTransformsInterface $T
      * @param $blockSubject
