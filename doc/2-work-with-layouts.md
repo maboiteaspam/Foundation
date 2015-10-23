@@ -37,7 +37,7 @@ It describes the page to render as a tree of named block.
     |   FOOTER       |
     |________________|
 ```
-It as a root block, and many sub blocks.
+It has a root block, and many sub blocks.
 
 __Each block id must be unique within the layout__
 
@@ -215,6 +215,12 @@ structure:
     [block_id]:
         delete: ~
 ```
+
+##### Working with assets
+##### Working with forms
+##### Working with validation
+
+
 
 
 
