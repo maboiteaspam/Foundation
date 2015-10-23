@@ -26,25 +26,27 @@ Request
 
 It describes the page to render as a tree of named block.
 ```
+    Root>
     __________________
     |   HEADER       |
     |________________|
     |         |      |
-    |         |      |
     |  MAIN   |  RB  |
     |         |      |
-    |         |      |
     |_________|______|
+    |   FOOTER       |
+    |________________|
 ```
 It as a root block, and many sub blocks.
 
 __Each block id must be unique within the layout__
 
 Each block hold information such template file,
-assets attached to it,
+assets attached to it, data to inject into the view,
+meta information.
+
 
 It s using a simple but powerful syntax written with `yml`
-
 
 `Hello The World` example
 
@@ -65,16 +67,20 @@ the same `hello the world` example with comments
 
 __FILE__ src/layouts/hello-the-world.yml
 ```yml
+
 # provide information about the layout to be rendered
 meta:
     id: hello-the-world
     description: Hello the world written with a layout
+
 # describe and update the structure of the layout
 structure:
+
     # Import a base layout which provides supports
     # for commons task regarding an HTMl website
     # HTML is a core module to provide such fundamentals.
     - import: HTML:/1-column.yml
+
     # select body_content node of the layout
     # body_content was delared by HTML:/1-column.yml
     body_content:
@@ -85,29 +91,129 @@ structure:
 
 ##### Describing a layout
 
-To describe the layout the system
+To describe the layout, the system
 gives you access to `action keywords`.
 
 Those actions can affect the layout structure,
 or a specific block content.
 
+__Import a layout__
+`import` keyword import
+and process an additional layout file.
+
+It takes a string, or an array of path to layout files.
+
 ```yml
-# provide information about the layout to be rendered
-meta:
-    id: hello-the-world
-    description: Hello the world written with a layout
-# describe and update the structure of the layout
 structure:
-    # Import a base layout which provides supports
-    # for commons task regarding an HTMl website
-    # HTML is a core module to provide such fundamentals.
-    - import: HTML:/1-column.yml
-    # select body_content node of the layout
-    # body_content was delared by HTML:/1-column.yml
-    body_content:
-        # set its body
+    - import: path/to/layout.yml
+    - import:
+        - path/to/layout1.yml
+        - path/to/layout2.yml
+```
+
+
+__Configure blocks__
+
+`set_template` keyword change the template file of a layout.
+
+It takes a string to the layout path.
+
+```yml
+structure:
+    [block_id]:
+        set_template: path/to/template.php
+```
+
+
+`body` keyword to set the body content of a block.
+
+It takes a string, the HTML content to use.
+
+```yml
+structure:
+    [block_id]:
         body: |
-            Hello the world !
+            The content in HTML
+```
+
+
+`set_default_data` keyword to set default data of a block.
+
+Defaults data won t override existing data.
+
+It takes an array, a dictionary.
+
+```yml
+structure:
+    [block_id]:
+        set_default_data:
+            key: value
+            pair: of data
+```
+
+
+`update_meta` keyword to update data.
+
+Meta of the block will be overridden by this call.
+
+It takes an array, a dictionary.
+
+```yml
+structure:
+    [block_id]:
+        update_meta:
+            key: value
+            pair: of data
+```
+
+
+`insert_before` keyword to insert a block before another one.
+
+It takes a string.
+
+```yml
+structure:
+    [block_id]:
+        insert_before: [target]
+```
+
+
+`insert_after` keyword to insert a block after another one.
+
+It takes a string.
+
+```yml
+structure:
+    [block_id]:
+        insert_after: [target]
+```
+
+
+`clear` keyword to clear the data or other information of a block.
+
+It takes a string, its value should be one of
+`all`, `data`, `meta`, `options`, `template`.
+
+or a mixin `data options`
+
+```yml
+structure:
+    [block_id]:
+        clear: [what]
+```
+
+
+`delete` keyword to delete a block from the tree,
+cancelling its display and all of its children.
+
+It does not take any value.
+
+or a mixin `data options`
+
+```yml
+structure:
+    [block_id]:
+        delete: ~
 ```
 
 
