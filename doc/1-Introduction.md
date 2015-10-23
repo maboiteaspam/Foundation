@@ -9,15 +9,21 @@ alternative tools to help in creating and maintaining a complex frontend applica
 To get started with this framework you shall first ensure those dependencies are available on your computer
 
 - php >= 5.3
+
     Please get a copy here http://us3.php.net/downloads.php
+
     Please ensure `php` binary is available into your system's `PATH`.
 
 - node >= 0.12.x
+
     Please get a copy here https://nodejs.org/en/download/
+
     Please ensure `node` and `npm` are available on into your system's `PATH`
 
 - composer
+
     Please get a copy here https://getcomposer.org/doc/00-intro.md#installation-linux-unix-osx
+
     Please ensure `composer` binary is available into your system's `PATH`.
 
 Once this is all set, open a terminal, you will install `c2-bin`, a dedicated command and control binary for C projects.
