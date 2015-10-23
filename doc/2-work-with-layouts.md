@@ -39,7 +39,7 @@ It describes the page to render as a tree of named block.
 ```
 It has a root block, and many sub blocks.
 
-__Each block id must be unique within the layout__
+__Each block id is unique within the layout__
 
 Each block hold information such template file,
 assets attached to it, data to inject into the view,
