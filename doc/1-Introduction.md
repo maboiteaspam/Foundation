@@ -155,8 +155,14 @@ Every time you ll create a module, a structure like this will be created :
  |   cli.php                        # Cli application entry point.
 ```
 
+## What's next ?
 
+That's it for this introduction about C framework.
+To continue your tour and experience, please choose one of the following topic,
 
+- I'm front end designer, get to know how to work with layouts .
+- I'm back end developer, get to know how to work with controllers, entities, cache .
+- I'm senior project developer, get to know how to work with framework internals and advanced topics .
 
 
 
