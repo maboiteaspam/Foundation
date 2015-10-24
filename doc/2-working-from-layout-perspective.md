@@ -127,6 +127,7 @@ structure:
 
 __See also__
 - https://github.com/maboiteaspam/Welcome/blob/master/src/layouts/formDemo.yml
+
     For an advanced layout example demonstration at
 
 ##### Block role and structure
@@ -249,6 +250,7 @@ Those actions can affect the layout structure,
 or a specific block content.
 
 __Import a layout__
+
 `import` keyword import
 and process an additional layout file.
 
@@ -457,6 +459,7 @@ structure:
 
 __See also__
 - https://github.com/maboiteaspam/Welcome/blob/master/src/layouts/hello-the-world-in-ajax.yml
+
     to study a complete example
 
 
@@ -485,6 +488,7 @@ __File:__ src/templates/hello-the-world.php
 
 __See more__
 - https://github.com/maboiteaspam/Foundation/blob/master/src/C/View/ConcreteContext.php
+
     For a complete reference of available helpers
 
 __Tips__
@@ -509,8 +513,10 @@ It load files from `src/intl`.
 Files can be written using
 
 - yaml format
+
     see https://en.wikipedia.org/wiki/YAML
 - xliff format
+
     see https://en.wikipedia.org/wiki/XLIFF
 
 __Filename convention__
