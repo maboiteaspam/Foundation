@@ -487,12 +487,17 @@ structure:
   # That's it !
 ```
 
-`esify` keyword to require a vendor asset on the given block.
+`esify` keyword to esify the given block id.
 
 ```yml
 structure:
-    [block_id]:
-      require: [js-normalizer:1.x]
+    [block_id]: # you must first declare the block to ajaxify
+      set_template: Module:/some/path.ext
+  - ajaxify: # then apply a layout structure change
+      id: [block_id]
+  # esi does not need any other dependencies
+  # other than an esi-able front proxy
+  # That's it !
 ```
 
 __See also__
