@@ -523,7 +523,7 @@ __Filename convention__
 
 Filename of intl files must follow a naming convention
 
-__([domain]_)[locale].[format]__
+(__domain___)__locale__.__format__
 
 - __domain__: is the message domain. It s an optional value,
     It defaults to `messages`.
