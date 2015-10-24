@@ -79,7 +79,7 @@ meta:
 
 structure:
     - import: HTML:/1-column.yml
-    body_content:
+      body_content:
         body: |
             Hello the world !
 ```
@@ -102,9 +102,9 @@ structure:
     # HTML is a core module to provide such fundamentals.
     - import: HTML:/1-column.yml
 
-    # select body_content node of the layout
-    # body_content was delared by HTML:/1-column.yml
-    body_content:
+      # select body_content node of the layout
+      # body_content was delared by HTML:/1-column.yml
+      body_content:
         # set its body
         body: |
             Hello the world !
@@ -170,7 +170,7 @@ firstAssets: {
 
 ```
 
-We ll see next the feature the framework offer to enrich layout and blocks.
+We ll see next the features the framework offer to enrich layout and blocks.
 
 ##### Layout file structure
 
@@ -197,8 +197,8 @@ The `structure:` node takes an array of action nodes.
 structure:
     - action_node1
     - action_node2
-    action_node3
-    action_node4
+      action_node3
+      action_node4
 ```
 
 Each action node can describe either
@@ -208,8 +208,8 @@ a structural change or select a block.
 structure:
     - change_layout: [arguments]
     - change_layout2: [arguments]
-    [block_id1]: [arguments]
-    [block_id2]: [arguments]
+      [block_id1]: [arguments]
+      [block_id2]: [arguments]
 ```
 
 When a block is selected, it is then possible
@@ -219,9 +219,9 @@ to apply it a series of block action nodes.
 structure:
     - change_layout: [arguments]
     - change_layout2: [arguments]
-    [block_id1]:
+      [block_id1]:
         set_template: /some/file.php
-    [block_id2]:
+      [block_id2]:
         set_data: {some_data: "indeed"}
 ```
 
@@ -439,6 +439,10 @@ structure:
     [block_id]:
       body: Hello, this is all none mobile devices !!
 ```
+
+find a layout example demonstration at
+
+https://github.com/maboiteaspam/Welcome/blob/master/src/layouts/hello-the-world-in-ajax.yml
 
 ##### Working with templates
 

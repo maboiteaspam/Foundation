@@ -4,8 +4,53 @@ namespace C\ModernApp\File\Helpers;
 use C\ModernApp\File\AbstractStaticLayoutHelper;
 use C\ModernApp\File\FileTransformsInterface;
 use C\ModernApp\jQuery\Transforms as jQuery;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Generator\UrlGenerator;
 
 class jQueryHelper extends  AbstractStaticLayoutHelper{
+
+    /**
+     * @var UrlGenerator
+     */
+    protected $generator;
+    /**
+     * @var Request
+     */
+    protected $request;
+
+    public function setGenerator (UrlGenerator $generator) {
+        $this->generator = $generator;
+    }
+
+    public function setRequest (Request $request) {
+        $this->request = $request;
+    }
+
+    /**
+     * Provide ajaxify structure change
+     *
+     * @param FileTransformsInterface $T
+     * @param $nodeAction
+     * @param $nodeContents
+     * @return mixed
+     */
+    public function executeStructureNode (FileTransformsInterface $T, $nodeAction, $nodeContents) {
+        if ($nodeAction==="ajaxify") {
+            $generator = $this->generator;
+            $requestRoute = [
+                'route'=>$this->request->get('_route'),
+                'params'=>$this->request->get('_route_params'),
+            ];
+            $route = array_merge($requestRoute, isset($nodeContents['route']) ? $nodeContents['route'] : []);
+            jQuery::transform()
+                ->setLayout($T->getLayout())
+                ->ajaxify($nodeContents['id'], [
+                    'url'   => $generator->generate($route['route'], $route['params']),
+                ]);
+            return $T;
+
+        }
+    }
 
     /**
      * Provide a new block action to inject jquery in your view.

@@ -178,26 +178,21 @@ class Transforms extends BaseTransforms implements FileTransformsInterface{
             foreach ($layoutStruct['structure'] as $actions) {
                 foreach ($actions as $action => $options) {
 
-                    $structure->then(function (FileTransformsInterface $T) use(&$structure, $action, $options) {
-
-                        $sub = $this->executeStructureNode($structure, $action, $options);
-                        if ($sub instanceof TransformsInterface) {
-                            $structure = $sub;
-                        } else if($sub===false) {
-
-                            $subject = $action;
-                            $nodeActions = $options;
-                            $structure->then(function (FileTransformsInterface $T) use($subject, $nodeActions) {
-                                foreach ($nodeActions as $nodeAction=>$nodeContent) {
-                                    if (!$this->executeBlockNode($T, $subject, $nodeAction, $nodeContent)) {
-                                        // mhh
-                                    }
+                    $sub = $this->executeStructureNode($structure, $action, $options);
+                    if ($sub instanceof TransformsInterface) {
+                        $structure = $sub;
+                    } else if($sub===false) {
+                        $subject = $action;
+                        $nodeActions = $options;
+                        $structure->then(function (FileTransformsInterface $T) use($subject, $nodeActions) {
+                            foreach ($nodeActions as $nodeAction=>$nodeContent) {
+                                if (!$this->executeBlockNode($T, $subject, $nodeAction, $nodeContent)) {
+                                    // mhh
                                 }
-                            });
+                            }
+                        });
 
-                        }
-                    });
-
+                    }
                 }
             }
         }

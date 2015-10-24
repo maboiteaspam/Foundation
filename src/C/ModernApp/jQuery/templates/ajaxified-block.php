@@ -10,8 +10,7 @@
         try{
             data = $(data);
         }catch(ex){
-            data = $("<div>"+data+"</div>").children();
-            console.log(data.html())
+            data = $("<div>"+data+"</div>").first();
         }
         if (data.length) {
             if (data.first().is("c_block_node")) {

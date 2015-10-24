@@ -28,9 +28,9 @@ class RequestTypeMatcher implements TagableResourceInterface{
     public $langPreferred;
 
     public function __construct (){
-        $this->requestKind = 'get';
-        $this->deviceType = 'desktop';
-        $this->langPreferred = 'en';
+        $this->requestKind      = 'get';
+        $this->deviceType       = 'desktop';
+        $this->langPreferred    = 'en';
     }
 
     public function setRequestKind($kind){
@@ -43,32 +43,45 @@ class RequestTypeMatcher implements TagableResourceInterface{
         $this->langPreferred = $lang;
     }
 
+    public function testValue ($knownValue, $expectedValue, $anyValue=null) {
+        $negate = false;
+        if (substr($expectedValue, 0, 1)==='!') {
+            $negate = true;
+            $expectedValue = substr($expectedValue, 1);
+        }
+        $match = ($anyValue && $expectedValue===$anyValue) || $knownValue===$expectedValue;
+        $match = $negate ? !$match : $match;
+        return $match;
+    }
+
     public function isRequestKind ($kind) {
-        if (in_array('any', func_get_args()))
-            return true;
-        foreach (func_get_args() as $kind) {
-            $negate = false;
-            if (substr($kind,0,1)==='!') {
-                $negate = true;
-                $kind = substr($kind,1);
-            }
-            if (!$negate&&$kind===$this->requestKind) {
-                return true;
-            } else if ($negate&&$kind!==$this->requestKind) {
-                return true;
+        if (is_string($kind)) $kind = explode(' ', $kind);
+        foreach ($kind as $k) {
+            if (!$this->testValue($this->requestKind, $k, 'any')) {
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
     public function isDevice($device) {
-        return in_array($this->deviceType, func_get_args())
-        || in_array('any', func_get_args());
+        if (is_string($device)) $device = explode(' ', $device);
+        foreach ($device as $d) {
+            if (!$this->testValue($this->deviceType, $d, 'any')) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public function isLang($language) {
-        return in_array($this->langPreferred, func_get_args())
-        || in_array('any', func_get_args());
+        if (is_string($language)) $language = explode(' ', $language);
+        foreach ($language as $l) {
+            if (!$this->testValue($this->langPreferred, $l)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public function isFacets($facets) {

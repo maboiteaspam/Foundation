@@ -47,6 +47,7 @@ class Transforms extends base{
                 $transform->clearBlock($target
                 )->setBody($target,
                     '<div id="'.$id.'"></div>'
+                )->requireAssets($target, 'jquery:2.x || 1.x'
                 )->setTemplate($target.'_ajax',
                     'jQuery:/ajaxified-block.php'
                 )->updateData($target.'_ajax', [
