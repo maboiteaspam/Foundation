@@ -125,6 +125,45 @@ The later they are resolved into plain html text,
 or other structure depending the desired action.
 
 A block structure example
+```json
+{
+    "id": "root",
+    "body": "the content body as plain html",
+    "options": {
+        "template": "HTML:\/html.php" //the template path
+    },
+    "data": [
+        .. A lits of displayed block
+        with their status of display
+     ],
+    "assets": [
+    ],
+    "inline": [
+    ],
+    "requires": [
+    ],
+    "meta": {
+        .. A handful list of meta information
+        injected by the various components
+        involved during the process
+        of building the layout
+        "debug_with": "comments", .. this will enable dashboard debug with html comments
+        "from": false, .. this a raw value
+        "etag": "" .. this is injected for etag computation
+    },
+    "displayed_blocks": [
+        .. A lits of displayed block
+        with their status of display
+    ],
+    "stack": [
+        .. when debug is enabled,
+        this gives stack trace values
+        of caller which updated the block
+    ],
+    "firstAssets": []
+}
+```
+
 ```yml
 id: root
 body: '<div>...' # the content body as plain html
@@ -151,9 +190,9 @@ meta:
         # injected by the various components
         # involved during the process
         # of building the layout
-    debug_with: comments
-    from: false
-    etag: ''
+    debug_with: comments # .. this will enable dashboard debug with html comments
+    from: false # .. this a raw value
+    etag: '' # .. this is injected for etag computation
 displayed_blocks:
         # .. A lits of displayed block
         # with their status of display
