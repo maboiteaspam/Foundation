@@ -92,6 +92,11 @@ structure:
             Hello the world !
 ```
 
+find an advanced layout example demonstration at
+
+https://github.com/maboiteaspam/Welcome/blob/master/src/layouts/formDemo.yml
+
+
 ##### Layout file structure
 
 The layout file takes root nodes
