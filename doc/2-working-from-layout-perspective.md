@@ -124,7 +124,7 @@ about its template, assets and so son.
 The later they are resolved into plain html text,
 or other structure depending the desired action.
 
-A block structure example
+The internal block data structure looks likes this
 ```yml
 id: root
 body: '<div>...' # the content body as plain html
