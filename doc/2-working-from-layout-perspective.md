@@ -125,9 +125,9 @@ structure:
             Hello the world !
 ```
 
-find an advanced layout example demonstration at
-
-https://github.com/maboiteaspam/Welcome/blob/master/src/layouts/formDemo.yml
+__See also__
+- https://github.com/maboiteaspam/Welcome/blob/master/src/layouts/formDemo.yml
+    For an advanced layout example demonstration at
 
 ##### Block role and structure
 
@@ -455,9 +455,10 @@ structure:
       body: Hello, this is all none mobile devices !!
 ```
 
-find a layout example demonstration at
+__See also__
+- https://github.com/maboiteaspam/Welcome/blob/master/src/layouts/hello-the-world-in-ajax.yml
+    to study a complete example
 
-https://github.com/maboiteaspam/Welcome/blob/master/src/layouts/hello-the-world-in-ajax.yml
 
 ##### Working with templates
 
@@ -467,7 +468,7 @@ They are located under `src/templates/`,
 they use `plain php` as templating engine
 and receives `plain php object` as data.
 
-Views are provided a useful context helper to
+Views are provided an useful context helper to
 realize most common display actions.
 
 A view example is
@@ -478,10 +479,13 @@ __File:__ src/templates/hello-the-world.php
 /* @var $this \C\View\ConcreteContext */
 ?>
 <h1><?php echo $this->upper($this->trans("welcome")); ?></h1>
+
+<?php $this->display('block_to_configure'); ?>
 ```
 
-For a complete reference of available helpers see
-https://github.com/maboiteaspam/Foundation/blob/master/src/C/View/ConcreteContext.php
+__See more__
+- https://github.com/maboiteaspam/Foundation/blob/master/src/C/View/ConcreteContext.php
+    For a complete reference of available helpers
 
 __Tips__
 Don't forget to use php comments to qualify `$this` variable.
@@ -494,6 +498,59 @@ Doing so helps your IDE to provide more pertinent information!
 ?>
 ... put the content here
 ```
+
+
+##### Working with Internationalization
+
+Internationalization files contains translation mapping.
+
+It load files from `src/intl`.
+
+Files can be written using
+
+- yaml format
+    see https://en.wikipedia.org/wiki/YAML
+- xliff format
+    see https://en.wikipedia.org/wiki/XLIFF
+
+__Filename convention__
+
+Filename of intl files must follow a naming convention
+
+([domain]_)[locale].[format]
+
+- __domain__: is the message domain. It s an optional value,
+    It defaults to `messages`.
+- __locale__: is the locale such en/zh/zh_TW/zh_CN.
+    It s a required value.
+- __format__: is the format of the file to load, one of yml/xlf.
+    It s a required value.
+
+__File:__ src/intl/en.yml
+```yml
+
+# YML is really cool format to use
+welcome: Welcome
+
+# It is always simple and straight to the point.
+subscribe: I want to subscibe the newsletter
+unsubscribe: sign-off
+
+# It handle many delcaration forms without effort.
+Your email: Please type in your email
+
+# And if you face an edge case like this key name containing the character ':', just quote it, it works too !
+"let s test some: translation key with special character inside ':' ": whatever
+
+# yml enthousiasts.
+```
+
+__See more__
+- https://github.com/maboiteaspam/Welcome/tree/master/src/intl
+
+__See also__
+- http://symfony.com/doc/current/components/translation/usage.html
+- http://silex.sensiolabs.org/doc/providers/translation.html
 
 
 ##### Working with forms
