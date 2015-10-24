@@ -266,6 +266,18 @@ class Block implements TagableResourceInterface{
         return $this->parentId;
     }
 
+
+    #region scripts / css
+    /**
+     * An array of assets to move to top
+     * [
+     *  asset1,
+     *  asset2,
+     * ]
+     *
+     * @var array
+     */
+    public $firstAssets = [];
     /**
      * Add inline asset content of JS / CSS to
      * one of available $target block
@@ -291,6 +303,20 @@ class Block implements TagableResourceInterface{
      */
     public function getInline(){
         return $this->inline;
+    }
+
+    /**
+     * @return array
+     */
+    public function getAssets(){
+        return $this->assets;
+    }
+
+    /**
+     * @return array
+     */
+    public function getFirstAssets(){
+        return $this->firstAssets;
     }
 
     /**
@@ -322,9 +348,8 @@ class Block implements TagableResourceInterface{
         foreach($assets as $targetAssetGroupName => $files) {
             if(!isset($this->assets[$targetAssetGroupName]))
                 $this->assets[$targetAssetGroupName] = [];
-            $this->assets[$targetAssetGroupName] = $first
-                ? array_merge($files, $this->assets[$targetAssetGroupName])
-                : array_merge($this->assets[$targetAssetGroupName], $files);
+            $this->assets[$targetAssetGroupName] = array_merge($this->assets[$targetAssetGroupName], $files);
+            if ($first) $this->firstAssets = array_merge($this->firstAssets, $files);
         }
     }
 
@@ -342,6 +367,7 @@ class Block implements TagableResourceInterface{
         }
         else $this->requires = array_merge($this->requires, $requires);
     }
+    #endregion
 
     /**
      * Compute attached resources to that block

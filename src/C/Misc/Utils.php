@@ -51,6 +51,15 @@ class Utils{
         return $arr;
     }
 
+    public static function arrayRemove (&$arr, $value) {
+        $index = array_keys($arr, $value);
+        $ret = [];
+        if (count($index)) {
+            $ret = array_splice($arr, $index[0], 1);
+        }
+        return $ret;
+    }
+
     public static function shorten ($path) {
         $path = LocalFs::realpath($path);
         if (substr($path, 0, strlen(getcwd()))===getcwd()) {

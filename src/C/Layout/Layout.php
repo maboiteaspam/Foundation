@@ -329,6 +329,14 @@ class Layout implements TagableResourceInterface{
     public function getRoot (){
         return $this->get($this->block);
     }
+
+    /**
+     * @return array
+     */
+    public function getBlocks (){
+        return $this->registry->blocks;
+    }
+
     /**
      * @param $id
      * @return Block

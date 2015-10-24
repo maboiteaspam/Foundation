@@ -78,7 +78,9 @@ class Transforms extends Base{
                 'page_footer_js'=>[
                     'DashboardExtension:/layout-structure.js'
                 ],
-            ])->insertAfterBlock("dashboard-body",
+            ])->requireAssets(
+                'dashboard-structure-pholder', ['jquery:2.x || 1.x']
+            )->insertAfterBlock("dashboard-body",
                 "dashboard-structure-pholder");
 
             // this is a special case.

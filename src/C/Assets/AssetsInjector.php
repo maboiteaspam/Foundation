@@ -5,6 +5,7 @@ namespace C\Assets;
 use C\FS\KnownFs;
 use C\FS\LocalFs;
 use C\Layout\Layout;
+use C\Misc\Utils;
 use vierbergenlars\SemVer\version;
 use vierbergenlars\SemVer\expression;
 
@@ -64,8 +65,9 @@ class AssetsInjector {
      */
     public function mergeAllAssets (Layout $layout) {
         $blockAssets = [];
-        foreach ($layout->registry->blocks as $block) {
-            foreach ($block->assets as $target=>$assets) {
+        foreach ($layout->getBlocks() as $block) {
+            /* @var $block \C\Layout\Block */
+            foreach ($block->getAssets() as $target=>$assets) {
                 if (!isset($blockAssets[$target])) {
                     $blockAssets[$target] = [];
                 }
@@ -73,6 +75,23 @@ class AssetsInjector {
             }
         }
         return $blockAssets;
+    }
+    /**
+     * walks through blocks and generate
+     * an array of all first assets detected.
+     *
+     * @param Layout $layout
+     * @return array
+     */
+    public function mergeAllFirstAssets (Layout $layout) {
+        $firstAssets = [];
+        foreach ($layout->getBlocks() as $block) {
+            /* @var $block \C\Layout\Block */
+            foreach ($block->getFirstAssets() as $target=>$assets) {
+                $firstAssets = array_merge($firstAssets, is_string($assets)?[$assets]:$assets);
+            }
+        }
+        return $firstAssets;
     }
 
     /**
@@ -186,6 +205,7 @@ class AssetsInjector {
      */
     public function applyFileAssets (Layout $layout) {
         $allAssets = $this->mergeAllAssets($layout);
+        $firstAssets = $this->mergeAllFirstAssets($layout);
 
         foreach( $allAssets as $target => $assets) {
             $targetBlock = $layout->getOrCreate($target);
@@ -193,6 +213,10 @@ class AssetsInjector {
             $targetBlock->body .= "\n";
 
             $assets = array_unique($assets);
+            foreach ($firstAssets as $firstAsset) {
+                $item = Utils::arrayRemove($assets, $firstAsset);
+                if (count($item)) array_unshift($assets, $item[0]);
+            }
             if ($this->concatenate===false) {
                 $targetBlock->body .= $this->createBridgedHTMLAssets($target, $assets);
             } else {
@@ -276,7 +300,7 @@ class AssetsInjector {
         foreach ($layout->registry->blocks as $block) {
             /* @var $block \C\Layout\Block */
             $blockId = $block->id;
-            foreach ($block->inline as $target=>$inline_items) {
+            foreach ($block->getInline() as $target=>$inline_items) {
                 foreach ($inline_items as $inline) {
                     $content = $inline['content'];
                     $type = $inline['type'];
@@ -353,6 +377,7 @@ class AssetsInjector {
                 $layout->get($block_id)->addAssets([$target=>[$path]], $first);
             }
         }
+
 
         return $requirementsSatisfaction;
     }
