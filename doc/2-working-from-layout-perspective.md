@@ -471,7 +471,7 @@ a system to implement FPC caching, via proxy or internal implementation.
 C makes no exception to that.
 
 C goes beyond and provides two action keywords `ajaxify` & `esify`
-to embrace those techniques provided
+to embrace `cache punch hole` techniques provided
 to enhance the speed, scalability, and hosting of our applications.
 
 
