@@ -477,9 +477,11 @@ to enhance the speed, scalability, and hosting of our applications.
 
 `ajaxify` keyword to ajaxify the given block id.
 
+It takes an array such [id=> block to ajaxify]
+
 ```yml
 structure:
-    [block_id]: # you must first declare the block to ajaxify
+    [block_id]: # you must first declare the block to ajaxify it
       set_template: Module:/some/path.ext
   - ajaxify: # then apply a layout structure change
       id: [block_id]
@@ -489,11 +491,13 @@ structure:
 
 `esify` keyword to esify the given block id.
 
+It takes an array such [id=> block to esify]
+
 ```yml
 structure:
-    [block_id]: # you must first declare the block to ajaxify
+    [block_id]: # you must first declare the block to esifyc
       set_template: Module:/some/path.ext
-  - ajaxify: # then apply a layout structure change
+  - esify: # then apply a layout structure change
       id: [block_id]
   # esi does not need any other dependencies
   # other than an esi-able front proxy
