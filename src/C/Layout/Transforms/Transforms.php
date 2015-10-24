@@ -262,9 +262,7 @@ class Transforms implements TransformsInterface{
      */
     public function requireAssets($id, $requires=[]){
         $block = $this->layout->getOrCreate($id);
-        foreach($requires as $require => $preferred_block_target) {
-            $block->addAssetRequire($require, $preferred_block_target);
-        }
+        $block->addAssetRequire($requires);
         return $this;
     }
 
@@ -286,15 +284,17 @@ class Transforms implements TransformsInterface{
      * $alias is the name of the vendor asset
      * $path to the asset
      * $version is the version of this asset
+     * $target is the asset block target to inject the asset into
      *
      *
      * @param $alias
      * @param $path
      * @param $version
+     * @param $target
      * @return $this
      */
-    public function registerAssets($alias, $path, $version){
-        $this->layout->registerAsset($alias, $path, $version);
+    public function registerAssets($alias, $path, $version, $target){
+        $this->layout->registerAsset($alias, $path, $version, $target);
         return $this;
     }
 

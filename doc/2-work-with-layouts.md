@@ -301,6 +301,7 @@ structure:
         alias: js-normalizer
         path: HTML:/normalizer.js
         version: 1.1.1
+        target: template_head_js
 ```
 
 `require` keyword to require a vendor asset on the given block.
@@ -308,8 +309,7 @@ structure:
 ```yml
 structure:
     [block_id]:
-      require:
-        - {"js-normalizer:1.x": "template_head_js"}
+      require: [js-normalizer:1.x]
 ```
 
 ##### Working with forms

@@ -290,50 +290,104 @@ class AssetsInjector {
     #endregion
 
     #region apply assets requirements
+    /**
+     * Walks through each block,
+     * gets and resolved its requires
+     * against layout referenced assets
+     *
+     * if the asset requirement is successfully
+     * satisfied, then the asset path is injected in the given
+     * target asset block defined by the
+     * latest register_asset rule attached
+     * to layout.
+     *
+     * if the asset can t be satisfied,
+     * a meta information can be found into block meta
+     *      requires_satisfaction
+     *
+     * It returns an array about all unique requirements
+     * with extra information about their satisfaction
+     * and block id requires.
+     *
+     * @param Layout $layout
+     * @return array
+     */
     public function applyAssetsRequirements (Layout $layout) {
-        $allRequirements = [];
+        $requirementsSatisfaction = [];
         foreach ($layout->registry->blocks as $block) {
             /* @var $block \C\Layout\Block */
-            $requirements = $block->requires;
-            foreach ($requirements as $requirement) {
-                $require = $requirement[0];
-                $target = $requirement[1];
-                $require = explode(':', $require);
-                $requireAlias = $require[0];
-                $requireVersion = $require[1];
-                $allRequirements[$requireAlias] = [
-                    'version'=>$requireVersion,
-                    'target'=>$target,
-                    'block'=>$block->id,
-                ];
+            foreach ($block->requires as $requirement) {
+                if (!isset($requirementsSatisfaction[$requirement])) {
+                    $require = explode(':', $requirement);
+                    $alias = $require[0];
+                    $version = $require[1];
+                    $satisfiedAsset = $this->satisfyAssetRequire($layout, $alias, $version);
+                    $requirementsSatisfaction[$requirement] = [
+                        'alias'         => $alias,
+                        'version'       => $version,
+                        'satisfaction'  => $satisfiedAsset,
+                        'on_behalf_of'  => [],
+                    ];
+                }
+                $requirementsSatisfaction[$requirement]['on_behalf_of'] = [$block->id];
             }
         }
-        foreach ($allRequirements as $requireAlias=>$require) {
-            $requireVersion = $require['version'];
-            $target = $require['target'];
-            $blockId = $require['block'];
-            $found = false;
-            foreach ($layout->referencedAssets as $availableAsset) {
-                $alias      = $availableAsset[0];
-                if ($alias===$requireAlias) {
-                    $found = true;
-                    $version    = $availableAsset[2];
-                    $semver     = new version($version);
-                    $satisfy    = $semver->satisfies(new expression($requireVersion));
-                    if ($satisfy) {
-                        $path       = $availableAsset[1];
-                        $layout->get($blockId)->addAssets([$target=>[$path]]);
-                    }
+        // @todo rewrite this to use the returned array of satisfaction,
+        // @todo later inject it into the dashboard to make this data valuable
+//        if ($layout->debugEnabled) {
+//            foreach ($layout->registry->blocks as $block) {
+//                $block->meta['requires_satisfaction'] = [];
+//                foreach ($block->requires as $require) {
+//                    $block->meta['requires_satisfaction'][$require] =
+//                        $requirementsSatisfaction[$require]['satisfaction'];
+//                }
+//            }
+//        }
+        foreach ($requirementsSatisfaction as $requirement) {
+            if ($requirement['satisfaction']!==false) {
+                // @see Layout::registerAsset
+                $target     = $requirement['satisfaction'][3];
+                $path       = $requirement['satisfaction'][1];
+                $block_id   = $requirement['on_behalf_of'][count($requirement['on_behalf_of'])-1];
+                $layout->get($block_id)->addAssets([$target=>[$path]]);
+            }
+        }
+
+        return $requirementsSatisfaction;
+    }
+
+    /**
+     * Given an alias and a desired version
+     * walks through each layout referenced asset
+     * and tries to satisfy the requirement
+     *
+     * on success, it returns an array
+     * about the asset reference such
+     * [
+     *  path: Module:/file/path.ext
+     *  version: 1.1.1
+     *  alias: alias-asset-vendor
+     *  target: template_head_js
+     * ]
+     *
+     * @param Layout $layout
+     * @param $alias
+     * @param $desiredVersion
+     * @return false|array the referenced asset information
+     */
+    protected function satisfyAssetRequire (Layout $layout, $alias, $desiredVersion) {
+        foreach ($layout->referencedAssets as $availableAsset) {
+            $availableAlias      = $availableAsset[0];
+            if ($availableAlias===$alias) {
+                $availableVersion = $availableAsset[2];
+                $semver     = new version($availableVersion);
+                $satisfy    = $semver->satisfies(new expression($desiredVersion));
+                if ($satisfy) {
+                    return $availableAsset;
                 }
             }
-
-            if (!$found) {
-                $block = $layout->get($blockId);
-                if (!isset($block->meta['alias-not-found-requirements']))
-                    $block->meta['alias-not-found-requirements'] = [];
-                $block->meta['alias-not-found-requirements'][] = $require;
-            }
         }
+        return false;
     }
     #endregion
 }

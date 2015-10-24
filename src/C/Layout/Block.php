@@ -334,13 +334,13 @@ class Block implements TagableResourceInterface{
      * $require is expected to be of the form
      * vendor-asset-alias:semver
      *
-     * $preferred_block_target is the block asset target id.
-     *
-     * @param $require
-     * @param $preferred_block_target
+     * @param $requires
      */
-    public function addAssetRequire($require, $preferred_block_target){
-        $this->requires[$require] = $preferred_block_target;
+    public function addAssetRequire($requires){
+        if (is_string($requires)) {
+            if (!in_array($requires, $this->requires)) $this->requires[] = $requires;
+        }
+        else $this->requires = array_merge($this->requires, $requires);
     }
 
     /**

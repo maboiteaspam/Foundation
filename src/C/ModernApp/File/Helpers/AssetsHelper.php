@@ -35,7 +35,11 @@ class AssetsHelper extends AbstractStaticLayoutHelper{
         if ($nodeAction==="register_assets") {
             Transforms::transform()
                 ->setLayout($T->getLayout())
-                ->registerAssets($nodeContents['alias'], $nodeContents['path'], $nodeContents['version']);
+                ->registerAssets(
+                    $nodeContents['alias'],
+                    $nodeContents['path'],
+                    $nodeContents['version'],
+                    $nodeContents['target']);
             return true;
 
         }
