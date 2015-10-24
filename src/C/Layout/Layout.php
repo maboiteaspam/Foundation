@@ -677,7 +677,14 @@ class Layout implements TagableResourceInterface{
     /**
      * @var array
      */
-    public $referencedAssets;
+    public $referencedAssets = [];
+
+    /**
+     * @return array
+     */
+    public function getReferencedAssets () {
+        return $this->referencedAssets;
+    }
 
     /**
      * @param $alias

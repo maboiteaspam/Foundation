@@ -7,20 +7,38 @@ of the rendering output of your application.
 Moreover its the backbone of communication
 between back and front developers.
 
+In order to let both concern work on their own
+but still communicate in a comprehensible way
+the system invite the principle of
+__progressive layout enhancement__.
+
+In order of declaration,
+starting from the backend controller,
+continued by imported frontend layout files,
+if offers to progressively build and enhance the layout
+of new features and behaviors.
+
 Ok, lets make a drawing :p
 ```
    |
 Request
    |
-   |----> Controller
-              |
- ______    Layout    _______
-| Back |-->   |     | Front |
-|______|      |  <--|_______|
-              |
-              |
-           Response
-              |----> Render
+   |----------> Controller
+                    |
+     ______       Layout
+    | Back |-->     |
+    |______|        |
+ create layout -->  |
+ import layout -->  |       _______
+                    |      | Front |
+                    |  <-- |_______|
+                    |  <-- declare or update layout
+                    |  <-- import its own layout
+ update layout -->  |
+ render layout -->  |
+                    |
+                 Response
+                    |----> Render
 ```
 
 
@@ -96,6 +114,63 @@ find an advanced layout example demonstration at
 
 https://github.com/maboiteaspam/Welcome/blob/master/src/layouts/formDemo.yml
 
+##### Block role and structure
+
+It s really about describing all of the components
+ of a page via a layout object.
+For that matter each block of the layout
+holds information
+about its template, assets and so son.
+The later they are resolved into plain html text,
+or other structure depending the desired action.
+
+A block structure example
+```json
+{
+    "id": "root",
+    "body": "the content body as plain html",
+    "options": {
+        "template": "HTML:\/html.php" //the template path
+    },
+    "data": [
+        .. A lits of displayed block
+        with their status of display
+     ],
+    "assets": [
+        .. A lits of assets block
+        to be injected in order to render this block
+    ],
+    "inline": [
+        .. A lits of inline assets content
+        to be injected in order to render this block
+    ],
+    "requires": [
+        .. A lits of assets requirements
+        based on semver pattern
+    ],
+    "meta": {
+        .. A handful list of meta information
+        injected by the various components
+        involved during the process
+        of building the layout
+        "debug_with": "comments", .. this will enable dashboard debug with html comments
+        "from": false, .. this a raw value
+        "etag": "" .. this is injected for etag computation
+    },
+    "displayed_blocks": [
+        .. A lits of displayed block
+        with their status of display
+    ],
+    "stack": [
+        .. when debug is enabled,
+        this gives stack trace values
+        of caller which updated the block
+    ],
+    "firstAssets": []
+}
+```
+
+We ll see next the feature the framework offer to enrich layout and blocks.
 
 ##### Layout file structure
 
@@ -320,10 +395,55 @@ structure:
 
 ##### Working with templates
 
+##### Working with request facets
+
+Request facets are request selector based on facet attributes.
+
+Facet attributes can be such as
+
+__device type__: desktop, mobile, tablet
+__request kind__: any, ajax, esi-master, esi-slave
+__request language__: put locale here
+__request date__: put a period here
+
+When working with layouts request facets
+are expressed as layout transform switcher.
+
+Within the flow of the layout definition,
+the requests facets are invoked to specify
+under which criterion of the request
+the layout object should be transformed.
+
+When the given request
+does not match the provided criterion
+the transformation are voided
+and does not affect the layout object.
+
+
+`for_facets` keyword to conditionally transform the underlying layout object.
+
+It takes an array of `facet=>requirement`,
+they must all satisfy the given request to trigger the transform.
+
+They can be negated using `!`.
+It must be prepended to the `requirement` value.
+
+```yml
+structure:
+
+  - for_facets:
+      device: mobile
+    [block_id]:
+      body: Hello, this is the layout for mobile devices !!
+
+  - for_facets:
+      device: !mobile
+    [block_id]:
+      body: Hello, this is all none mobile devices !!
+```
+
 ##### Working with forms
 ##### Working with validation
-
-##### Working with request facets
 
 ##### Loading your own
 

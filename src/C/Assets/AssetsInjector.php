@@ -402,7 +402,7 @@ class AssetsInjector {
      * @return false|array the referenced asset information
      */
     protected function satisfyAssetRequire (Layout $layout, $alias, $desiredVersion) {
-        foreach ($layout->referencedAssets as $availableAsset) {
+        foreach ($layout->getReferencedAssets() as $availableAsset) {
             $availableAlias      = $availableAsset[0];
             if ($availableAlias===$alias) {
                 $availableVersion = $availableAsset[2];
