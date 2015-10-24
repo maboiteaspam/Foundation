@@ -125,49 +125,49 @@ The later they are resolved into plain html text,
 or other structure depending the desired action.
 
 A block structure example
-```json
-{
-    "id": "root",
-    "body": "the content body as plain html",
-    "options": {
-        "template": "HTML:\/html.php" //the template path
-    },
-    "data": [
-        .. A lits of displayed block
-        with their status of display
-     ],
-    "assets": [
-        .. A lits of assets block
-        to be injected in order to render this block
-    ],
-    "inline": [
-        .. A lits of inline assets content
-        to be injected in order to render this block
-    ],
-    "requires": [
-        .. A lits of assets requirements
-        based on semver pattern
-    ],
-    "meta": {
-        .. A handful list of meta information
-        injected by the various components
-        involved during the process
-        of building the layout
-        "debug_with": "comments", .. this will enable dashboard debug with html comments
-        "from": false, .. this a raw value
-        "etag": "" .. this is injected for etag computation
-    },
-    "displayed_blocks": [
-        .. A lits of displayed block
-        with their status of display
-    ],
-    "stack": [
-        .. when debug is enabled,
-        this gives stack trace values
-        of caller which updated the block
-    ],
-    "firstAssets": []
+```yml
+id: root
+body: '<div>...' # the content body as plain html
+options:
+    template: 'HTML:/html.php' # the template path
+data: {
+       # .. A lits of displayed block
+       # with their status of display
 }
+assets: {
+        # .. A lits of assets block
+        # to be injected in order to render this block
+}
+inline: {
+        # .. A lits of inline assets content
+        # to be injected in order to render this block
+}
+requires: {
+       #  .. A lits of assets requirements
+        # based on semver pattern
+}
+meta:
+        # .. A handful list of meta information
+        # injected by the various components
+        # involved during the process
+        # of building the layout
+    debug_with: comments
+    from: false
+    etag: ''
+displayed_blocks:
+        # .. A lits of displayed block
+        # with their status of display
+    - { id: html_begin, shown: true }
+stack:
+        # .. when debug is enabled,
+        # this gives stack trace values
+        # of caller which updated the block
+    - { file: .../src/C/Layout/Layout.php, line: 390, function: getStackTrace, class: C\Misc\Utils, type: '::' }
+firstAssets: {
+        # .. A lits of asset paths
+        # to display first
+}
+
 ```
 
 We ll see next the feature the framework offer to enrich layout and blocks.
@@ -393,8 +393,6 @@ structure:
       require: [js-normalizer:1.x]
 ```
 
-##### Working with templates
-
 ##### Working with request facets
 
 Request facets are request selector based on facet attributes.
@@ -441,6 +439,8 @@ structure:
     [block_id]:
       body: Hello, this is all none mobile devices !!
 ```
+
+##### Working with templates
 
 ##### Working with forms
 ##### Working with validation
