@@ -399,10 +399,10 @@ Request facets are request selector based on facet attributes.
 
 Facet attributes can be such as
 
-__device type__: desktop, mobile, tablet
-__request kind__: any, ajax, esi-master, esi-slave
-__request language__: put locale here
-__request date__: put a period here
+- __device type__: desktop, mobile, tablet
+- __request kind__: any, ajax, esi-master, esi-slave
+- __request language__: put locale here
+- __request date__: put a period here
 
 When working with layouts request facets
 are expressed as layout transform switcher.
