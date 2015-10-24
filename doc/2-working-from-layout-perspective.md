@@ -1,15 +1,30 @@
 # Working with layouts
 
+Hi there! In this `README` we ll be covering
+the `layout first` approach a C application let you put in action.
+
+We ll review the concepts of layout, block, view.
+
+We ll also review their components implementation
+such as asset, form, dashboard.
+
+## Introduction
+
 Layout files are an important aspect of this project.
 They let you control and take power on the appearance
 of the rendering output of your application.
 
-Moreover its the backbone of communication
-between back and front developers.
+C encourage you to take the `layout first` approach,
+the most quickest way to implement
+a functional prototype of your application.
+
+Once your prototype is finalized, you ll be able
+to consume the layout as a the backbone of communication
+between controller and frontend development.
 
 In order to let both concern work on their own
 but still communicate in a comprehensible way
-the system invite the principle of
+the system encourage the principle and use of
 __progressive layout enhancement__.
 
 In order of declaration,
@@ -445,6 +460,41 @@ find a layout example demonstration at
 https://github.com/maboiteaspam/Welcome/blob/master/src/layouts/hello-the-world-in-ajax.yml
 
 ##### Working with templates
+
+Templates are the implementation files of each block's' view.
+
+They are located under `src/templates/`,
+they use `plain php` as templating engine
+and receives `plain php object` as data.
+
+Views are provided a useful context helper to
+realize most common display actions.
+
+A view example is
+
+__File:__ src/templates/hello-the-world.php
+```php
+<?php
+/* @var $this \C\View\ConcreteContext */
+?>
+<h1><?php echo $this->upper($this->trans("welcome")); ?></h1>
+```
+
+For a complete reference of available helpers see
+https://github.com/maboiteaspam/Foundation/blob/master/src/C/View/ConcreteContext.php
+
+__Tips__
+Don't forget to use php comments to qualify `$this` variable.
+
+Doing so helps your IDE to provide more pertinent information!
+
+```php
+<?php
+/* @var $this \C\View\ConcreteContext */
+?>
+... put the content here
+```
+
 
 ##### Working with forms
 ##### Working with validation
