@@ -458,10 +458,47 @@ structure:
 ```
 
 __See also__
-- https://github.com/maboiteaspam/Welcome/blob/master/src/layouts/hello-the-world-in-ajax.yml
+- https://github.com/maboiteaspam/Welcome/blob/master/src/layouts/hello-the-world.yml
 
     to study a complete example
 
+
+##### Working with ajax / esi
+
+Nowadays there is no serious php application which does not consume
+a system to implement FPC caching, via proxy or internal implementation.
+
+C makes no exception to that.
+
+C goes beyond and provides two action keywords `ajaxify` & `esify`
+to embrace those techniques provided
+to enhance the speed, scalability, and hosting of our applications.
+
+
+`ajaxify` keyword to ajaxify the given block id.
+
+```yml
+structure:
+    [block_id]: # you must first declare the block to ajaxify
+      set_template: Module:/some/path.ext
+  - ajaxify: # then apply a layout structure change
+      id: [block_id]
+  # You should also ensure to register jquery.
+  # That's it !
+```
+
+`esify` keyword to require a vendor asset on the given block.
+
+```yml
+structure:
+    [block_id]:
+      require: [js-normalizer:1.x]
+```
+
+__See also__
+- https://github.com/maboiteaspam/Welcome/blob/master/src/layouts/hello-the-world-in-ajax.yml
+
+    to study a complete example
 
 ##### Working with templates
 
