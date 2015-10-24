@@ -142,14 +142,18 @@ Every time you ll create a module, a structure like this will be created :
  |   vendor/                        # Contains all composer dependencies.
  |   www/                           # The www root folder for a web application.
  |   src/                           # Your local source code !
- |   src/assets/                    # Your front assets such as JS and CSS files.
- |   src/intl/                      # Intl files and translations lands here.
- |   src/layouts/                   # Layout files describing the view lands here.
- |   src/templates/                 # The view implementation files stand here.
- |   src/Controllers.php            # A Controller example implementation, for your convenience.
- |   src/ControllersProvider.php    # Your application controller provider, to declare your module as a service.
- |  .gitignore                      # get things done right.
- |  .editorconfig                   # get things done right.
+ |      src/assets/                    # Your front assets such as JS and CSS files.
+ |      src/intl/                      # Intl files and translations lands here.
+ |      src/layouts/                   # Layout files describing the view lands here.
+ |      src/templates/                 # The view implementation files stand here.
+ |      src/Controllers.php            # A Controller example implementation,
+                                       # for your convenience.
+ |      src/ControllersProvider.php    # Your application controller provider,
+                                       # to declare your module as a service.
+ |   .gitignore                     # get things done right.
+ |   .editorconfig                  # get things done right.
+ |   bower.json                     # get things done right.
+ |   .bowerrc                       # get things done right.
  |   app.php                        # Web application entry point.
  |   bootstrap.php                  # Application modules registration and configuration.
  |   cli.php                        # Cli application entry point.
