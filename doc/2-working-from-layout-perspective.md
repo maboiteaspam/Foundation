@@ -404,7 +404,7 @@ Facet attributes can be such as
 - __request language__: put locale here
 - __request date__: put a period here
 
-When working with layouts request facets
+When working with layouts, request facets
 are expressed as layout transform switcher.
 
 Within the flow of the layout definition,
@@ -414,7 +414,7 @@ the layout object should be transformed.
 
 When the given request
 does not match the provided criterion
-the transformation are voided
+the transformations are voided
 and does not affect the layout object.
 
 
