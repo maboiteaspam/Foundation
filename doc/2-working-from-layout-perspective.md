@@ -532,6 +532,14 @@ Filename of intl files must follow a naming convention
 - __format__: is the format of the file to load, one of yml/xlf.
     It s a required value.
 
+__Valid filename examples__
+
+- en.yml
+- en_US.yml
+- domain1_en_US.yml
+- domain1_zh_TW.yml
+- zh.yml
+
 __File:__ src/intl/en.yml
 ```yml
 
