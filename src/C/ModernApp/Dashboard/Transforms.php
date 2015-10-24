@@ -65,7 +65,6 @@ class Transforms extends Base{
             foreach ($showExtensions as $showExtension) {
                 if (method_exists($extension, $showExtension)) {
                     $extension->{$showExtension}($fromClass);
-                    break;
                 }
             }
         }
