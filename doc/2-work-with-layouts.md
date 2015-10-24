@@ -318,8 +318,13 @@ structure:
       require: [js-normalizer:1.x]
 ```
 
+##### Working with templates
+
 ##### Working with forms
 ##### Working with validation
+
+##### Working with request facets
+
 ##### Loading your own
 
 
