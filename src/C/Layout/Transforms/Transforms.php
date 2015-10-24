@@ -286,15 +286,15 @@ class Transforms implements TransformsInterface{
      * $version is the version of this asset
      * $target is the asset block target to inject the asset into
      *
-     *
      * @param $alias
      * @param $path
      * @param $version
      * @param $target
+     * @param bool|false $first
      * @return $this
      */
-    public function registerAssets($alias, $path, $version, $target){
-        $this->layout->registerAsset($alias, $path, $version, $target);
+    public function registerAssets($alias, $path, $version, $target, $first=false){
+        $this->layout->registerAsset($alias, $path, $version, $target, $first);
         return $this;
     }
 

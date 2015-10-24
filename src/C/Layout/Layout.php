@@ -670,8 +670,16 @@ class Layout implements TagableResourceInterface{
      * @var array
      */
     public $referencedAssets;
-    public function registerAsset ($alias, $path, $version, $target) {
-        $this->referencedAssets["$alias:$version"] = [$alias, $path, $version, $target];
+
+    /**
+     * @param $alias
+     * @param $path
+     * @param $version
+     * @param $target
+     * @param bool|false $first
+     */
+    public function registerAsset ($alias, $path, $version, $target, $first=false) {
+        $this->referencedAssets["$alias:$version"] = [$alias, $path, $version, $target, $first];
     }
     #endregion
 

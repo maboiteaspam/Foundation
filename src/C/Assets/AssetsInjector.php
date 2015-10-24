@@ -348,8 +348,9 @@ class AssetsInjector {
                 // @see Layout::registerAsset
                 $target     = $requirement['satisfaction'][3];
                 $path       = $requirement['satisfaction'][1];
+                $first       = $requirement['satisfaction'][4];
                 $block_id   = $requirement['on_behalf_of'][count($requirement['on_behalf_of'])-1];
-                $layout->get($block_id)->addAssets([$target=>[$path]]);
+                $layout->get($block_id)->addAssets([$target=>[$path]], $first);
             }
         }
 

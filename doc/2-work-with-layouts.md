@@ -302,6 +302,7 @@ structure:
         path: HTML:/normalizer.js
         version: 1.1.1
         target: template_head_js
+        first: true|false
 ```
 
 `require` keyword to require a vendor asset on the given block.
