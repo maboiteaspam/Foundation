@@ -59,7 +59,7 @@ Don t worry about the warnings if you encounter any.
 
 `c2-bin` is now available on your path, you can give it a check by running `--version` switch and get an output similar to this
 
-```
+```sh
 shell > c2-bin --version
 grunt-cli v0.1.13
 grunt v0.4.5
@@ -73,7 +73,7 @@ Let s generate a first module so the later we can see and study a module composi
 
 For that matter, open a command line, make a new folder, and let s invoke `c2-bin generate`.
 
-```
+```sh
 shell > cd /to/my/work/folder/
 shell > mkdir a-new-folder
 shell > cd a-new-folder
@@ -116,7 +116,7 @@ We are all set and ready, let s start the module now !
 
 Open a terminal, browse to your module folder and use `c2-bin run`.
 
-```
+```sh
 shell > cd /to/my/work/folder/a-new-folder/
 shell > c2-bin
 
