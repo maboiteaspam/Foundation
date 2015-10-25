@@ -37,7 +37,7 @@ a dedicated command and control binary for C projects.
 
 __read more__ about `c2-bin` https://github.com/maboiteaspam/c2-bin
 
-```
+```sh
 shell > npm i maboiteaspam/c2-bin -g
 npm WARN optional dep failed, continuing fsevents@1.0.2
 /some/path/to/npm/c2-bin -> /some/path/to/npm/node_modules/c2-bin/bin.js
