@@ -338,14 +338,18 @@ class AssetsInjector {
      */
     public function applyAssetsRequirements (Layout $layout) {
         $requirementsSatisfaction = [];
-        foreach ($layout->registry->blocks as $block) {
+
+        $layoutAssets = $layout->getReferencedAssets();
+        if(!count($layoutAssets)) return $requirementsSatisfaction;
+
+        foreach ($layout->getBlocks() as $block) {
             /* @var $block \C\Layout\Block */
             foreach ($block->requires as $requirement) {
                 if (!isset($requirementsSatisfaction[$requirement])) {
-                    $require = explode(':', $requirement);
-                    $alias = $require[0];
-                    $version = $require[1];
-                    $satisfiedAsset = $this->satisfyAssetRequire($layout, $alias, $version);
+                    $require    = explode(':', $requirement);
+                    $alias      = $require[0];
+                    $version    = $require[1];
+                    $satisfiedAsset = $this->satisfyAssetRequire($layoutAssets, $alias, $version);
                     $requirementsSatisfaction[$requirement] = [
                         'alias'         => $alias,
                         'version'       => $version,
@@ -396,20 +400,25 @@ class AssetsInjector {
      *  target: template_head_js
      * ]
      *
-     * @param Layout $layout
+     * @param array $layoutAssets
      * @param $alias
      * @param $desiredVersion
      * @return false|array the referenced asset information
      */
-    protected function satisfyAssetRequire (Layout $layout, $alias, $desiredVersion) {
-        foreach ($layout->getReferencedAssets() as $availableAsset) {
-            $availableAlias      = $availableAsset[0];
+    protected function satisfyAssetRequire ($layoutAssets, $alias, $desiredVersion) {
+        foreach ($layoutAssets as $availableAsset) {
+            $availableAlias = $availableAsset[0];
             if ($availableAlias===$alias) {
-                $availableVersion = $availableAsset[2];
-                $semver     = new version($availableVersion);
-                $satisfy    = $semver->satisfies(new expression($desiredVersion));
-                if ($satisfy) {
+                $availableVersion   = $availableAsset[2];
+                $wellKnownRequires  = $availableAsset[5];
+                if (in_array($desiredVersion, $wellKnownRequires)) {
                     return $availableAsset;
+                }else {
+                    $semver     = new version($availableVersion);
+                    $satisfy    = $semver->satisfies(new expression($desiredVersion));
+                    if ($satisfy) {
+                        return $availableAsset;
+                    }
                 }
             }
         }
