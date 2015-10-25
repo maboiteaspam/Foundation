@@ -146,7 +146,7 @@ In order to get things done right, C framework is very opiniated.
 
 Every time you ll create a module, a structure like this will be created :
 
-```
+```sh
  |   run/                           # Contains runtime data such cache
  |   vendor/                        # Contains all composer dependencies.
  |   www/                           # The www root folder for a web application.
