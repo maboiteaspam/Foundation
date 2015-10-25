@@ -37,18 +37,21 @@ class jQueryHelper extends  AbstractStaticLayoutHelper{
     public function executeStructureNode (FileTransformsInterface $T, $nodeAction, $nodeContents) {
         if ($nodeAction==="ajaxify") {
             $generator = $this->generator;
-            $requestRoute = [
-                'route'=>$this->request->get('_route'),
-                'params'=>$this->request->get('_route_params'),
-            ];
-            $route = array_merge($requestRoute, isset($nodeContents['route']) ? $nodeContents['route'] : []);
-            jQuery::transform()
-                ->setLayout($T->getLayout())
-                ->ajaxify($nodeContents['id'], [
-                    'url'   => $generator->generate($route['route'], $route['params']),
-                ]);
-            return $T;
+            $request = $this->request;
 
+            $T->then(function() use($T, $nodeContents, $generator, $request){
+                $requestRoute = [
+                    'route'=>$this->request->get('_route'),
+                    'params'=>$this->request->get('_route_params'),
+                ];
+                $route = array_merge($requestRoute, isset($nodeContents['route']) ? $nodeContents['route'] : []);
+                jQuery::transform()
+                    ->setLayout($T->getLayout())
+                    ->ajaxify($nodeContents['id'], [
+                        'url'   => $generator->generate($route['route'], $route['params']),
+                    ]);
+            });
+            return $T;
         }
     }
 

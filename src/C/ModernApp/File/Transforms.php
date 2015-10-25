@@ -3,6 +3,7 @@ namespace C\ModernApp\File;
 
 use C\Layout\Transforms\Transforms as BaseTransforms;
 use C\Layout\Transforms\TransformsInterface;
+use C\Misc\Utils;
 use C\TagableResource\TagedResource;
 use C\FS\Store;
 
@@ -169,17 +170,15 @@ class Transforms extends BaseTransforms implements FileTransformsInterface{
             ->setLayout($this->getLayout())
             ->setStore($this->store)
             ->setHelpers($this->helpers);
-        // $structure = $this;
-        // @todo give it a check
 
-
-
+        // @todo this loop will need good tests
         if (isset($layoutStruct['structure'])) {
-
+            $sub = $structure;
             foreach ($layoutStruct['structure'] as $actions) {
                 foreach ($actions as $action => $options) {
 
-                    $sub = $this->executeStructureNode($structure, $action, $options);
+                    $sub = $this->executeStructureNode((is_object($sub)?$sub:$structure), $action, $options);
+
                     if ($sub instanceof TransformsInterface) {
                         $structure = $sub;
                     } else if($sub===false) {

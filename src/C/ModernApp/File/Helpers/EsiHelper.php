@@ -37,20 +37,22 @@ class EsiHelper extends  AbstractStaticLayoutHelper{
     public function executeStructureNode (FileTransformsInterface $T, $nodeAction, $nodeContents) {
         if ($nodeAction==="esify") {
             $generator = $this->generator;
-            $requestRoute = [
-                'route'=>$this->request->get('_route'),
-                'params'=>$this->request->get('_route_params'),
-            ];
-            $route = array_merge($requestRoute, isset($nodeContents['route']) ? $nodeContents['route'] : []);
+            $request = $this->request;
 
-            Esi::transform()
-                ->setLayout($T->getLayout())
-                ->esify($nodeContents['id'], [
-                    'url'   => $generator->generate($route['name'], $route['params']),
-                ]);
+            $T->then(function() use($T, $nodeContents, $generator, $request){
+                $requestRoute = [
+                    'route'=>$request->get('_route'),
+                    'params'=>$request->get('_route_params'),
+                ];
+                $route = array_merge($requestRoute, isset($nodeContents['route']) ? $nodeContents['route'] : []);
+                Esi::transform()
+                    ->setLayout($T->getLayout())
+                    ->esify($nodeContents['id'], [
+                        'url'   => $generator->generate($route['name'], $route['params']),
+                    ]);
+            });
 
             return $T;
-
         }
     }
 }
