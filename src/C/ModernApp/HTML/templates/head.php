@@ -19,6 +19,7 @@
     // css import for template specifics, then page specifics
     $this->display('template_head_css');
     $this->display('page_head_css');
+
     // script import for template specifics, then page specifics
     $this->display('template_head_js');
     $this->display('page_head_js');
