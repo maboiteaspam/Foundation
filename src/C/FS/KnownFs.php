@@ -50,6 +50,8 @@ class KnownFs {
         $this->registry->registerPath($path, $as);
     }
 
+    //@todo add extension restrictions
+
     /**
      * @param $bp string
      */
