@@ -7,18 +7,10 @@
 <script type="text/javascript">
     $.get('<?php echo $url; ?>?target=<?php echo $target; ?>', function(data){
         var receiver = $('#<?php echo $id; ?>');
-        try{
-            data = $(data);
-        }catch(ex){
-            data = $("<div>"+data+"</div>").first();
-        }
+        data = $("<div>"+data+"</div>").first();
         if (data.length) {
             if (data.first().is("c_block_node")) {
-                if (data.children().length) {
-                    data = data.children().unwrap();
-                } else {
-                    data = data.html();
-                }
+                data = data.children().unwrap();
             }
         }
         receiver.replaceWith(data);
