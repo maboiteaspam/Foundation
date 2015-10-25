@@ -6,40 +6,110 @@ meta:
     1 column base template.
 
 structure:
+  # define the starting root node of the document,
+  # necessary to start somewhere,
+  # it can also be changed later. ajax and esi uses that technique.
+  # document
   - root:
       set_template: HTML:/html.php
-      debug_with: comments
+      debug_with: comments # degug with comments helps to improve browser-html-inspector experience
+  # <html>
   - html_begin:
       body: >
         <!DOCTYPE html>
         <html>
       debug_with: comments
+  # <head>
   - html_head:
       set_template: HTML:/head.php
       debug_with: comments
+  # those are the placeholders for assets loading
+  # they are split into head/foot, inline/file, template/page, css/js.
+
+  # those assets will appear in the <head> node,
+  # thus it  should be mostly about css.
+
+  # starts with first inlines,
+  # they are those you really want on the top
+  - first_inline_css:
+      debug_with: comments
+  - first_inline_js:
+      debug_with: comments
+
+  # inject css,
+  # give it an order such page css overwrtie template css
   - template_head_css:
       debug_with: comments
   - page_head_css:
       debug_with: comments
+
+  # inject js,
+  # it s possible, but not advised to stack JS here
+  # for rendering performance.
   - template_head_js:
       debug_with: comments
   - page_head_js:
       debug_with: comments
+
+  # inject some more inline
+  - head_inline_css:
+      debug_with: comments
+  - head_inline_js:
+      debug_with: comments
+  # thats it for head assets.
+  # footer defines the same structure for the foot assets.
+
+  # <body>
   - html_body_begin:
       body: |
         <body>
       debug_with: comments
+  # it defines a layout like this
+  # body_top
+  #   body_content_left - body_content - body_content_right
+  # body_footer
   - body:
       set_template: HTML:/1-column.php
+  # <footer> # the same as head but for footer assets
   - footer:
       set_template: HTML:/footer.php
-  - script_bottom:
-      body:
+
+  # some more inline,
+  # imho, those should have limited usage.
+  - foot_inline_css:
       debug_with: comments
+  - foot_inline_js:
+      debug_with: comments
+
+  # inject css,
+  # imho, those should have limited usage.
+  - template_footer_css:
+      debug_with: comments
+  - page_footer_css:
+      debug_with: comments
+
+  # inject js,
+  # this is where you should stack your JS.
+  - template_footer_js:
+      debug_with: comments
+  - page_footer_js:
+      debug_with: comments
+
+  # inject some more inline
+  # this one is very useful to add inline
+  # after having loaded your libraries
+  - last_inline_css:
+      debug_with: comments
+  - last_inline_js:
+      debug_with: comments
+  # thats it for foot assets.
+
+  # </body> # html document needs it
   - html_body_end:
       body: |
         </body>
       debug_with: comments
+  # </html> # html document needs it
   - html_end:
       body: |
         </html>
