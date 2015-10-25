@@ -254,9 +254,10 @@ class Registry {
         return [
             'items'=>$this->items,
             'config'=>[
-                'basePath' => $this->config['basePath'],
-                'paths' => $this->getUniversalPath($this->config['paths']),
-                'alias' => $this->getUniversalPath($this->config['alias']),
+                'basePath'      => $this->config['basePath'],
+                'paths'         => $this->getUniversalPath($this->config['paths']),
+                'extensions'    => array_unique($this->config['extensions']),
+                'alias'         => $this->getUniversalPath($this->config['alias']),
             ],
             'signature'=>$this->signature,
         ];
