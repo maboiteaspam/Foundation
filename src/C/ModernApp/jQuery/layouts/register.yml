@@ -1,0 +1,25 @@
+---
+
+# Register jQuery on the layout
+structure:
+
+  # register_assets adds an asset reference on the layout object
+  - register_assets:
+      alias: jquery # it s the public alias consumed by module requiring this asset
+      path: jQuery:/jquery-2.1.3.min.js # it s the path of the assets, can be array
+      version: 2.1.3 # it s the version of this asset, it lets module require their own version
+      target: page_footer_js # it s te layout target asset block to inject the asset into
+      first: true # preferably first asset, it s not guaranteed ! but does the job so far.
+      satisfy: # this is a list of well require constraints that this asset can satisfy
+      # its mainly for performance purpose
+        - "2.x || 1.x"
+  # now register jquery for non html5 browsers,
+  # the system will implement a strategy to select appropriate resource.
+  - register_assets:
+      alias: jquery
+      path: jQuery:/jquery-1.11.3.min.js
+      version: 1.11.3
+      target: page_footer_js
+      first: true
+      satisfy:
+        - "2.x || 1.x"

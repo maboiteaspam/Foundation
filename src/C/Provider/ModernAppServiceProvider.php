@@ -96,6 +96,7 @@ class ModernAppServiceProvider implements ServiceProviderInterface
         }
         if (isset($app['modern.fs'])) {
             $app['modern.fs']->register(__DIR__.'/../ModernApp/HTML/layouts/', 'HTML');
+            $app['modern.fs']->register(__DIR__.'/../ModernApp/jQuery/layouts/', 'jQuery');
         }
 
         if (isset($app['httpcache.tagger'])) {
