@@ -207,6 +207,10 @@ class Transforms extends BaseTransforms implements FileTransformsInterface{
      * @return bool
      */
     public function executeMetaNode ($nodeAction, $nodeContent) {
+        // @todo improve this to avoid the repeated double loop
+        // @todo helpers should be identifiable by their token id
+        // @todo if isset($this->tokens[$tokenId])
+        // @todo  then $this->tokens[$tokenId]->execute(...);
         foreach ($this->helpers as $helper) {
             /* @var $helper StaticLayoutHelperInterface */
             if ($helper->executeMetaNode($this->layout, $nodeAction, $nodeContent)) {
