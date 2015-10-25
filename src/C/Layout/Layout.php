@@ -133,6 +133,13 @@ class Layout implements TagableResourceInterface{
         $this->requestMatcher = $requestMatcher;
     }
 
+    /**
+     * @return RequestTypeMatcher
+     */
+    public function getRequestMatcher () {
+        return $this->requestMatcher;
+    }
+
     public function setDispatcher (EventDispatcher $dispatcher) {
         $this->dispatcher = $dispatcher;
     }

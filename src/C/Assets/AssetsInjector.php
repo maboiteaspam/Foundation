@@ -298,6 +298,7 @@ class AssetsInjector {
      * @param Layout $layout
      */
     public function applyInlineAssets (Layout $layout) {
+        $isAjax = $layout->getRequestMatcher()->isRequestKind('ajax');
         foreach ($layout->registry->blocks as $block) {
             /* @var $block \C\Layout\Block */
             $blockId = $block->id;
@@ -305,7 +306,11 @@ class AssetsInjector {
                 foreach ($inline_items as $inline) {
                     $content = $inline['content'];
                     $type = $inline['type'];
-                    $targetBlock = $layout->getOrCreate("{$target}_inline_{$type}");
+                    if (!$isAjax ) {
+                        $targetBlock = $layout->getOrCreate("{$target}_inline_{$type}");
+                    } else {
+                        $targetBlock = $layout->getOrCreate("$blockId");
+                    }
                     $targetBlock->body .= "\n<!-- {$blockId} -->\n";
                     $targetBlock->body .= "\n{$content}\n";
                 }

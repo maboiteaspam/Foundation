@@ -7,6 +7,7 @@ use C\FS\Registry;
 use C\FS\Store;
 use C\Misc\ArrayHelpers;
 use C\ModernApp\File\Helpers\FormViewHelper;
+use C\View\Context;
 use C\Watch\WatchedStore;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
@@ -75,13 +76,12 @@ class FormServiceProvider implements ServiceProviderInterface
             }
 
             if (isset($app['modern.layout.helpers'])) {
-
                 $app['modern.layout.helpers'] = $app->share(
                     $app->extend("modern.layout.helpers",
                         function (ArrayHelpers $helpers, Application $app) {
-                            $helper = new FormViewHelper();
-                            $helper->setFactory($app['form.factory']);
-                            $helper->setUrlGenerator($app['url_generator']);
+                            $layoutHelper = new FormViewHelper();
+                            $layoutHelper->setFactory($app['form.factory']);
+                            $layoutHelper->setUrlGenerator($app['url_generator']);
                             $formFileLoader = new FormFileLoader();
                             if (isset($app['form.factory'])) {
                                 $formFileLoader->setFactory($app['form.factory']);
@@ -89,13 +89,30 @@ class FormServiceProvider implements ServiceProviderInterface
                             if (isset($app['forms.store'])) {
                                 $formFileLoader->setStore($app['forms.store']);
                             }
-                            $helper->setFormLoader($formFileLoader);
-                            $helpers->append($helper);
+                            $layoutHelper->setFormLoader($formFileLoader);
+                            $helpers->append($layoutHelper);
                             return $helpers;
                         }
                     )
                 );
             }
+        }
+
+        if (isset($app['layout.view'])) {
+            $viewHelper = new \C\View\Helper\FormViewHelper();
+            $app['layout.view'] = $app->share(
+                $app->extend("layout.view",
+                    function(Context $view, Application $app) use($viewHelper) {
+                        $viewHelper->setEnv($app['layout.env']);
+                        $viewHelper->setCommonHelper($app['layout.helper.common']);
+                        $view->helpers->append($viewHelper);
+                        return $view;
+                    }
+                )
+            );
+            $app->before(function($request) use($viewHelper){
+                $viewHelper->setRequest($request);
+            });
         }
 
         if (isset($app['assets.fs'])) {

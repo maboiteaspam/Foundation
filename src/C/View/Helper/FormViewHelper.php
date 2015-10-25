@@ -2,6 +2,7 @@
 namespace C\View\Helper;
 
 use Symfony\Component\Form\FormView;
+use Symfony\Component\HttpFoundation\Request;
 
 // form
 // vendor/symfony/twig-bridge/Extension/FormExtension.php
@@ -16,6 +17,14 @@ class FormViewHelper extends AbstractViewHelper {
     public $commons;
     public function setCommonHelper (CommonViewHelper $helper) {
         $this->commons = $helper;
+    }
+
+    /**
+     * @var Request
+     */
+    public $request;
+    public function setRequest (Request $request) {
+        $this->request = $request;
     }
 
 
@@ -43,6 +52,17 @@ class FormViewHelper extends AbstractViewHelper {
         $form_method = 'POST';
         if (in_array($method, ['GET', 'POST',])) {
             $form_method = $method;
+        }
+
+        if ($this->request
+            && strpos($action, 'requestkind')===false) {
+            if ($this->request->isXmlHttpRequest()) {
+                $action .= strpos($action, '?')===false?'?':'&';
+                $action .= 'requestkind=ajax';
+            } else if ($this->request->headers->get("x-esi-secret")) {
+                $action .= strpos($action, '?')===false?'?':'&';
+                $action .= 'requestkind=esi-slave';
+            }
         }
 
         $str = '';
