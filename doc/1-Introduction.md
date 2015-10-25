@@ -2,11 +2,16 @@
 
 Welcome, C is a frontend framework wrote in php.
 Based on top of symfony and silex components, it aims to provide
-alternative tools to help in creating and maintaining a complex frontend application.
+alternative tools to help in creating and maintaining
+a complex frontend application.
 
 ## Getting started
 
-To get started with this framework you shall first ensure those dependencies are available on your computer
+The framework is compatible with major desktop environment systems.
+Others like freebsd are untested but expected to work.
+
+To get started with this framework
+you shall first ensure those dependencies are available on your computer
 
 - php >= 5.3
 
@@ -26,7 +31,11 @@ To get started with this framework you shall first ensure those dependencies are
 
     Please ensure `composer` binary is available into your system's `PATH`.
 
-Once this is all set, open a terminal, you will install `c2-bin`, a dedicated command and control binary for C projects.
+Once this is all set, open a terminal,
+you will install `c2-bin`,
+a dedicated command and control binary for C projects.
+
+__read more__ about `c2-bin` https://github.com/maboiteaspam/c2-bin
 
 ```
 shell > npm i maboiteaspam/c2-bin -g
