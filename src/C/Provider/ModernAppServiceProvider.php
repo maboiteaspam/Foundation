@@ -4,8 +4,9 @@ namespace C\Provider;
 use C\FS\KnownFs;
 use C\FS\LocalFs;
 use C\FS\Registry;
+use C\FS\Store;
 use C\Misc\ArrayHelpers;
-use C\Watch\WatchedModernLayout;
+use C\Watch\WatchedStore;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -35,9 +36,9 @@ class ModernAppServiceProvider implements ServiceProviderInterface
             $app['modern.layout_store_name'] = "modern-layout-store";
 
         $app['modern.layout.store'] = $app->share(function (Application $app) {
-            $store = new \C\ModernApp\File\Store();
+            $store = new Store();
 
-            $store->setModernLayoutFS($app['modern.fs']);
+            $store->setFS($app['modern.fs']);
 
             $storeName = $app['modern.layout_store_name'];
             if (isset($app['caches'][$storeName])) $cache = $app['caches'][$storeName];
@@ -59,10 +60,10 @@ class ModernAppServiceProvider implements ServiceProviderInterface
             $helper->setGenerator($app['url_generator']);
             $helper->setRequest($app['request']);
             $helpers->append($helper);
-            $helper = new \C\ModernApp\File\Helpers\FormViewHelper();
-            $helper->setFactory($app['form.factory']);
-            $helper->setUrlGenerator($app['url_generator']);
-            $helpers->append($helper);
+//            $helper = new \C\ModernApp\File\Helpers\FormViewHelper();
+//            $helper->setFactory($app['form.factory']);
+//            $helper->setUrlGenerator($app['url_generator']);
+//            $helpers->append($helper);
             $helpers->append(new \C\ModernApp\File\Helpers\FileHelper());
             $helper = new \C\ModernApp\File\Helpers\DashboardHelper();
             $helper->setExtensions($app['modern.dashboard.extensions']);
@@ -132,7 +133,7 @@ class ModernAppServiceProvider implements ServiceProviderInterface
 
         if (isset($app['watchers.watched'])) {
             $app['watchers.watched'] = $app->share($app->extend('watchers.watched', function($watched, Application $app) {
-                $w = new WatchedModernLayout();
+                $w = new WatchedStore();
                 $w->setStore($app['modern.layout.store']);
                 $w->setRegistry($app['modern.fs']->registry);
                 $w->setName("modern.fs");

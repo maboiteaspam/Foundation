@@ -2,9 +2,9 @@
 
 namespace C\Watch;
 
-use C\ModernApp\File\Store;
+use C\FS\Store;
 
-class WatchedModernLayout extends WatchedRegistry {
+class WatchedStore extends WatchedRegistry {
 
     /**
      * @var Store
@@ -28,8 +28,12 @@ class WatchedModernLayout extends WatchedRegistry {
         parent::build();
         $store = $this->store;
         $this->registry->each(function ($item) use($store) {
-            if ($item['extension']){
-                $store->storeFile($item['absolute_path']);
+            try{
+                if ($item['extension']) {
+                    $store->storeFile($item['absolute_path']);
+                }
+            }catch(\Exception $ex) {
+                echo $ex->getMessage()."\n";
             }
         });
         return $this;

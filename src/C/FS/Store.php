@@ -1,24 +1,15 @@
 <?php
-namespace C\ModernApp\File;
+namespace C\FS;
 
-use C\FS\KnownFs;
-use C\FS\LocalFs;
 use Moust\Silex\Cache\CacheInterface;
 use Symfony\Component\Yaml\Yaml;
 
-/**
- * Class Store
- * Knows how to store and fetch a layout from the cache system.
- *
- *
- * @package C\ModernApp\File
- */
 class Store {
 
     /**
      * @var KnownFs
      */
-    protected $modernFS;
+    protected $fs;
 
     /**
      * @var CacheInterface
@@ -31,8 +22,8 @@ class Store {
      *
      * @param KnownFs $fs
      */
-    public function setModernLayoutFS (KnownFs $fs) {
-        $this->modernFS = $fs;
+    public function setFS (KnownFs $fs) {
+        $this->fs = $fs;
     }
 
     /**
@@ -53,25 +44,25 @@ class Store {
      * @throws \Exception
      */
     public function storeFile ($filePath) {
-        $layoutFile     = $this->getFileMeta($filePath);
+        $item     = $this->getFileMeta($filePath);
         try{
-            $layoutStruct   = Yaml::parse (LocalFs::file_get_contents ($layoutFile['absolute_path']), true, false, true);
+            $content   = Yaml::parse (LocalFs::file_get_contents ($item['absolute_path']), true, false, true);
         }catch(\Exception $ex) {
-            throw new \Exception("Failed to parse file ".$layoutFile['absolute_path'], 0, $ex);
+            throw new \Exception("Failed to parse file ".$item['absolute_path'], 0, $ex);
         }
-        $this->cache->store($layoutFile['dir'].'/'.$layoutFile['name'], $layoutStruct);
-        return $layoutStruct;
+        $this->cache->store($item['dir'].'/'.$item['name'], $content);
+        return $content;
     }
 
     /**
-     * Remove an item from the cache, a layout file.
+     * Remove an item from the cache, a file.
      * @param $filePath
      * @return bool
      * @throws \Exception
      */
     public function removeFile ($filePath) {
-        $layoutFile = $this->getFileMeta($filePath);
-        return $this->cache->delete($layoutFile['dir'].'/'.$layoutFile['name']);
+        $item = $this->getFileMeta($filePath);
+        return $this->cache->delete($item['dir'].'/'.$item['name']);
     }
 
     /**
@@ -82,23 +73,23 @@ class Store {
     }
 
     /**
-     * Convenience method to get meta data of a layout file.
+     * Convenience method to get meta data of a file.
      *
      * @param $filePath
      * @return bool|string
      * @throws \Exception
      */
     public function getFileMeta ($filePath) {
-        $layoutFile = $this->modernFS->get($filePath);
-        if( $layoutFile===false) {
+        $item = $this->fs->get($filePath);
+        if( $item===false) {
             throw new \Exception("File not found $filePath");
         }
-        return $layoutFile;
+        return $item;
     }
 
     /**
      * Given a virtual path,
-     * fetch the layout content from the cache.
+     * fetch the item content from the cache.
      * Add it to the cache if it does not exists.
      *
      * @param $filePath
@@ -106,11 +97,11 @@ class Store {
      * @throws \Exception
      */
     public function get ($filePath) {
-        $layoutFile     = $this->getFileMeta($filePath);
-        $layoutStruct   = $this->cache->fetch($layoutFile['dir'].'/'.$layoutFile['name']);
-        if (!$layoutStruct) {
-            $layoutStruct = $this->storeFile($filePath);
+        $item   = $this->getFileMeta($filePath);
+        $item   = $this->cache->fetch($item['dir'].'/'.$item['name']);
+        if (!$item) {
+            $item = $this->storeFile($filePath);
         }
-        return $layoutStruct;
+        return $item;
     }
 }
