@@ -41,5 +41,9 @@ class FormServiceProvider implements ServiceProviderInterface
         if (isset($app['assets.fs'])) {
             $app['assets.fs']->register(__DIR__.'/../Form/assets/', 'Form');
         }
+
+        if (isset($app['modern.fs'])) {
+            $app['modern.fs']->register(__DIR__.'/../Form/layouts/', 'Form');
+        }
     }
 }
