@@ -44,9 +44,15 @@ class CapsuleServiceProvider implements ServiceProviderInterface
             $storeName = $app['capsule.cache_store_name'];
             if (isset($app['caches'][$storeName])) $cache = $app['caches'][$storeName];
             else $cache = $app['cache'];
-            $loader = new Loader(new Registry('capsule-', $cache, [
+
+
+            $registry = new Registry('capsule-', $cache, [
                 'basePath' => $app['project.path']
-            ]));
+            ]);
+            $registry->restrictWithExtensions([
+                'php',
+            ]);
+            $loader = new Loader($registry);
             $loader->setCapsule($app['capsule']);
             return $loader;
         });

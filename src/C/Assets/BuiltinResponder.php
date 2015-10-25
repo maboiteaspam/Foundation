@@ -87,7 +87,7 @@ class BuiltinResponder {
         // we want to test/try only specific extensions.
         if (in_array($extension, $acceptableAssets)) {
 
-            if (substr($reqUrl,0,1)==='/' && strpos($reqUrl,':')!==false) {
+            if (substr($reqUrl,0,1)==='/') {
                 $reqUrl = substr($reqUrl, 1); // remove the leading slash.
             }
 

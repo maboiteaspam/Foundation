@@ -51,9 +51,18 @@ class AssetsServiceProvider implements ServiceProviderInterface
             $storeName = $app['assets.cache_store_name'];
             if (isset($app['caches'][$storeName])) $cache = $app['caches'][$storeName];
             else $cache = $app['cache'];
-            return new KnownFs(new Registry('assets-', $cache, [
+
+            $registry = new Registry('assets-', $cache, [
                 'basePath' => $app['project.path']
-            ]));
+            ]);
+            $registry->restrictWithExtensions([
+                'css',
+                'js',
+                'woff',
+                'otf'//...ect
+            ]);
+
+            return new KnownFs($registry);
         });
         $app['assets.responder'] = $app->share(function(Application $app) {
             $responder = new BuiltinResponder();

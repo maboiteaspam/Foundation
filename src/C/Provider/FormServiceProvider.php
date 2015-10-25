@@ -26,9 +26,14 @@ class FormServiceProvider implements ServiceProviderInterface
             $storeName = $app['forms.fs.cache_store_name'];
             if (isset($app['caches'][$storeName])) $cache = $app['caches'][$storeName];
             else $cache = $app['cache'];
-            return new KnownFs(new Registry('forms-', $cache, [
+
+            $registry = new Registry('forms-', $cache, [
                 'basePath' => $app['project.path']
-            ]));
+            ]);
+            $registry->restrictWithExtensions([
+                'yml',
+            ]);
+            return new KnownFs($registry);
         });
 
         if (!isset($app['forms.cache_store_name']))

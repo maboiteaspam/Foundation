@@ -52,6 +52,7 @@ class Registry {
         'basePath' => '/', // must always be an absolute path
         'paths' => [],
         'alias' => [],
+        'extensions' => [],
     ];
     /**
      * dumped content.
@@ -105,6 +106,16 @@ class Registry {
         $this->config['paths'][] = rp($path);
         if($as) $this->config['alias']["$as:"] = rp($path);
         return $path;
+    }
+
+    /**
+     * The bae path for relative files path.
+     * @param $extensions array
+     * @return string
+     */
+    public function restrictWithExtensions($extensions){
+        $this->config['extensions'] = array_merge($this->config['extensions'], $extensions);
+        return $extensions;
     }
 
     /**
@@ -187,6 +198,10 @@ class Registry {
         $this->cache->store("{$this->storeName}dump", ($dump));
         return $dump;
     }
+
+    /**
+     *
+     */
     public function clearCached(){
         $this->cache->delete('dump');
     }
@@ -328,8 +343,9 @@ class Registry {
      * type, name, isRelative, dir, sha1, extension, file_mtime, file_ctime.
      *
      * @param $path string
+     * @return bool
      */
-    public function addItem ($path) {
+    public function parseItem ($path) {
         $basePath = $this->config['basePath'];
 
         if (is_string($path)) {
@@ -355,8 +371,36 @@ class Registry {
             'file_ctime'    => $path->getCTime(),
         ];
 
-        $key = $fp.($path->isFile()?'':DIRECTORY_SEPARATOR);
+        return $item;
+    }
+
+    /**
+     * dump a file item or a directory into an array of metadata.
+     *
+     * You ll find in there a number of computed information such
+     * type, name, isRelative, dir, sha1, extension, file_mtime, file_ctime.
+     *
+     * @param $path string
+     * @return bool
+     */
+    public function addItem ($path) {
+        $item   = $this->parseItem($path);
+        $ext    = $item['extension'];
+        $extensions = $this->config['extensions'];
+        if (count($extensions) &&!in_array($ext, $extensions, true)) return false;
+
+        $item   = $this->absolutePath($item);
+        $aPath  = $item['absolute_path'];
+        $key    = $aPath.(!$item['dir']?'':DIRECTORY_SEPARATOR);
+        $alias  = $this->getAliasFromFile($aPath);
+        if ($alias) {
+            $key = "$alias".str_replace(
+                    $this->config['alias'][$alias], '', $aPath
+                );
+        }
         $this->items[$key] = $item;
+
+        return true;
     }
 
     /**
@@ -405,6 +449,11 @@ class Registry {
      */
     public function get($itemPath){
         if (!$itemPath) return false;
+
+        if (isset($this->items[$itemPath])) {
+            $item = $this->items[$itemPath];
+            return $this->absolutePath($item);
+        }
 
         $basePath = $this->config['basePath'];
 
@@ -463,6 +512,14 @@ class Registry {
                 return $this->absolutePath($item);
             }
         }
+
+        if (LocalFs::file_exists("$basePath/$itemPath")) {
+            $item = $this->parseItem("$basePath/$itemPath");
+            return $this->absolutePath($item);
+        }else if (LocalFs::file_exists("$itemPath")) {
+            $item = $this->parseItem("$itemPath");
+            return $this->absolutePath($item);
+        }
         return false;
     }
 
@@ -489,6 +546,23 @@ class Registry {
         foreach ($paths as $path) {
             if (realpath($path)===$d) {
                 return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns the corresponding alias of a file path
+     *
+     * @param $file
+     * @return bool|string $alias
+     */
+    public function getAliasFromFile ($file) {
+        $paths = $this->config['alias'];
+        $d = realpath(dirname($file));
+        foreach ($paths as $alias=>$path) {
+            if (realpath($path)===$d) {
+                return $alias;
             }
         }
         return false;

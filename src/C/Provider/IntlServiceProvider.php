@@ -36,9 +36,14 @@ class IntlServiceProvider implements ServiceProviderInterface
             $storeName = $app['intl.cache_store_name'];
             if (isset($app['caches'][$storeName])) $cache = $app['caches'][$storeName];
             else $cache = $app['cache'];
-            return new KnownFs(new Registry('intl-', $cache, [
+
+            $registry = new Registry('intl-', $cache, [
                 'basePath' => $app['project.path']
-            ]));
+            ]);
+            $registry->restrictWithExtensions([
+                'yml','xlf',
+            ]);
+            return new KnownFs($registry);
         });
 
         if (!isset($app['intl-content.cache_store_name']))

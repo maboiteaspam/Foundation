@@ -27,9 +27,14 @@ class ModernAppServiceProvider implements ServiceProviderInterface
             $storeName = $app['modern.fs_store_name'];
             if (isset($app['caches'][$storeName])) $cache = $app['caches'][$storeName];
             else $cache = $app['cache'];
-            return new KnownFs(new Registry('modern-layout-', $cache, [
+
+            $registry = new Registry('modern-layout-', $cache, [
                 'basePath' => $app['project.path']
-            ]));
+            ]);
+            $registry->restrictWithExtensions([
+                'yml',
+            ]);
+            return new KnownFs($registry);
         });
 
         if (!isset($app['modern.layout_store_name']))

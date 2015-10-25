@@ -50,7 +50,12 @@ class KnownFs {
         $this->registry->registerPath($path, $as);
     }
 
-    //@todo add extension restrictions
+    /**
+     * @param $extensions array
+     */
+    public function restrictWithExtensions ($extensions) {
+        $this->registry->restrictWithExtensions($extensions);
+    }
 
     /**
      * @param $bp string

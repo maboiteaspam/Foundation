@@ -140,9 +140,14 @@ class LayoutServiceProvider implements ServiceProviderInterface
             $storeName = $app['layout.cache_store_name'];
             if (isset($app['caches'][$storeName])) $cache = $app['caches'][$storeName];
             else $cache = $app['cache'];
-            return new KnownFs(new Registry('layout-', $cache, [
+
+            $registry = new Registry('layout-', $cache, [
                 'basePath' => $app['project.path']
-            ]));
+            ]);
+            $registry->restrictWithExtensions([
+                'php',
+            ]);
+            return new KnownFs($registry);
         });
 
 //        if (isset($app['form.extensions'])) {
