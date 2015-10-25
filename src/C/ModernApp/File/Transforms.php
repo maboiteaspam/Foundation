@@ -4,6 +4,7 @@ namespace C\ModernApp\File;
 use C\Layout\Transforms\Transforms as BaseTransforms;
 use C\Layout\Transforms\TransformsInterface;
 use C\TagableResource\TagedResource;
+use C\FS\Store;
 
 /**
  * Class Transforms

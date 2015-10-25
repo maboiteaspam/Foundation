@@ -2,6 +2,7 @@
 namespace C\ModernApp\File\Helpers;
 
 use C\Form\FormBuilder;
+use C\Form\FormFileLoader;
 use C\ModernApp\File\AbstractStaticLayoutHelper;
 use C\ModernApp\File\FileTransformsInterface;
 use Symfony\Component\Form\FormFactory;
@@ -89,6 +90,18 @@ class FormViewHelper extends  AbstractStaticLayoutHelper{
     }
 
     /**
+     * @var FormFileLoader
+     */
+    protected $formLoader;
+
+    /**
+     * @param FormFileLoader $formLoader
+     */
+    public function setFormLoader ( FormFileLoader $formLoader) {
+        $this->formLoader = $formLoader;
+    }
+
+    /**
      * Looks for 'create_form' node actions,
      * create a form object and populate it with provided fields,
      * inject the form into the default view data.
@@ -116,12 +129,27 @@ class FormViewHelper extends  AbstractStaticLayoutHelper{
     public function executeBlockNode (FileTransformsInterface $T, $blockSubject, $nodeAction, $nodeContents) {
         if ($nodeAction==="create_form") {
 
-            $formId         = isset($nodeContents['name'])      ? $nodeContents['name']         : 'form';
-            $formType       = isset($nodeContents['type'])      ? $nodeContents['type']         : null;
-            $formContent    = isset($nodeContents['children'])  ? $nodeContents['children']     : [];
-            $formAttrs      = isset($nodeContents['attr'])      ? $nodeContents['attr']         : [];
+            $formId = isset($nodeContents['name']) ? $nodeContents['name'] : 'form';
 
-            $builder = $this->formFactory->createBuilder('form', $formType? new $formType : null, ['attr'=>$formAttrs]);
+            $builder = $this->formLoader->createFormBuilder($nodeContents);
+            if ($this->defaultMethod) $builder->setMethod($this->defaultMethod);
+            if ($this->defaultRoute) $builder->setAction(
+                $this->urlGenerator->generate($this->defaultRoute, array_merge([], $this->defaultRouteParameters, [
+                    "block" => $blockSubject,
+                    "formId" => $formId,
+                ]))
+            );
+
+            $T->setDefaultData($blockSubject, [$formId => FormBuilder::createView($builder->getForm())]);
+
+            return true;
+
+        } else if ($nodeAction==="import_form") {
+
+            $formFile   = isset($nodeContents['from']) ? $nodeContents['from'] : '';
+            $formId     = isset($nodeContents['as']) ? $nodeContents['as'] : 'form';
+
+            $builder = $this->formLoader->createFormBuilderFromFile($formFile);
             if ($this->defaultMethod)   $builder->setMethod($this->defaultMethod);
             if ($this->defaultRoute)    $builder->setAction(
                 $this->urlGenerator->generate($this->defaultRoute, array_merge([],$this->defaultRouteParameters,[
@@ -130,54 +158,9 @@ class FormViewHelper extends  AbstractStaticLayoutHelper{
                 ]))
             );
 
-            foreach ($formContent as $elName=>$elData) {
-
-                $type       = isset($elData['type'])        ? $elData['type'] : 'text';
-                $options    = isset($elData['options'])     ? $elData['options'] : [];
-                $attr       = isset($elData['attr'])        ? $elData['attr'] : [];
-                $validation = isset($elData['validation'])  ? $this->createRealConstraintObjects($elData['validation']) : [];
-
-                $options['attr'] = isset($options['attr']) ? array_merge($attr, $options['attr']) : $attr;
-                if (count($validation)) $options['constraints'] = $validation;
-
-                $builder->add($elName, $type, $options);
-            }
-
             $T->setDefaultData($blockSubject, [$formId=>FormBuilder::createView($builder->getForm())]);
 
             return true;
         }
-    }
-
-    /**
-     * It transforms an array describing constraint validation
-     * and their options into an array of constraint objects.
-     *
-     * [
-     *  'ConstraintClass'=>[
-     *      // constraint options
-     *  ]
-     * ]
-     *
-     * When constraint class contains a backslash,
-     * it considers it as FQClassName.
-     * Otherwise, it will prepend the default symfony constraint namespace,
-     *  \Symfony\Component\Validator\Constraints\...
-     * before attempting to create the constraint object.
-     *
-     * @param $constraints
-     * @return array
-     */
-    protected function createRealConstraintObjects ($constraints) {
-        $ret = [];
-        foreach ($constraints as $constraint) {
-            $constraintClass = array_keys($constraint)[0];
-            $options = $constraint[$constraintClass];
-            if (strpos($constraintClass, '\\')===false) {
-                $constraintClass = "\\Symfony\\Component\\Validator\\Constraints\\$constraintClass";
-            }
-            $ret[] = new $constraintClass($options);
-        }
-        return $ret;
     }
 }

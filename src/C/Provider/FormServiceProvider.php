@@ -1,7 +1,13 @@
 <?php
 namespace C\Provider;
 
+use C\Form\FormFileLoader;
 use C\FS\KnownFs;
+use C\FS\Registry;
+use C\FS\Store;
+use C\Misc\ArrayHelpers;
+use C\ModernApp\File\Helpers\FormViewHelper;
+use C\Watch\WatchedStore;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
 
@@ -13,6 +19,32 @@ class FormServiceProvider implements ServiceProviderInterface
      **/
     public function register(Application $app)
     {
+        if (!isset($app['forms.fs.cache_store_name']))
+            $app['forms.fs.cache_store_name'] = "forms-fs-store";
+
+        $app['forms.fs'] = $app->share(function(Application $app) {
+            $storeName = $app['forms.fs.cache_store_name'];
+            if (isset($app['caches'][$storeName])) $cache = $app['caches'][$storeName];
+            else $cache = $app['cache'];
+            return new KnownFs(new Registry('forms-', $cache, [
+                'basePath' => $app['project.path']
+            ]));
+        });
+
+        if (!isset($app['forms.cache_store_name']))
+            $app['forms.cache_store_name'] = "forms-store";
+
+        $app['forms.store'] = $app->share(function (Application $app) {
+            $store = new Store();
+            $store->setFS($app['forms.fs']);
+
+            $storeName = $app['forms.cache_store_name'];
+            if (isset($app['caches'][$storeName])) $cache = $app['caches'][$storeName];
+            else $cache = $app['cache'];
+            $store->setCache($cache);
+
+            return $store;
+        });
     }
     /**
      *
@@ -34,7 +66,30 @@ class FormServiceProvider implements ServiceProviderInterface
             if (isset($app['form.factory'])) {
                 $r = new \ReflectionClass('Symfony\Component\Form\Form');
                 $path = dirname($r->getFilename()).'/Resources/translations/';
-                $fs->register($path, 'Validator');
+                $fs->register($path, 'Form');
+            }
+
+            if (isset($app['modern.layout.helpers'])) {
+
+                $app['modern.layout.helpers'] = $app->share(
+                    $app->extend("modern.layout.helpers",
+                        function (ArrayHelpers $helpers, Application $app) {
+                            $helper = new FormViewHelper();
+                            $helper->setFactory($app['form.factory']);
+                            $helper->setUrlGenerator($app['url_generator']);
+                            $formFileLoader = new FormFileLoader();
+                            if (isset($app['form.factory'])) {
+                                $formFileLoader->setFactory($app['form.factory']);
+                            }
+                            if (isset($app['forms.store'])) {
+                                $formFileLoader->setStore($app['forms.store']);
+                            }
+                            $helper->setFormLoader($formFileLoader);
+                            $helpers->append($helper);
+                            return $helpers;
+                        }
+                    )
+                );
             }
         }
 
@@ -44,6 +99,24 @@ class FormServiceProvider implements ServiceProviderInterface
 
         if (isset($app['modern.fs'])) {
             $app['modern.fs']->register(__DIR__.'/../Form/layouts/', 'Form');
+        }
+
+        $app->before(function($request, Application $app){
+            $app['forms.fs']->registry->loadFromCache();
+        }, Application::EARLY_EVENT);
+
+        if (isset($app['watchers.watched'])) {
+            $app['watchers.watched'] = $app->share(
+                $app->extend('watchers.watched', function($watched, Application $app) {
+                    $w = new WatchedStore();
+                    $w->setStore($app['forms.store']);
+                    $w->setRegistry($app['forms.fs']->registry);
+                    $w->setName("forms.fs");
+                    $watched[] = $w;
+                    return $watched;
+                }
+                )
+            );
         }
     }
 }
