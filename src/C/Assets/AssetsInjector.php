@@ -227,7 +227,9 @@ class AssetsInjector {
     }
 
     /**
-     * this method create appropriate merged file given blocks and their assets
+     * this method create appropriate merged file
+     * given blocks and their assets
+     *
      * @param Layout $layout
      */
     public function createMergedAssetsFiles (Layout $layout) {
