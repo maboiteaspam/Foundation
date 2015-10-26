@@ -3,6 +3,12 @@ namespace C\ModernApp\jQuery;
 
 use C\Layout\Transforms\Transforms as base;
 
+/**
+ * Class Transforms
+ * provide helpers to work with jquery and ajax
+ *
+ * @package C\ModernApp\jQuery
+ */
 class Transforms extends base{
 
     /**
@@ -12,6 +18,11 @@ class Transforms extends base{
         return new self();
     }
 
+    /**
+     * @param array $options
+     * @return $this
+     * @deprecated prefer using jQuery:/register.yml
+     */
     public function inject($options=[]){
         $options = array_merge([
             'jquery' => 'jQuery:/jquery-2.1.3.min.js',
@@ -23,6 +34,11 @@ class Transforms extends base{
         return $this;
     }
 
+    /**
+     * @param array $options
+     * @return $this
+     * @deprecated prefer not using it.
+     */
     public function tooltipster($options=[]){
         $options = array_merge([
             'js'        => 'jQuery:/tooltipster-master/js/jquery.tooltipster.min.js',
@@ -38,8 +54,23 @@ class Transforms extends base{
         return $this;
     }
 
+    /**
+     * ajaxify given target block id.
+     *
+     * options is an array of values such
+     * [
+     *  url => url to ajax render url
+     * ]
+     *
+     *
+     * @param $target
+     * @param array $options
+     * @return $this
+     */
     public function ajaxify($target, $options=[]){
         $options = array_merge(['url'=>'',], $options);
+        // use layout capabilities to target non ajax queries
+        // and injected the js code to trigger the ajax loading
         return $this->forRequest('!ajax')
             ->then(function (Transforms $transform) use ($target, $options) {
                 $id = sha1($target.$options['url']);
@@ -57,6 +88,10 @@ class Transforms extends base{
                 ]);
                 $this->insertAfterBlock('page_footer_js', $target.'_ajax', []);
             })
+            // use layout capabilities to target ajax queries
+            // detect the targeted block, if that matches,
+            // set root layout as ajaxified block id to render the block
+            // and its children.
             ->forRequest('ajax')
             ->then(function (Transforms $transform) use($target) {
                 if ($_GET['target']===$target) {
