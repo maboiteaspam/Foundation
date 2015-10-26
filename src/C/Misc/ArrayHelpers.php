@@ -1,8 +1,22 @@
 <?php
 namespace C\Misc;
-
+/**
+ * Class ArrayHelpers
+ * helps to manage
+ * an array of helpers.
+ *
+ * It can prepend / find / remove / replace
+ * based on object types.
+ *
+ * @package C\Misc
+ */
 class ArrayHelpers extends \ArrayObject {
 
+    /**
+     * prepend to this array.
+     *
+     * @param $some
+     */
     public function prepend ($some) {
         $internals = $this->getArrayCopy();
         array_unshift($internals, $some);
@@ -10,15 +24,27 @@ class ArrayHelpers extends \ArrayObject {
     }
 
     /**
-     * @param $some mixed
-     * @return bool
+     * merge to this array.
+     *
+     * @param $some
      */
-    public function isValid ($some) {
-        return in_array($this->interface, class_implements($some));
+    public function merge ($some) {
+        $internals = $this->getArrayCopy();
+        $this->exchangeArray(array_merge($internals, (array) $some));
     }
 
     /**
-     * Find an item given its type.
+     * default values of this array.
+     *
+     * @param $some
+     */
+    public function defaults ($some) {
+        $internals = $this->getArrayCopy();
+        $this->exchangeArray(array_merge((array) $some, $internals));
+    }
+
+    /**
+     * Find an item given its class type.
      * @param $some string
      * @return mixed|null
      */
@@ -37,7 +63,7 @@ class ArrayHelpers extends \ArrayObject {
     }
 
     /**
-     * Remove an item given its type
+     * Remove an item given its class type
      * @param $some string
      * @return bool
      */
@@ -52,7 +78,7 @@ class ArrayHelpers extends \ArrayObject {
     }
 
     /**
-     * Replace an existing item of a similar type or append to the array.
+     * Replace an existing item of a similar class type
      * @param $some string
      * @return bool
      */
