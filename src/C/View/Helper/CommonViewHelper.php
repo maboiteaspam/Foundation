@@ -1,13 +1,21 @@
 <?php
+
+// totally inspired by twig
+// vendor/twig/twig/lib/Twig/Extension/Core.php
+
 namespace C\View\Helper;
 
 use C\Intl\Translator;
 use Symfony\Component\Config\Definition\Exception\Exception;
 
+/**
+ * Class CommonViewHelper
+ * provides the most common stuff required
+ * to implement templates
+ *
+ * @package C\View\Helper
+ */
 class CommonViewHelper extends AbstractViewHelper {
-
-    // totally inspired by twig
-    // vendor/twig/twig/lib/Twig/Extension/Core.php
 
 
     #region twig backport

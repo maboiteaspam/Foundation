@@ -4,6 +4,13 @@ namespace C\View\Helper;
 use C\Layout\Block;
 use C\Misc\Utils;
 
+/**
+ * Class AssetsViewHelper
+ * provides to inject assets as html inline
+ * or external script to a specified layout target
+ *
+ * @package C\View\Helper
+ */
 class AssetsViewHelper implements ViewHelperInterface {
 
 
@@ -11,19 +18,29 @@ class AssetsViewHelper implements ViewHelperInterface {
      * @var Block
      */
     public $block;
+    /**
+     * the content of the current inline opened with
+     * inlineTo()
+     *
+     * @var string
+     */
     public $currentInline;
 
     /**
      * @param Block $block
      */
-    public function setBlockToRender ( Block $block) {
+    public function setBlockToRender (Block $block) {
         $this->block = $block;
-//        if ($this->currentInline!==null) echo 'bad';
+//        if ($this->currentInline!==null)
+        // the developer forgot to call $this->>endInline()
         $this->currentInline = null;
     }
 
     public $assetPatterns = [];
     /**
+     * Patterns used to determine the
+     * values of urlAsset()
+     *
      * @param $patterns
      */
     public function setPatterns ($patterns) {
@@ -38,7 +55,8 @@ class AssetsViewHelper implements ViewHelperInterface {
 
 
     /**
-     * Get url of an asset given it s name and its parameters.
+     * Get url of an asset
+     * given it s name and its parameters.
      *
      * @param $name
      * @param array $options
@@ -73,6 +91,7 @@ class AssetsViewHelper implements ViewHelperInterface {
         if (!in_array($target, ['first','head','foot','last',]))
             throw new \Exception('target must be one of first / head / foot / last');
 //        if ($this->currentInline!==null) echo 'bad';
+        // the developer forgot to call $this->>endInline()
         ob_start();
     }
 
@@ -81,6 +100,7 @@ class AssetsViewHelper implements ViewHelperInterface {
      */
     public function endInline() {
 //        if ($this->currentInline===null) echo 'bad';
+        // the developer forgot to call $this->>inlineTo()
         $content = ob_get_clean();
         $type = strpos($content, "script")!==false?"js":"css";
         $this->block->addInline($this->currentInline, $type, $content);
@@ -88,7 +108,8 @@ class AssetsViewHelper implements ViewHelperInterface {
     }
 
     /**
-     * Let you inject an asset from the view.
+     * Inject into target the given asset path
+     *
      * @param $target
      * @param $asset
      * @param bool $first

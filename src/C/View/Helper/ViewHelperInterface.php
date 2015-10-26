@@ -15,7 +15,6 @@ interface ViewHelperInterface {
      * is about to render
      *
      * @param Block $block
-     * @return mixed
      */
     public function setBlockToRender (Block $block);
 

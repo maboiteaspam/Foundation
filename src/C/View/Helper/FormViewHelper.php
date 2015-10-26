@@ -9,6 +9,17 @@ use Symfony\Component\HttpFoundation\Request;
 // vendor/symfony/twig-bridge/Resources/views/Form/form_div_layout.html.twig
 // http://stackoverflow.com/a/30054764
 
+/**
+ * Class FormViewHelper
+ *
+ * provides a re implementation of symfony templates.
+ *
+ * The reason is the renderer engine of symfony is not loaded in,
+ * so C can t benefit from it.
+ *
+ * @package C\View\Helper
+ */
+// @todo find a way to test that completely.
 class FormViewHelper extends AbstractViewHelper {
 
     /**
