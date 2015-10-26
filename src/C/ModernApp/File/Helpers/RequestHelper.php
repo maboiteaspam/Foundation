@@ -13,6 +13,9 @@ use C\ModernApp\File\FileTransformsInterface;
  */
 class RequestHelper extends  AbstractStaticLayoutHelper{
 
+    //@todo add ua
+    //@todo add http accept
+    //@todo add request locale
     /**
      * Provides three new structure actions
      *  for_device: <device type>
