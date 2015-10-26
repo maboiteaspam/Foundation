@@ -4,8 +4,17 @@ namespace C\Misc;
 
 use C\FS\LocalFs;
 
-class Utils{
+/**
+ * Class Utils
+ * is a fourre-tout class
+ * put there some shorthands.
+ *
+ * @package C\Misc
+ */
+class Utils {
 
+    #region console output
+    //@todo replace this with monolog
     public static $stdoutHandle;
     public static $stderrHandle;
     public static function stderr ($message) {
@@ -15,6 +24,7 @@ class Utils{
     public static function stdout ($message) {
         fwrite(self::$stdoutHandle, "$message\n");
     }
+    #endregion
 
     public static function fileToEtag ($file) {
         if (is_string($file)) $file = [$file];
@@ -29,6 +39,12 @@ class Utils{
         return $h;
     }
 
+    #region data
+    /**
+     * An PO to a dictionary array
+     * @param $d
+     * @return array
+     */
     public static function objectToArray($d) {
         if (is_object($d)) {
             $d = get_object_vars($d);
@@ -39,6 +55,12 @@ class Utils{
         return $d;
     }
 
+    /**
+     * pick given columns of the provided $arr
+     * @param $arr
+     * @param $pick
+     * @return array
+     */
     public static function arrayPick ($arr, $pick) {
         if (count($pick)>0 && $arr) {
             $opts = [];
@@ -51,8 +73,15 @@ class Utils{
         return $arr;
     }
 
+    /**
+     * remove given value from the given array
+     *
+     * @param $arr
+     * @param $value
+     * @return array the extracted item
+     */
     public static function arrayRemove (&$arr, $value) {
-        $index = array_keys($arr, $value);
+        $index = array_keys($arr, $value, true);
         $ret = [];
         if (count($index)) {
             $ret = array_splice($arr, $index[0], 1);
@@ -60,6 +89,12 @@ class Utils{
         return $ret;
     }
 
+    /**
+     * shorten a path against the cwd
+     *
+     * @param $path
+     * @return string
+     */
     public static function shorten ($path) {
         $path = LocalFs::realpath($path);
         if (substr($path, 0, strlen(getcwd()))===getcwd()) {
@@ -67,67 +102,13 @@ class Utils{
         }
         return $path;
     }
+    #endregion
 
-    public static function mergeMultiBlockOptions ($options, $defaults) {
-        $options = array_merge($defaults, $options);
-        foreach ($defaults as $n => $d) {
-            $options[$n] = array_merge($d, $options[$n]);
-        }
-        return $options;
-    }
-
-
+    #region tracing and debug
+    //@todo check how symfony manage that, they probably have developed some solution.
     /**
-     * @param $dest
-     * @param string $root
-     * @param string $dir_sep
-     * @return string
-     */
-    public static function relativePath($dest, $root = '', $dir_sep = DIRECTORY_SEPARATOR) {
-        $root = explode($dir_sep, $root);
-        $dest = explode($dir_sep, $dest);
-        $path = '.';
-        $fix = '';
-        $diff = 0;
-        for($i = -1; ++$i < max(($rC = count($root)), ($dC = count($dest)));)
-        {
-            if(isset($root[$i]) and isset($dest[$i]))
-            {
-                if($diff)
-                {
-                    $path .= $dir_sep. '..';
-                    $fix .= $dir_sep. $dest[$i];
-                    continue;
-                }
-                if($root[$i] != $dest[$i])
-                {
-                    $diff = 1;
-                    $path .= $dir_sep. '..';
-                    $fix .= $dir_sep. $dest[$i];
-                    continue;
-                }
-            }
-            elseif(!isset($root[$i]) and isset($dest[$i]))
-            {
-                for($j = $i-1; ++$j < $dC;)
-                {
-                    $fix .= $dir_sep. $dest[$j];
-                }
-                break;
-            }
-            elseif(isset($root[$i]) and !isset($dest[$i]))
-            {
-                for($j = $i-1; ++$j < $rC;)
-                {
-                    $fix = $dir_sep. '..'. $fix;
-                }
-                break;
-            }
-        }
-        return $path. $fix;
-    }
-
-    /**
+     * Return the current stack trace.
+     *
      * @return array
      */
     public static function getStackTrace () {
@@ -140,6 +121,8 @@ class Utils{
         return $stack;
     }
     /**
+     * helper to traverse a stack trace
+     *
      * @param array $stack
      * @param $classType
      * @return array|null
@@ -160,6 +143,7 @@ class Utils{
         }
         return $caller;
     }
+    #endregion
 }
 Utils::$stderrHandle = fopen('php://stderr', 'w+');
 Utils::$stdoutHandle = fopen('php://stdout', 'w+');
