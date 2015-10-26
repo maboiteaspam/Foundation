@@ -103,8 +103,8 @@ class Registry {
      * @return mixed
      */
     public function registerPath($path, $as=null){
-        $this->config['paths'][] = rp($path);
-        if($as) $this->config['alias']["$as:"] = rp($path);
+        $this->config['paths'][] = realpath($path); // wish we don t need this realpath.
+        if($as) $this->config['alias']["$as:"] = realpath($path);; // wish we don t need this realpath.
         return $path;
     }
 
