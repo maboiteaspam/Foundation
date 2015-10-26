@@ -10,6 +10,9 @@ use C\ModernApp\File\FileTransformsInterface;
  * to import a layout file
  * from another layout file.
  *
+ * structure:
+ *  - import_file: Module:/path/to/layout.yml
+ *
  * @package C\ModernApp\File\Helpers
  */
 class FileHelper extends  AbstractStaticLayoutHelper{

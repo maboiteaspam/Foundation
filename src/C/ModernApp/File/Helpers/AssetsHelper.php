@@ -22,8 +22,10 @@ class AssetsHelper extends AbstractStaticLayoutHelper{
      *
      * $nodeContents is an array such [
      *  alias => jquery,
-     *  path => jquery,
-     *  version => jquery,
+     *  path => /fs/path/to/jquery.js,
+     *  version => x.x,
+     *  target => page_footer_js,
+     *  first => false,
      * ]
      *
      * @param FileTransformsInterface $T

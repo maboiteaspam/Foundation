@@ -7,6 +7,16 @@ use C\Esi\Transforms as Esi;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 
+/**
+ * Class EsiHelper
+ * provide esify: keyword
+ *
+ * structure:
+ *  esify:
+ *      id: [select block id]
+ *
+ * @package C\ModernApp\File\Helpers
+ */
 class EsiHelper extends  AbstractStaticLayoutHelper{
 
     /**
@@ -22,6 +32,9 @@ class EsiHelper extends  AbstractStaticLayoutHelper{
         $this->generator = $generator;
     }
 
+    /**
+     * @param Request $request
+     */
     public function setRequest (Request $request) {
         $this->request = $request;
     }

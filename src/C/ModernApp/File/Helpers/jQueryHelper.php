@@ -7,6 +7,16 @@ use C\ModernApp\jQuery\Transforms as jQuery;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 
+/**
+ * Class jQueryHelper
+ * provide ajaxify: keyword
+ *
+ * structure:
+ *  ajaxify:
+ *      id: [select block id]
+ *
+ * @package C\ModernApp\File\Helpers
+ */
 class jQueryHelper extends  AbstractStaticLayoutHelper{
 
     /**
@@ -18,10 +28,16 @@ class jQueryHelper extends  AbstractStaticLayoutHelper{
      */
     protected $request;
 
+    /**
+     * @param UrlGenerator $generator
+     */
     public function setGenerator (UrlGenerator $generator) {
         $this->generator = $generator;
     }
 
+    /**
+     * @param Request $request
+     */
     public function setRequest (Request $request) {
         $this->request = $request;
     }
@@ -58,6 +74,8 @@ class jQueryHelper extends  AbstractStaticLayoutHelper{
     /**
      * Provide a new block action to inject jquery in your view.
      *
+     * @deprecated
+     *
      * @param FileTransformsInterface $T
      * @param $blockTarget
      * @param $nodeAction
@@ -66,6 +84,8 @@ class jQueryHelper extends  AbstractStaticLayoutHelper{
      */
     public function executeBlockNode (FileTransformsInterface $T, $blockTarget, $nodeAction, $nodeContents) {
         if ($nodeAction==="inject_jquery") {
+            // @todo this node is now deprecated, it s not document-able, not good.
+            // @todo add a way to log that properly to the dashboard
             if (is_string($nodeContents)) {
                 $nodeContents = [
                     'version'   => $nodeContents,
@@ -82,6 +102,7 @@ class jQueryHelper extends  AbstractStaticLayoutHelper{
                 ->inject($nodeContents);
             return true;
 
+            // as this is now deprecated too, move those out to a dedicated helper
         } else if ($nodeAction==="dom_prepend_to") {
 
         } else if ($nodeAction==="dom_append_to") {
