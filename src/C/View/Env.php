@@ -1,6 +1,14 @@
 <?php
 namespace C\View;
 
+/**
+ * Class Env
+ * provides system environmental
+ * data such timezone, date format,
+ * number formatting, charset
+ *
+ * @package C\View
+ */
 class Env {
 
     public $dateFormat;
