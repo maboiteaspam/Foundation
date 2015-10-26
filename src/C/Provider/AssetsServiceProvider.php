@@ -64,12 +64,16 @@ class AssetsServiceProvider implements ServiceProviderInterface
 
             return new KnownFs($registry);
         });
-        $app['assets.responder'] = $app->share(function(Application $app) {
-            $responder = new BuiltinResponder();
-            $responder->wwwDir = $app['documentRoot'];
-            $responder->setFS($app['assets.fs']);
-            return $responder;
-        });
+
+        if ($app['assets.bridge_type']==='builtin') {
+            $app['assets.responder'] = $app->share(function(Application $app) {
+                $responder = new BuiltinResponder();
+                $responder->wwwDir = $app['documentRoot'];
+                $responder->setFS($app['assets.fs']);
+                return $responder;
+            });
+            if(!isset($app['assets.verbose'])) $app['assets.verbose'] = false;
+        }
 
 
     }
@@ -84,7 +88,7 @@ class AssetsServiceProvider implements ServiceProviderInterface
     {
 
         if (isset($app['httpcache.tagger'])) {
-            $fs = $app['assets.fs'];
+            $fs     = $app['assets.fs'];
             $tagger = $app['httpcache.tagger'];
             /* @var $fs \C\FS\KnownFs */
             /* @var $tagger \C\TagableResource\ResourceTagger */
@@ -106,11 +110,13 @@ class AssetsServiceProvider implements ServiceProviderInterface
 
         if (isset($app['layout'])) {
             $app->before(function (Request $request, Application $app) {
+
                 $injector = new AssetsInjector();
-                $injector->concatenate = $app['assets.concat'];
-                $injector->assetsFS = $app['assets.fs'];
-                $injector->wwwDir = $app['assets.www_dir'];
-                $injector->buildDir = $app['assets.build_dir'];
+                $injector->concatenate  = $app['assets.concat'];
+                $injector->assetsFS     = $app['assets.fs'];
+                $injector->wwwDir       = $app['assets.www_dir'];
+                $injector->buildDir     = $app['assets.build_dir'];
+
                 $layout = $app['layout'];
                 /* @var $layout \C\Layout\Layout */
                 $layout->afterResolve(function () use($injector, $app) {
@@ -136,13 +142,13 @@ class AssetsServiceProvider implements ServiceProviderInterface
             $app['layout.view']->addHelper($assetsViewHelper);
         }
 
-        if(!isset($app['assets.verbose'])) $app['assets.verbose'] = false;
         if (php_sapi_name()==='cli-server') {
-//            $app['assets.fs']->registry->loadFromCache();
-            /* @var $responder \C\Assets\BuiltinResponder */
-            $responder = $app['assets.responder'];
-            $app['assets.fs']->registry->loadFromCache();
-            $responder->respond($app['assets.verbose']);
+            if (isset($app['assets.responder'])) {
+                /* @var $responder \C\Assets\BuiltinResponder */
+                $responder = $app['assets.responder'];
+                $app['assets.fs']->registry->loadFromCache();
+                $responder->respond($app['assets.verbose']);
+            }
         } else {
             $app->before(function($request, Application $app){
                 $app['assets.fs']->registry->loadFromCache();
@@ -150,13 +156,17 @@ class AssetsServiceProvider implements ServiceProviderInterface
         }
 
         if (isset($app['watchers.watched'])) {
-            $app['watchers.watched'] = $app->share($app->extend('watchers.watched', function($watched, Application $app) {
-                $w = new WatchedRegistry();
-                $w->setRegistry($app['assets.fs']->registry);
-                $w->setName("assets.fs");
-                $watched[] = $w;
-                return $watched;
-            }));
+            $app['watchers.watched'] = $app->share(
+                $app->extend('watchers.watched',
+                    function($watched, Application $app) {
+                        $w = new WatchedRegistry();
+                        $w->setRegistry($app['assets.fs']->registry);
+                        $w->setName("assets.fs");
+                        $watched[] = $w;
+                        return $watched;
+                    }
+                )
+            );
         }
 
     }
