@@ -3,6 +3,13 @@ namespace C\View\Helper;
 
 use C\Layout\Layout;
 
+/**
+ * Class LayoutViewHelper
+ * provides the ability to display the content
+ * of the given block id.
+ *
+ * @package C\View\Helper
+ */
 class LayoutViewHelper extends AbstractViewHelper {
 
     /**
