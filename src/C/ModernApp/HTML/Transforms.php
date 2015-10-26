@@ -4,6 +4,12 @@ namespace C\ModernApp\HTML;
 use C\Layout\Transforms\Transforms as BaseTransforms;
 use Silex\Application;
 
+/**
+ * Class Transforms
+ * @deprecated prefer importing HTML:/1-column.yml
+ *
+ * @package C\ModernApp\HTML
+ */
 class Transforms extends BaseTransforms{
 
     /**
