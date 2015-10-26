@@ -161,7 +161,6 @@ Every time you ll create a module, a structure like this will be created :
                                        # to declare your module as a service.
  |   .gitignore                     # get things done right.
  |   .editorconfig                  # get things done right.
- |   bower.json                     # get things done right.
  |   .bowerrc                       # get things done right.
  |   app.php                        # Web application entry point.
  |   bootstrap.php                  # Application modules registration and configuration.
