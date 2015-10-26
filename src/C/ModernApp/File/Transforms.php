@@ -9,12 +9,15 @@ use C\FS\Store;
 
 /**
  * Class Transforms
+ * to update layout instance given
+ * an input provided by a file path
  *
  *
  * @package C\ModernApp\File
  */
 class Transforms extends BaseTransforms implements FileTransformsInterface{
 
+    #region setter ect
     /**
      * @return Transforms
      */
@@ -30,6 +33,12 @@ class Transforms extends BaseTransforms implements FileTransformsInterface{
     /**
      * Helpers are responsible to declare and implement
      * actions to apply on layout, structure, or blocks.
+     * such as
+     *  import:
+     *  add_assets:
+     *  [select block id]
+     *
+     * They can receive dynamic values.
      *
      * @var array
      */
@@ -64,8 +73,18 @@ class Transforms extends BaseTransforms implements FileTransformsInterface{
         $this->store = $store;
         return $this;
     }
+    #endregion
 
+    #region transform switcher
     /**
+     * Takes an array of constraints and
+     * require them to return true.
+     *
+     * [
+     *  device => !desktop
+     *  lang=>fr
+     * ]
+     *
      * @param $facets
      * @return $this|VoidFileTransforms
      */
@@ -141,9 +160,12 @@ class Transforms extends BaseTransforms implements FileTransformsInterface{
             ->setLayout($this->getLayout())
             ->setInnerTransform($this);
     }
+    #endregion
 
     /**
-     * Imports the given file and process it on the current layout.
+     * Imports the given file
+     * and process it
+     * on the current layout.
      *
      * @param $filePath
      * @return $this
@@ -175,8 +197,10 @@ class Transforms extends BaseTransforms implements FileTransformsInterface{
         if (isset($layoutStruct['structure'])) {
             $sub = $structure;
             foreach ($layoutStruct['structure'] as $actions) {
+                // loop
                 foreach ($actions as $action => $options) {
 
+                    // passToEach
                     $sub = $this->executeStructureNode((is_object($sub)?$sub:$structure), $action, $options);
 
                     if ($sub instanceof TransformsInterface) {
@@ -186,8 +210,12 @@ class Transforms extends BaseTransforms implements FileTransformsInterface{
                         $nodeActions = $options;
                         $structure->then(function (FileTransformsInterface $T) use($subject, $nodeActions) {
                             foreach ($nodeActions as $nodeAction=>$nodeContent) {
+                                // catchAllToEach
                                 if (!$this->executeBlockNode($T, $subject, $nodeAction, $nodeContent)) {
                                     // mhh
+                                    // dead as not found,
+                                    // in fact, it just keep going.
+                                    //@todo put a log here, there is keyword which is not evaluated properly.
                                 }
                             }
                         });
@@ -200,7 +228,8 @@ class Transforms extends BaseTransforms implements FileTransformsInterface{
     }
 
     /**
-     * Executes a meta node, one that affects layout object properties.
+     * Executes a meta node,
+     * one that affects layout object properties.
      *
      * @param $nodeAction
      * @param $nodeContent
@@ -224,7 +253,7 @@ class Transforms extends BaseTransforms implements FileTransformsInterface{
      * Execute a structural layout node.
      * For examples,
      * - importing a file
-     * - active / void transform switch
+     * - active / void transform switch via facets
      * - dashboard insertion
      * are considered as a structural action
      *
