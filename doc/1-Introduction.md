@@ -161,7 +161,6 @@ Every time you ll create a module, a structure like this will be created :
                                        # to declare your module as a service.
  |   .gitignore                     # get things done right.
  |   .editorconfig                  # get things done right.
- |   bower.json                     # get things done right.
  |   .bowerrc                       # get things done right.
  |   app.php                        # Web application entry point.
  |   bootstrap.php                  # Application modules registration and configuration.
@@ -206,11 +205,16 @@ That's it for this introduction about C framework.
 To continue your tour and experience, please choose one of the following topic,
 
 - I'm front end designer, get to know how to work with layouts
-https://github.com/maboiteaspam/Foundation/blob/master/doc/2.0-working-from-layout-perspective.md
+
+    https://github.com/maboiteaspam/Foundation/blob/master/doc/2.0-working-from-layout-perspective.md
+
 - I'm back end developer, get to know how to work with controllers, entities, cache
-https://github.com/maboiteaspam/Foundation/blob/master/doc/3-working-from-controller-perspective.md
+
+    https://github.com/maboiteaspam/Foundation/blob/master/doc/3.0-working-from-controller-perspective.md
+
 - I'm senior project developer, get to know how to work with framework internals and advanced topics
-https://github.com/maboiteaspam/Foundation/blob/master/doc/4-advanced-topics.md
+
+    https://github.com/maboiteaspam/Foundation/blob/master/doc/4.0-advanced-topics.md
 
 Don t forget to check out the Welcome module available here
 https://github.com/maboiteaspam/Welcome

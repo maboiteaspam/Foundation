@@ -64,15 +64,19 @@ class FormServiceProvider implements ServiceProviderInterface
             $fs = $app['intl.fs'];
             /* @var $fs KnownFS */
             if (isset($app['validator'])) {
-                $r = new \ReflectionClass('Symfony\Component\Validator\Validation');
-                $path = dirname($r->getFilename()).'/Resources/translations/';
-                $fs->register($path, 'Validator');
+                try{
+                    $r = new \ReflectionClass('Symfony\Component\Validator\Validation');
+                    $path = dirname($r->getFilename()).'/Resources/translations/';
+                    $fs->register($path, 'Validator');
+                }catch(\Exception $ex) {}
             }
 
             if (isset($app['form.factory'])) {
-                $r = new \ReflectionClass('Symfony\Component\Form\Form');
-                $path = dirname($r->getFilename()).'/Resources/translations/';
-                $fs->register($path, 'Form');
+                try{
+                    $r = new \ReflectionClass('Symfony\Component\Form\Form');
+                    $path = dirname($r->getFilename()).'/Resources/translations/';
+                    $fs->register($path, 'Form');
+                }catch(\Exception $ex) {}
             }
 
             if (isset($app['modern.layout.helpers'])) {
