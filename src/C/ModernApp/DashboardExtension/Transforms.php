@@ -6,8 +6,12 @@ use C\Layout\Layout;
 
 /**
  * Class Transforms
- * the layout to provide
- * the dashboard extensions to display.
+ * the layout to inject dashboard extensions
+ *
+ * Dashboard extensions
+ * are methods of this class, such as
+ *
+ * time_travel, structure_visualizer ect
  *
  * @package C\ModernApp\DashboardExtension
  */
