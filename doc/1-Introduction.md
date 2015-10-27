@@ -137,7 +137,7 @@ Running "start" task
 php -S localhost:8000 -t www app.php
 ```
 
-That`s it! Your system should now be spawning a new browser window and get you on your first C web application endpoint.
+That's it! Your system should now be spawning a new browser window and get you on your first C web application endpoint.
 
 
 ## Module overview
