@@ -6,7 +6,87 @@ C framework is a lightweight framework dedicated to frontend development for php
 
 Based on top of silex and symfony.
 
-Please see more at https://github.com/maboiteaspam/Foundation/blob/master/doc/1-Introduction.md
+Please see more at
+http://maboiteaspam.github.io/Foundation/index.html
+
+# Installation
+
+To hack it, just run usual `composer` commands.
+
+```sh
+composer require git@github.com:maboiteaspam/Foundation.git
+```
+
+# Register
+
+This module provides a list of services
+to register to your application.
+
+Get an eye on bootstrap module to know more.
+
+https://github.com/maboiteaspam/Bootstrap
+
+# Developer
+
+#### Running the tests
+
+#### Contributing guidelines
+
+#### Writing the doc
+
+The documentation is wrote using Markdown , GH flavor.
+
+It s hosted on github at this address
+
+https://github.com/maboiteaspam/Foundation/tree/master/doc
+
+The documentation is provided as a book to the end user
+
+http://maboiteaspam.github.io/Foundation/1-Introduction.html
+
+It s published and made public via github `gh-pages`
+
+https://github.com/maboiteaspam/Foundation/tree/gh-pages
+
+To generate the documentation `C` relies on `gitbook`
+
+
+#### Generating the doc
+
+To generate the documentation please get to know `gitbook`
+
+https://www.gitbook.com
+
+###### __TLDR__
+
+__setup__
+```sh
+> npm install gitbook-cli -g
+> gitbook serve doc # to check your changes
+> gitbook build doc book # to build the doc
+```
+
+__routine build__
+```sh
+mkdir ../Foundation-book
+cd ../Foundation-book
+git clone git@github.com:maboiteaspam/Foundation.git .
+git branch gh-pages
+git checkout gh-pages
+gitbook build ../Foundation/doc .
+git add -A
+git commit -m "Book update"
+git push
+cd ../Foundation
+rm -fr ../Foundation-book
+```
+
+
+
+
+
+
+@todo move this part out into per service README file.
 
 ## Modules provided
 
