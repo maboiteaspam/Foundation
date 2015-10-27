@@ -1,0 +1,439 @@
+<!DOCTYPE HTML>
+<html lang="en" >
+    
+    <head>
+        
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <title>Working with view templates | C - A php framework for frontend development</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 2.5.0">
+        
+        
+        <meta name="HandheldFriendly" content="true"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <link rel="apple-touch-icon-precomposed" sizes="152x152" href="gitbook/images/apple-touch-icon-precomposed-152.png">
+        <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
+        
+    <link rel="stylesheet" href="gitbook/style.css">
+    
+        
+        <link rel="stylesheet" href="gitbook/plugins/gitbook-plugin-highlight/website.css">
+        
+    
+        
+        <link rel="stylesheet" href="gitbook/plugins/gitbook-plugin-search/search.css">
+        
+    
+        
+        <link rel="stylesheet" href="gitbook/plugins/gitbook-plugin-fontsettings/website.css">
+        
+    
+    
+
+        
+    
+    
+    <link rel="next" href="./2.6-layout-and-internationalization.html" />
+    
+    
+    <link rel="prev" href="./2.4-layout-using-ajax-and-esi.html" />
+    
+
+        
+    </head>
+    <body>
+        
+        
+    <div class="book" data-level="2.5" data-chapter-title="Working with view templates" data-filepath="2.5-layout-and-view-templates.md" data-basepath="." data-revision="Tue Oct 27 2015 21:05:28 GMT+0800 (CST)">
+    
+
+<div class="book-summary">
+    <nav role="navigation">
+        <ul class="summary">
+            
+            
+            
+            
+
+            
+
+            
+    
+        <li class="chapter " data-level="0" data-path="index.html">
+            
+                
+                    <a href="./index.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                        Introduction
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="1" data-path="1-Introduction.html">
+            
+                
+                    <a href="./1-Introduction.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>1.</b>
+                        
+                        Introduction
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2" data-path="2.0-working-from-layout-perspective.html">
+            
+                
+                    <a href="./2.0-working-from-layout-perspective.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.</b>
+                        
+                        Working from layout perspective
+                    </a>
+            
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="2.1" data-path="2.1-layout-actions.html">
+            
+                
+                    <a href="./2.1-layout-actions.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.1.</b>
+                        
+                        Layout actions
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2" data-path="2.2-layout-and-assets.html">
+            
+                
+                    <a href="./2.2-layout-and-assets.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.2.</b>
+                        
+                        Working with assets
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.3" data-path="2.3-layout-and-request-facets.html">
+            
+                
+                    <a href="./2.3-layout-and-request-facets.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.3.</b>
+                        
+                        Working with request facets
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.4" data-path="2.4-layout-using-ajax-and-esi.html">
+            
+                
+                    <a href="./2.4-layout-using-ajax-and-esi.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.4.</b>
+                        
+                        Working with ajax and esi
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter active" data-level="2.5" data-path="2.5-layout-and-view-templates.html">
+            
+                
+                    <a href="./2.5-layout-and-view-templates.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.5.</b>
+                        
+                        Working with view templates
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.6" data-path="2.6-layout-and-internationalization.html">
+            
+                
+                    <a href="./2.6-layout-and-internationalization.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.6.</b>
+                        
+                        Working with internationalization
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.7" data-path="2.7-layout-and-form.html">
+            
+                
+                    <a href="./2.7-layout-and-form.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.7.</b>
+                        
+                        Working with forms
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.8" data-path="2.8-layout-and-validation.html">
+            
+                
+                    <a href="./2.8-layout-and-validation.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.8.</b>
+                        
+                        Working wih validation
+                    </a>
+            
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="3" data-path="3.0-working-from-controller-perspective.html">
+            
+                
+                    <a href="./3.0-working-from-controller-perspective.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.</b>
+                        
+                        Working from controller perspective
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="4" data-path="4.0-advanced-topics.html">
+            
+                
+                    <a href="./4.0-advanced-topics.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.</b>
+                        
+                        Advanced topics
+                    </a>
+            
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.1" data-path="4.1-setting-up-dev-environment.html">
+            
+                
+                    <a href="./4.1-setting-up-dev-environment.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.1.</b>
+                        
+                        Setup your dev environment
+                    </a>
+            
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+
+            
+            <li class="divider"></li>
+            <li>
+                <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+                    Published with GitBook
+                </a>
+            </li>
+            
+        </ul>
+    </nav>
+</div>
+
+    <div class="book-body">
+        <div class="body-inner">
+            <div class="book-header" role="navigation">
+    <!-- Actions Left -->
+    
+    <a href="./GLOSSARY.html" class="btn pull-left" aria-label="Glossary"><i class="fa fa-sort-alpha-asc"></i></a>
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="./" >C - A php framework for frontend development</a>
+    </h1>
+</div>
+
+            <div class="page-wrapper" tabindex="-1" role="main">
+                <div class="page-inner">
+                
+                
+                    <section class="normal" id="section-">
+                    
+                        <h2 id="working-with-templates">Working with templates</h2>
+<p>Templates are the implementation files of each block&apos;s&apos; view.</p>
+<p>They are located under <code>src/templates/</code>,
+they use <code>plain php</code> as templating engine
+and receives <code>plain php object</code> as data.</p>
+<p>Views are provided an useful context helper to
+realize most common display actions.</p>
+<p>A view example is</p>
+<p><strong>File:</strong> src/templates/hello-the-world.php</p>
+<pre><code class="lang-php"><span class="hljs-preprocessor">&lt;?php</span>
+<span class="hljs-comment">/* <span class="hljs-doctag">@var</span> $this \C\View\ConcreteContext */</span>
+<span class="hljs-preprocessor">?&gt;</span>
+&lt;h1&gt;<span class="hljs-preprocessor">&lt;?php</span> <span class="hljs-keyword">echo</span> <span class="hljs-variable">$this</span>-&gt;upper(<span class="hljs-variable">$this</span>-&gt;trans(<span class="hljs-string">&quot;welcome&quot;</span>)); <span class="hljs-preprocessor">?&gt;</span>&lt;/h1&gt;
+
+<span class="hljs-preprocessor">&lt;?php</span> <span class="hljs-variable">$this</span>-&gt;display(<span class="hljs-string">&apos;configurable_block_id&apos;</span>); <span class="hljs-preprocessor">?&gt;</span>
+</code></pre>
+<p><strong>Tips</strong>
+Don&apos;t forget to use php comments to qualify <code>$this</code> variable.</p>
+<p>Doing so helps your IDE to provide more pertinent information!</p>
+<pre><code class="lang-php"><span class="hljs-preprocessor">&lt;?php</span>
+<span class="hljs-comment">/* <span class="hljs-doctag">@var</span> $this \C\View\ConcreteContext */</span>
+<span class="hljs-preprocessor">?&gt;</span>
+... put the content here
+</code></pre>
+<h3 id="injectable-blocks">Injectable blocks</h3>
+<p>It s useful pattern to use when you want to inject blocks into a template.</p>
+<p>The principle is very simple, use a data variable as block name.</p>
+<p><strong>File:</strong> src/templates/injected-block.php</p>
+<pre><code class="lang-php"><span class="hljs-preprocessor">&lt;?php</span>
+<span class="hljs-comment">/* <span class="hljs-doctag">@var</span> $this \C\View\ConcreteContext */</span>
+<span class="hljs-comment">/* <span class="hljs-doctag">@var</span> $injected_block_id string The block to inject. */</span>
+<span class="hljs-preprocessor">?&gt;</span>
+&lt;h1&gt;<span class="hljs-preprocessor">&lt;?php</span> <span class="hljs-keyword">echo</span> <span class="hljs-variable">$this</span>-&gt;upper (<span class="hljs-variable">$this</span>-&gt;trans (<span class="hljs-string">&quot;welcome&quot;</span>)); <span class="hljs-preprocessor">?&gt;</span>&lt;/h1&gt;
+
+<span class="hljs-preprocessor">&lt;?php</span> <span class="hljs-variable">$this</span>-&gt;display  (<span class="hljs-variable">$injected_block_id</span>); <span class="hljs-preprocessor">?&gt;</span>
+</code></pre>
+<p>Later, within the layout definition file,
+it will be possible to inject and configure a given block id.</p>
+<pre><code class="lang-yml">structure:
+
+  # declare import a base
+  - import: HTML:/1-column.yml
+  - import: jQuery:/register.yml
+    # re-configure body_content and
+    # and call a block injectable template
+    body_content:
+      set_template: Welcome:/templates/injected-block.php
+      # using default_data, set a default injected block_id
+      set_default_data:
+        injected_block_id: injected_block
+
+    # defines the configuration of the injected block
+    injected_block:
+        set_template: Module:/file/path.ext
+
+    # For the fun!
+    ajaxify:
+      id: injected_block
+</code></pre>
+<h3 id="view-context-and-its-helpers">View context and its helpers</h3>
+<p><strong>See more</strong></p>
+<ul>
+<li><p><a href="https://github.com/maboiteaspam/Foundation/blob/master/src/C/View/ConcreteContext.php" target="_blank">https://github.com/maboiteaspam/Foundation/blob/master/src/C/View/ConcreteContext.php</a></p>
+<p>  For a complete reference of available helpers</p>
+</li>
+</ul>
+<h2 id="whats-next-">What&apos;s next ?</h2>
+<p>To continue your tour and experience, read more about <code>internationalization</code></p>
+<ul>
+<li><a href="https://github.com/maboiteaspam/Foundation/blob/master/doc/2.6-layout-and-internationalization.md" target="_blank">https://github.com/maboiteaspam/Foundation/blob/master/doc/2.6-layout-and-internationalization.md</a></li>
+</ul>
+
+                    
+                    </section>
+                
+                
+                </div>
+            </div>
+        </div>
+
+        
+        <a href="./2.4-layout-using-ajax-and-esi.html" class="navigation navigation-prev " aria-label="Previous page: Working with ajax and esi"><i class="fa fa-angle-left"></i></a>
+        
+        
+        <a href="./2.6-layout-and-internationalization.html" class="navigation navigation-next " aria-label="Next page: Working with internationalization"><i class="fa fa-angle-right"></i></a>
+        
+    </div>
+</div>
+
+        
+<script src="gitbook/app.js"></script>
+
+    
+    <script src="gitbook/plugins/gitbook-plugin-search/lunr.min.js"></script>
+    
+
+    
+    <script src="gitbook/plugins/gitbook-plugin-search/search.js"></script>
+    
+
+    
+    <script src="gitbook/plugins/gitbook-plugin-sharing/buttons.js"></script>
+    
+
+    
+    <script src="gitbook/plugins/gitbook-plugin-fontsettings/buttons.js"></script>
+    
+
+<script>
+require(["gitbook"], function(gitbook) {
+    var config = {"highlight":{},"search":{},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2}};
+    gitbook.start(config);
+});
+</script>
+
+        
+    </body>
+    
+</html>

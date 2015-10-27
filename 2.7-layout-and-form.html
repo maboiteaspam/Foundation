@@ -1,0 +1,519 @@
+<!DOCTYPE HTML>
+<html lang="en" >
+    
+    <head>
+        
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <title>Working with forms | C - A php framework for frontend development</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 2.5.0">
+        
+        
+        <meta name="HandheldFriendly" content="true"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <link rel="apple-touch-icon-precomposed" sizes="152x152" href="gitbook/images/apple-touch-icon-precomposed-152.png">
+        <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
+        
+    <link rel="stylesheet" href="gitbook/style.css">
+    
+        
+        <link rel="stylesheet" href="gitbook/plugins/gitbook-plugin-highlight/website.css">
+        
+    
+        
+        <link rel="stylesheet" href="gitbook/plugins/gitbook-plugin-search/search.css">
+        
+    
+        
+        <link rel="stylesheet" href="gitbook/plugins/gitbook-plugin-fontsettings/website.css">
+        
+    
+    
+
+        
+    
+    
+    <link rel="next" href="./2.8-layout-and-validation.html" />
+    
+    
+    <link rel="prev" href="./2.6-layout-and-internationalization.html" />
+    
+
+        
+    </head>
+    <body>
+        
+        
+    <div class="book" data-level="2.7" data-chapter-title="Working with forms" data-filepath="2.7-layout-and-form.md" data-basepath="." data-revision="Tue Oct 27 2015 21:05:28 GMT+0800 (CST)">
+    
+
+<div class="book-summary">
+    <nav role="navigation">
+        <ul class="summary">
+            
+            
+            
+            
+
+            
+
+            
+    
+        <li class="chapter " data-level="0" data-path="index.html">
+            
+                
+                    <a href="./index.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                        Introduction
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="1" data-path="1-Introduction.html">
+            
+                
+                    <a href="./1-Introduction.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>1.</b>
+                        
+                        Introduction
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2" data-path="2.0-working-from-layout-perspective.html">
+            
+                
+                    <a href="./2.0-working-from-layout-perspective.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.</b>
+                        
+                        Working from layout perspective
+                    </a>
+            
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="2.1" data-path="2.1-layout-actions.html">
+            
+                
+                    <a href="./2.1-layout-actions.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.1.</b>
+                        
+                        Layout actions
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2" data-path="2.2-layout-and-assets.html">
+            
+                
+                    <a href="./2.2-layout-and-assets.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.2.</b>
+                        
+                        Working with assets
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.3" data-path="2.3-layout-and-request-facets.html">
+            
+                
+                    <a href="./2.3-layout-and-request-facets.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.3.</b>
+                        
+                        Working with request facets
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.4" data-path="2.4-layout-using-ajax-and-esi.html">
+            
+                
+                    <a href="./2.4-layout-using-ajax-and-esi.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.4.</b>
+                        
+                        Working with ajax and esi
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.5" data-path="2.5-layout-and-view-templates.html">
+            
+                
+                    <a href="./2.5-layout-and-view-templates.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.5.</b>
+                        
+                        Working with view templates
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.6" data-path="2.6-layout-and-internationalization.html">
+            
+                
+                    <a href="./2.6-layout-and-internationalization.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.6.</b>
+                        
+                        Working with internationalization
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter active" data-level="2.7" data-path="2.7-layout-and-form.html">
+            
+                
+                    <a href="./2.7-layout-and-form.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.7.</b>
+                        
+                        Working with forms
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.8" data-path="2.8-layout-and-validation.html">
+            
+                
+                    <a href="./2.8-layout-and-validation.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.8.</b>
+                        
+                        Working wih validation
+                    </a>
+            
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="3" data-path="3.0-working-from-controller-perspective.html">
+            
+                
+                    <a href="./3.0-working-from-controller-perspective.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.</b>
+                        
+                        Working from controller perspective
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="4" data-path="4.0-advanced-topics.html">
+            
+                
+                    <a href="./4.0-advanced-topics.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.</b>
+                        
+                        Advanced topics
+                    </a>
+            
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.1" data-path="4.1-setting-up-dev-environment.html">
+            
+                
+                    <a href="./4.1-setting-up-dev-environment.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.1.</b>
+                        
+                        Setup your dev environment
+                    </a>
+            
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+
+            
+            <li class="divider"></li>
+            <li>
+                <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+                    Published with GitBook
+                </a>
+            </li>
+            
+        </ul>
+    </nav>
+</div>
+
+    <div class="book-body">
+        <div class="body-inner">
+            <div class="book-header" role="navigation">
+    <!-- Actions Left -->
+    
+    <a href="./GLOSSARY.html" class="btn pull-left" aria-label="Glossary"><i class="fa fa-sort-alpha-asc"></i></a>
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="./" >C - A php framework for frontend development</a>
+    </h1>
+</div>
+
+            <div class="page-wrapper" tabindex="-1" role="main">
+                <div class="page-inner">
+                
+                
+                    <section class="normal" id="section-">
+                    
+                        <h2 id="working-with-forms">Working with Forms</h2>
+<p>The C framework offer you to enhance your capabilities to create
+and define views by creating form as descriptive structure.</p>
+<p>To create a form, start a new layout file,
+and make use of <code>create_form</code> or <code>import_form</code> keyword.</p>
+<p>To import a form, you should create a <code>yml</code> file under <code>src/forms/</code>.</p>
+<h4 id="block-actions">Block actions</h4>
+<h6 id="createform">create_form</h6>
+<p><code>create_form</code> keyword to create and configure a Form object to inject in the view.</p>
+<p>It takes an array configuring the form.</p>
+<pre><code class="lang-yml">structure:
+
+  [block_id]:
+    create_form:
+</code></pre>
+<h6 id="importform">import_form</h6>
+<p><code>import_form</code> keyword to create and configure a Form object to inject in the view.</p>
+<p>It takes an array configuring the form.</p>
+<pre><code class="lang-yml">structure:
+
+  [block_id]:
+    import_form:
+      as: myForm
+      from: Welcome:/demoForm.yml
+</code></pre>
+<p>It then takes a number of keywords and structure to configure and
+establish the form information.</p>
+<h4 id="demonstration">Demonstration</h4>
+<p><strong>File:</strong> src/forms/demoForm.yml</p>
+<pre><code class="lang-yml"># Each form must have a name,
+# it s the alias used by others to manipulate/use the form object.
+name: myForm
+# It is possible to use a class defined form
+# it can inject its own validation constraint,
+# its own configuration.
+type: \C\Welcome\FormDemo
+# the HTML attributes of the HTML <form> node.
+attr:
+    # This attribute it useful to disable html5 validation and thus ease testing of backend validation
+    novalidate: novalidate
+    # set a regular attribute on the form element
+    id: myForm
+
+# Declare the members of the form under children key.
+children:
+  # An text field type
+  # http://symfony.com/doc/current/reference/forms/types/text.html
+  form_elment_name:
+    type: text
+    validation:
+      - NotBlank: ~
+    options:
+      label: Your name
+      data: John
+
+  # A submit button
+  subscribe:
+    type: submit
+    options:
+      label: subscribe
+</form></code></pre>
+<p>Then declare the layout file to import the form object.</p>
+<p><strong>File:</strong> src/layouts/formDemo.yml</p>
+<pre><code class="lang-yml">
+structure:
+  # let&apos;s use some pre defined structure for us.
+  - import: HTML:/1-column.yml
+
+   # The form framework requires some view helpers.
+  - import: jQuery:/register.yml
+  - import: Form:/register.yml
+
+    # lets update the body_content block.
+    # It will be used to display the formDemo.
+    body_content:
+
+      # This view expects to receive a form object as $myForm.
+      # It will demonstrate the atuomatic rendering result of a form object.
+      set_template: Welcome:/formDemo.php # This view will receive a form object and process it for rendering.
+
+      # inject asset requirements
+      require:
+        # so far it s using jquery
+        - jquery:2.x || 1.x
+        # and needs some helpers to
+        # manage errors display,
+        # perform ajax validation
+        - form-helper:1.x
+
+      # Now import a form and defines its elements.
+      import_form:
+        as: myForm
+        from: Welcome:/demoForm.yml
+</code></pre>
+<p>Finally, in the view you can process the form like this</p>
+<p><strong>File:</strong> src/templates/formDemo.yml</p>
+<pre><code class="lang-php"><span class="hljs-preprocessor">&lt;?php</span>
+<span class="hljs-comment">/* <span class="hljs-doctag">@var</span> $this \C\View\ConcreteContext */</span>
+<span class="hljs-comment">/* <span class="hljs-doctag">@var</span> $myForm \Symfony\Component\Form\FormView This is the form object to render. */</span>
+<span class="hljs-preprocessor">?&gt;</span>
+
+&lt;h1&gt;Form demonstration&lt;/h1&gt;
+
+<span class="hljs-preprocessor">&lt;?php</span>
+<span class="hljs-keyword">echo</span> <span class="hljs-variable">$this</span>-&gt;form_start(<span class="hljs-variable">$myForm</span>);
+<span class="hljs-keyword">echo</span> <span class="hljs-variable">$this</span>-&gt;form_rows(<span class="hljs-variable">$myForm</span>);
+<span class="hljs-keyword">echo</span> <span class="hljs-variable">$this</span>-&gt;form_end(<span class="hljs-variable">$myForm</span>);
+<span class="hljs-preprocessor">?&gt;</span>
+
+
+<span class="hljs-preprocessor">&lt;?php</span> <span class="hljs-variable">$this</span>-&gt;inlineTo(<span class="hljs-string">&apos;last&apos;</span>); <span class="hljs-preprocessor">?&gt;</span>
+&lt;script&gt;
+    (<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">var</span> form = $(<span class="hljs-string">&quot;#myForm&quot;</span>);
+        form.ajaxForm({
+            dataType: <span class="hljs-string">&apos;json&apos;</span>,
+            success: window.CHelpers.formErrorProcessor(form)
+        });
+        form.on(<span class="hljs-string">&apos;reset&apos;</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+            form.find(<span class="hljs-string">&apos;.errors&apos;</span>).remove()
+        })
+    })();
+&lt;/script&gt;
+<span class="hljs-preprocessor">&lt;?php</span> <span class="hljs-variable">$this</span>-&gt;endInline(); <span class="hljs-preprocessor">?&gt;</span>
+</code></pre>
+<p><strong>Tips</strong>
+View provides a handful way to inline scripts and css to specific blocks.</p>
+<p>You can use on of <code>[&apos;first&apos;,&apos;head&apos;,&apos;foot&apos;,&apos;last&apos;,]</code> inline asset target block.</p>
+<pre><code class="lang-php"><span class="hljs-preprocessor">&lt;?php</span> <span class="hljs-variable">$this</span>-&gt;inlineTo(<span class="hljs-string">&apos;last&apos;</span>); <span class="hljs-preprocessor">?&gt;</span>
+&lt;!-- put script / <span class="hljs-keyword">or</span> css here --&gt;
+<span class="hljs-preprocessor">&lt;?php</span> <span class="hljs-variable">$this</span>-&gt;endInline(); <span class="hljs-preprocessor">?&gt;</span>
+</code></pre>
+<p><strong>See also</strong></p>
+<ul>
+<li><a href="https://github.com/maboiteaspam/Foundation/blob/master/src/C/ModernApp/HTML/layouts/1-column.yml" target="_blank">https://github.com/maboiteaspam/Foundation/blob/master/src/C/ModernApp/HTML/layouts/1-column.yml</a></li>
+<li><a href="https://github.com/maboiteaspam/Foundation/blob/master/src/C/ModernApp/jQuery/layouts/register.yml" target="_blank">https://github.com/maboiteaspam/Foundation/blob/master/src/C/ModernApp/jQuery/layouts/register.yml</a></li>
+<li><a href="https://github.com/maboiteaspam/Foundation/blob/master/src/C/Form/layouts/register.yml" target="_blank">https://github.com/maboiteaspam/Foundation/blob/master/src/C/Form/layouts/register.yml</a></li>
+<li><a href="https://github.com/maboiteaspam/Welcome/blob/master/src/layouts/formDemo.yml" target="_blank">https://github.com/maboiteaspam/Welcome/blob/master/src/layouts/formDemo.yml</a>
+  to study a complete example</li>
+</ul>
+<p><strong>read more</strong></p>
+<ul>
+<li><a href="http://silex.sensiolabs.org/doc/providers/form.html" target="_blank">http://silex.sensiolabs.org/doc/providers/form.html</a></li>
+<li><a href="http://symfony.com/doc/2.3/book/forms.html#rendering-a-form-in-a-template" target="_blank">http://symfony.com/doc/2.3/book/forms.html#rendering-a-form-in-a-template</a></li>
+<li><a href="http://symfony.com/doc/2.3/book/forms.htmld#built-in-field-types" target="_blank">http://symfony.com/doc/2.3/book/forms.htmld#built-in-field-types</a></li>
+</ul>
+<h2 id="whats-next-">What&apos;s next ?</h2>
+<p>To continue your tour and experience, read more about <code>validation</code></p>
+<ul>
+<li><a href="https://github.com/maboiteaspam/Foundation/blob/master/doc/2.8-layout-and-validation.md" target="_blank">https://github.com/maboiteaspam/Foundation/blob/master/doc/2.8-layout-and-validation.md</a></li>
+</ul>
+
+                    
+                    </section>
+                
+                
+                </div>
+            </div>
+        </div>
+
+        
+        <a href="./2.6-layout-and-internationalization.html" class="navigation navigation-prev " aria-label="Previous page: Working with internationalization"><i class="fa fa-angle-left"></i></a>
+        
+        
+        <a href="./2.8-layout-and-validation.html" class="navigation navigation-next " aria-label="Next page: Working wih validation"><i class="fa fa-angle-right"></i></a>
+        
+    </div>
+</div>
+
+        
+<script src="gitbook/app.js"></script>
+
+    
+    <script src="gitbook/plugins/gitbook-plugin-search/lunr.min.js"></script>
+    
+
+    
+    <script src="gitbook/plugins/gitbook-plugin-search/search.js"></script>
+    
+
+    
+    <script src="gitbook/plugins/gitbook-plugin-sharing/buttons.js"></script>
+    
+
+    
+    <script src="gitbook/plugins/gitbook-plugin-fontsettings/buttons.js"></script>
+    
+
+<script>
+require(["gitbook"], function(gitbook) {
+    var config = {"highlight":{},"search":{},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2}};
+    gitbook.start(config);
+});
+</script>
+
+        
+    </body>
+    
+</html>

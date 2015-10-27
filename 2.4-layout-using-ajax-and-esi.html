@@ -1,0 +1,421 @@
+<!DOCTYPE HTML>
+<html lang="en" >
+    
+    <head>
+        
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <title>Working with ajax and esi | C - A php framework for frontend development</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 2.5.0">
+        
+        
+        <meta name="HandheldFriendly" content="true"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <link rel="apple-touch-icon-precomposed" sizes="152x152" href="gitbook/images/apple-touch-icon-precomposed-152.png">
+        <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
+        
+    <link rel="stylesheet" href="gitbook/style.css">
+    
+        
+        <link rel="stylesheet" href="gitbook/plugins/gitbook-plugin-highlight/website.css">
+        
+    
+        
+        <link rel="stylesheet" href="gitbook/plugins/gitbook-plugin-search/search.css">
+        
+    
+        
+        <link rel="stylesheet" href="gitbook/plugins/gitbook-plugin-fontsettings/website.css">
+        
+    
+    
+
+        
+    
+    
+    <link rel="next" href="./2.5-layout-and-view-templates.html" />
+    
+    
+    <link rel="prev" href="./2.3-layout-and-request-facets.html" />
+    
+
+        
+    </head>
+    <body>
+        
+        
+    <div class="book" data-level="2.4" data-chapter-title="Working with ajax and esi" data-filepath="2.4-layout-using-ajax-and-esi.md" data-basepath="." data-revision="Tue Oct 27 2015 21:05:28 GMT+0800 (CST)">
+    
+
+<div class="book-summary">
+    <nav role="navigation">
+        <ul class="summary">
+            
+            
+            
+            
+
+            
+
+            
+    
+        <li class="chapter " data-level="0" data-path="index.html">
+            
+                
+                    <a href="./index.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                        Introduction
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="1" data-path="1-Introduction.html">
+            
+                
+                    <a href="./1-Introduction.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>1.</b>
+                        
+                        Introduction
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2" data-path="2.0-working-from-layout-perspective.html">
+            
+                
+                    <a href="./2.0-working-from-layout-perspective.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.</b>
+                        
+                        Working from layout perspective
+                    </a>
+            
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="2.1" data-path="2.1-layout-actions.html">
+            
+                
+                    <a href="./2.1-layout-actions.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.1.</b>
+                        
+                        Layout actions
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2" data-path="2.2-layout-and-assets.html">
+            
+                
+                    <a href="./2.2-layout-and-assets.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.2.</b>
+                        
+                        Working with assets
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.3" data-path="2.3-layout-and-request-facets.html">
+            
+                
+                    <a href="./2.3-layout-and-request-facets.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.3.</b>
+                        
+                        Working with request facets
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter active" data-level="2.4" data-path="2.4-layout-using-ajax-and-esi.html">
+            
+                
+                    <a href="./2.4-layout-using-ajax-and-esi.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.4.</b>
+                        
+                        Working with ajax and esi
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.5" data-path="2.5-layout-and-view-templates.html">
+            
+                
+                    <a href="./2.5-layout-and-view-templates.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.5.</b>
+                        
+                        Working with view templates
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.6" data-path="2.6-layout-and-internationalization.html">
+            
+                
+                    <a href="./2.6-layout-and-internationalization.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.6.</b>
+                        
+                        Working with internationalization
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.7" data-path="2.7-layout-and-form.html">
+            
+                
+                    <a href="./2.7-layout-and-form.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.7.</b>
+                        
+                        Working with forms
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.8" data-path="2.8-layout-and-validation.html">
+            
+                
+                    <a href="./2.8-layout-and-validation.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.8.</b>
+                        
+                        Working wih validation
+                    </a>
+            
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="3" data-path="3.0-working-from-controller-perspective.html">
+            
+                
+                    <a href="./3.0-working-from-controller-perspective.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.</b>
+                        
+                        Working from controller perspective
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="4" data-path="4.0-advanced-topics.html">
+            
+                
+                    <a href="./4.0-advanced-topics.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.</b>
+                        
+                        Advanced topics
+                    </a>
+            
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.1" data-path="4.1-setting-up-dev-environment.html">
+            
+                
+                    <a href="./4.1-setting-up-dev-environment.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.1.</b>
+                        
+                        Setup your dev environment
+                    </a>
+            
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+
+            
+            <li class="divider"></li>
+            <li>
+                <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+                    Published with GitBook
+                </a>
+            </li>
+            
+        </ul>
+    </nav>
+</div>
+
+    <div class="book-body">
+        <div class="body-inner">
+            <div class="book-header" role="navigation">
+    <!-- Actions Left -->
+    
+    <a href="./GLOSSARY.html" class="btn pull-left" aria-label="Glossary"><i class="fa fa-sort-alpha-asc"></i></a>
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="./" >C - A php framework for frontend development</a>
+    </h1>
+</div>
+
+            <div class="page-wrapper" tabindex="-1" role="main">
+                <div class="page-inner">
+                
+                
+                    <section class="normal" id="section-">
+                    
+                        <h2 id="working-with-ajax--esi">Working with ajax / <a href="GLOSSARY.html#esi" class="glossary-term" title="Edge Side Includes or ESI is a small markup language to assemble weg page.
+The purpose of ESI is to tackle the problem of web infrastructure scaling.">esi</a></h2>
+<p>Nowadays there is no serious php application which does not consume
+a system to implement FPC caching, via proxy or internal implementation.</p>
+<p>C makes no exception to that.</p>
+<p>C goes beyond and provides two action keywords <code>ajaxify</code> &amp; <code>esify</code>
+to embrace <code>cache punch hole</code> techniques provided
+to enhance the speed, scalability, and hosting of our applications.</p>
+<h4 id="structural-actions">Structural actions</h4>
+<h6 id="ajaxify">ajaxify</h6>
+<p><code>ajaxify</code> keyword to ajaxify the given block id.</p>
+<p>It takes an array such [id=&gt; block to ajaxify]</p>
+<pre><code class="lang-yml">structure:
+    [block_id]: # you must first declare the block to ajaxify it
+      set_template: Module:/some/path.ext
+  - ajaxify: # then apply a layout structure change
+      id: [block_id]
+  # You should also ensure to register jquery.
+  # That&apos;s it !
+</code></pre>
+<h6 id="esify">esify</h6>
+<p><code>esify</code> keyword to esify the given block id.</p>
+<p>It takes an array such [id=&gt; block to esify]</p>
+<pre><code class="lang-yml">structure:
+    [block_id]: # you must first declare the block to esifyc
+      set_template: Module:/some/path.ext
+  - esify: # then apply a layout structure change
+      id: [block_id]
+  # esi does not need any other dependencies
+  # other than an esi-able front proxy
+  # That&apos;s it !
+</code></pre>
+<p><strong>See also</strong></p>
+<ul>
+<li><p><a href="https://github.com/maboiteaspam/Welcome/blob/master/src/layouts/hello-the-world-in-ajax.yml" target="_blank">https://github.com/maboiteaspam/Welcome/blob/master/src/layouts/hello-the-world-in-ajax.yml</a></p>
+<p>  to study a complete example</p>
+</li>
+</ul>
+<p><strong>read more</strong></p>
+<ul>
+<li><a href="https://www.varnish-cache.org/trac/wiki/ESIfeatures" target="_blank">https://www.varnish-cache.org/trac/wiki/ESIfeatures</a></li>
+<li><a href="https://www.varnish-software.com/book/3/Content_Composition.html#edge-side-includes" target="_blank">https://www.varnish-software.com/book/3/Content_Composition.html#edge-side-includes</a></li>
+<li><a href="https://www.varnish-cache.org/docs/3.0/tutorial/esi.html" target="_blank">https://www.varnish-cache.org/docs/3.0/tutorial/esi.html</a></li>
+<li><a href="http://blog.lavoie.sl/2013/08/varnish-esi-and-cookies.html" target="_blank">http://blog.lavoie.sl/2013/08/varnish-esi-and-cookies.html</a></li>
+<li><a href="http://symfony.com/doc/current/cookbook/cache/varnish.html" target="_blank">http://symfony.com/doc/current/cookbook/cache/varnish.html</a></li>
+<li><a href="http://silex.sensiolabs.org/doc/providers/http_cache.html" target="_blank">http://silex.sensiolabs.org/doc/providers/http_cache.html</a></li>
+<li><a href="http://symfony.com/doc/current/cookbook/cache/form_csrf_caching.html" target="_blank">http://symfony.com/doc/current/cookbook/cache/form_csrf_caching.html</a></li>
+</ul>
+<h2 id="whats-next-">What&apos;s next ?</h2>
+<p>To continue your tour and experience, read more about <code>ajax</code> and <code>esi</code></p>
+<ul>
+<li><a href="https://github.com/maboiteaspam/Foundation/blob/master/doc/2.5-layout-and-view-templates.md" target="_blank">https://github.com/maboiteaspam/Foundation/blob/master/doc/2.5-layout-and-view-templates.md</a></li>
+</ul>
+
+                    
+                    </section>
+                
+                
+                </div>
+            </div>
+        </div>
+
+        
+        <a href="./2.3-layout-and-request-facets.html" class="navigation navigation-prev " aria-label="Previous page: Working with request facets"><i class="fa fa-angle-left"></i></a>
+        
+        
+        <a href="./2.5-layout-and-view-templates.html" class="navigation navigation-next " aria-label="Next page: Working with view templates"><i class="fa fa-angle-right"></i></a>
+        
+    </div>
+</div>
+
+        
+<script src="gitbook/app.js"></script>
+
+    
+    <script src="gitbook/plugins/gitbook-plugin-search/lunr.min.js"></script>
+    
+
+    
+    <script src="gitbook/plugins/gitbook-plugin-search/search.js"></script>
+    
+
+    
+    <script src="gitbook/plugins/gitbook-plugin-sharing/buttons.js"></script>
+    
+
+    
+    <script src="gitbook/plugins/gitbook-plugin-fontsettings/buttons.js"></script>
+    
+
+<script>
+require(["gitbook"], function(gitbook) {
+    var config = {"highlight":{},"search":{},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2}};
+    gitbook.start(config);
+});
+</script>
+
+        
+    </body>
+    
+</html>

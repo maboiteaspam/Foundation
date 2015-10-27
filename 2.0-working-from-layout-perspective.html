@@ -1,0 +1,583 @@
+<!DOCTYPE HTML>
+<html lang="en" >
+    
+    <head>
+        
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <title>Working from layout perspective | C - A php framework for frontend development</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 2.5.0">
+        
+        
+        <meta name="HandheldFriendly" content="true"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <link rel="apple-touch-icon-precomposed" sizes="152x152" href="gitbook/images/apple-touch-icon-precomposed-152.png">
+        <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
+        
+    <link rel="stylesheet" href="gitbook/style.css">
+    
+        
+        <link rel="stylesheet" href="gitbook/plugins/gitbook-plugin-highlight/website.css">
+        
+    
+        
+        <link rel="stylesheet" href="gitbook/plugins/gitbook-plugin-search/search.css">
+        
+    
+        
+        <link rel="stylesheet" href="gitbook/plugins/gitbook-plugin-fontsettings/website.css">
+        
+    
+    
+
+        
+    
+    
+    <link rel="next" href="./2.1-layout-actions.html" />
+    
+    
+    <link rel="prev" href="./1-Introduction.html" />
+    
+
+        
+    </head>
+    <body>
+        
+        
+    <div class="book" data-level="2" data-chapter-title="Working from layout perspective" data-filepath="2.0-working-from-layout-perspective.md" data-basepath="." data-revision="Tue Oct 27 2015 21:05:28 GMT+0800 (CST)">
+    
+
+<div class="book-summary">
+    <nav role="navigation">
+        <ul class="summary">
+            
+            
+            
+            
+
+            
+
+            
+    
+        <li class="chapter " data-level="0" data-path="index.html">
+            
+                
+                    <a href="./index.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                        Introduction
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="1" data-path="1-Introduction.html">
+            
+                
+                    <a href="./1-Introduction.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>1.</b>
+                        
+                        Introduction
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter active" data-level="2" data-path="2.0-working-from-layout-perspective.html">
+            
+                
+                    <a href="./2.0-working-from-layout-perspective.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.</b>
+                        
+                        Working from layout perspective
+                    </a>
+            
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="2.1" data-path="2.1-layout-actions.html">
+            
+                
+                    <a href="./2.1-layout-actions.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.1.</b>
+                        
+                        Layout actions
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2" data-path="2.2-layout-and-assets.html">
+            
+                
+                    <a href="./2.2-layout-and-assets.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.2.</b>
+                        
+                        Working with assets
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.3" data-path="2.3-layout-and-request-facets.html">
+            
+                
+                    <a href="./2.3-layout-and-request-facets.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.3.</b>
+                        
+                        Working with request facets
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.4" data-path="2.4-layout-using-ajax-and-esi.html">
+            
+                
+                    <a href="./2.4-layout-using-ajax-and-esi.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.4.</b>
+                        
+                        Working with ajax and esi
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.5" data-path="2.5-layout-and-view-templates.html">
+            
+                
+                    <a href="./2.5-layout-and-view-templates.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.5.</b>
+                        
+                        Working with view templates
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.6" data-path="2.6-layout-and-internationalization.html">
+            
+                
+                    <a href="./2.6-layout-and-internationalization.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.6.</b>
+                        
+                        Working with internationalization
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.7" data-path="2.7-layout-and-form.html">
+            
+                
+                    <a href="./2.7-layout-and-form.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.7.</b>
+                        
+                        Working with forms
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.8" data-path="2.8-layout-and-validation.html">
+            
+                
+                    <a href="./2.8-layout-and-validation.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.8.</b>
+                        
+                        Working wih validation
+                    </a>
+            
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="3" data-path="3.0-working-from-controller-perspective.html">
+            
+                
+                    <a href="./3.0-working-from-controller-perspective.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.</b>
+                        
+                        Working from controller perspective
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="4" data-path="4.0-advanced-topics.html">
+            
+                
+                    <a href="./4.0-advanced-topics.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.</b>
+                        
+                        Advanced topics
+                    </a>
+            
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.1" data-path="4.1-setting-up-dev-environment.html">
+            
+                
+                    <a href="./4.1-setting-up-dev-environment.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.1.</b>
+                        
+                        Setup your dev environment
+                    </a>
+            
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+
+            
+            <li class="divider"></li>
+            <li>
+                <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+                    Published with GitBook
+                </a>
+            </li>
+            
+        </ul>
+    </nav>
+</div>
+
+    <div class="book-body">
+        <div class="body-inner">
+            <div class="book-header" role="navigation">
+    <!-- Actions Left -->
+    
+    <a href="./GLOSSARY.html" class="btn pull-left" aria-label="Glossary"><i class="fa fa-sort-alpha-asc"></i></a>
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="./" >C - A php framework for frontend development</a>
+    </h1>
+</div>
+
+            <div class="page-wrapper" tabindex="-1" role="main">
+                <div class="page-inner">
+                
+                
+                    <section class="normal" id="section-">
+                    
+                        <h1 id="working-with-layouts">Working with layouts</h1>
+<p>Hi there! In this <code>README</code> we ll be covering
+the <code>layout first</code> approach a C application let you put in action.</p>
+<p>We ll review the concepts of layout, block, view.</p>
+<p>We ll also review their components implementation
+such as asset, form, dashboard.</p>
+<h2 id="introduction">Introduction</h2>
+<p>Layout files are an important aspect of this project.
+They let you control and take power on the appearance
+of the rendering output of your application.</p>
+<p>C encourage you to take the <code>layout first</code> approach,
+the most quickest way to implement
+a functional prototype of your application.</p>
+<p>Once your prototype is finalized, you ll be able
+to consume the layout as a the backbone of communication
+between controller and frontend development.</p>
+<p>In order to let both concern work on their own
+but still communicate in a comprehensible way
+the system encourage the principle and use of
+<strong>progressive layout enhancement</strong>.</p>
+<p>In order of declaration,
+starting from the backend controller,
+continued by imported frontend layout files,
+if offers to progressively build and enhance the layout
+of new features and behaviors.</p>
+<p>Ok, lets make a drawing :p</p>
+<pre><code>   |
+Request
+   |
+   |----------&gt; Controller
+                    |
+     ______       Layout
+    | Back |--&gt;     |
+    |______|        |
+ create layout --&gt;  |
+ import layout --&gt;  |       _______
+                    |      | Front |
+                    |  &lt;-- |_______|
+                    |  &lt;-- declare or update layout
+                    |  &lt;-- import its own layout
+ update layout --&gt;  |
+ render layout --&gt;  |
+                    |
+                 Response
+                    |----&gt; Render
+</code></pre><p>It describes the page to render as a tree of named block.</p>
+<pre><code>    VISUAL                  TREE
+    __________________
+    |   HEADER       |      | Root
+    |________________|      | Root/HEADER
+    |         |      |      | Root/MAIN
+    |  MAIN   |  RB  |      | Root/RB
+    |         |      |      | Root/FOOTER
+    |_________|______|
+    |   FOOTER       |
+    |________________|
+</code></pre><p>It has a root block, and many sub blocks.</p>
+<p>Each block can render its part
+of the layout by invoking other blocks.</p>
+<p><strong>Each block id is unique within the layout</strong></p>
+<p>Each block hold information such template file,
+assets attached to it, data to inject into the view,
+meta information.</p>
+<p>It s using a simple but powerful syntax written with <code>yml</code></p>
+<p><code>Hello The World</code> example</p>
+<p><strong>File:</strong> src/layouts/hello-the-world.yml</p>
+<pre><code class="lang-yml">meta:
+    id: hello-the-world
+    description: Hello the world written with a layout
+
+structure:
+    - import: HTML:/1-column.yml
+      body_content:
+        body: |
+            Hello the world !
+</code></pre>
+<p>the same <code>hello the world</code> example with comments</p>
+<p><strong>File:</strong> src/layouts/hello-the-world.yml</p>
+<pre><code class="lang-yml">
+# provide information about the layout to be rendered
+meta:
+    id: hello-the-world
+    description: Hello the world written with a layout
+
+# describe and update the structure of the layout
+structure:
+
+    # Import a base layout which provides supports
+    # for commons task regarding an HTMl website
+    # HTML is a core module to provide such fundamentals.
+    - import: HTML:/1-column.yml
+
+      # select body_content node of the layout
+      # body_content was delared by HTML:/1-column.yml
+      body_content:
+        # set its body
+        body: |
+            Hello the world !
+</code></pre>
+<p><strong>See also</strong></p>
+<ul>
+<li><p><a href="https://github.com/maboiteaspam/Welcome/blob/master/src/layouts/formDemo.yml" target="_blank">https://github.com/maboiteaspam/Welcome/blob/master/src/layouts/formDemo.yml</a></p>
+<p>  For an advanced layout example demonstration at</p>
+</li>
+</ul>
+<h5 id="block-role-and-structure">Block role and structure</h5>
+<p>It s really about describing all of the components
+ of a page via a layout object.
+For that matter each block of the layout
+holds information
+about its template, assets and so son.
+The later they are resolved into plain html text,
+or other structure depending the desired action.</p>
+<p>The internal block data structure looks likes this</p>
+<pre><code class="lang-yml">id: root
+body: &apos;<div>...&apos; # the content body as plain html
+options:
+    template: &apos;HTML:/html.php&apos; # the template path
+data: {
+       # .. A lits of displayed block
+       # with their status of display
+}
+assets: {
+        # .. A lits of assets block
+        # to be injected in order to render this block
+}
+inline: {
+        # .. A lits of inline assets content
+        # to be injected in order to render this block
+}
+requires: {
+       #  .. A lits of assets requirements
+        # based on semver pattern
+}
+meta:
+        # .. A handful list of meta information
+        # injected by the various components
+        # involved during the process
+        # of building the layout
+    debug_with: comments # .. this will enable dashboard debug with html comments
+    from: false # .. this a raw value
+    etag: &apos;&apos; # .. this is injected for etag computation
+displayed_blocks:
+        # .. A lits of displayed block
+        # with their status of display
+    - { id: html_begin, shown: true }
+stack:
+        # .. when debug is enabled,
+        # this gives stack trace values
+        # of caller which updated the block
+    - { file: .../src/C/Layout/Layout.php, line: 390, function: getStackTrace, class: C\Misc\Utils, type: &apos;::&apos; }
+firstAssets: {
+        # .. A lits of asset paths
+        # to display first
+}
+</div></code></pre>
+<p>We ll see next the features the framework offer to enrich layout and blocks.</p>
+<h5 id="layout-file-structure">Layout file structure</h5>
+<p>The layout file takes root nodes</p>
+<pre><code class="lang-yml">meta:
+    # describe the layout object properties
+structure:
+    # describe the layout content structure
+</code></pre>
+<p>The <code>meta:</code> node takes an array of property nodes.</p>
+<pre><code class="lang-yml">meta:
+    id: layout-id
+    description: description
+</code></pre>
+<p>The <code>structure:</code> node takes an array of action nodes.</p>
+<pre><code class="lang-yml">structure:
+    - action_node1
+    - action_node2
+      action_node3
+      action_node4
+</code></pre>
+<p>Each action node can describe either
+a structural change or select a block.</p>
+<pre><code class="lang-yml">structure:
+    - change_layout: [arguments]
+    - change_layout2: [arguments]
+      [block_id1]: [arguments]
+      [block_id2]: [arguments]
+</code></pre>
+<p>When a block is selected, it is then possible
+to apply it a series of block action nodes.</p>
+<pre><code class="lang-yml">structure:
+    - change_layout: [arguments]
+    - change_layout2: [arguments]
+      [block_id1]:
+        set_template: /some/file.php
+      [block_id2]:
+        set_data: {some_data: &quot;indeed&quot;}
+</code></pre>
+<h2 id="whats-next-">What&apos;s next ?</h2>
+<p>To continue your tour and experience, please choose one of the following topic</p>
+<ul>
+<li><a href="https://github.com/maboiteaspam/Foundation/blob/master/doc/2.1-layout-actions.md" target="_blank">https://github.com/maboiteaspam/Foundation/blob/master/doc/2.1-layout-actions.md</a></li>
+<li><a href="https://github.com/maboiteaspam/Foundation/blob/master/doc/2.2-layout-and-assets.md" target="_blank">https://github.com/maboiteaspam/Foundation/blob/master/doc/2.2-layout-and-assets.md</a></li>
+<li><a href="https://github.com/maboiteaspam/Foundation/blob/master/doc/2.3-layout-and-request-facets.md" target="_blank">https://github.com/maboiteaspam/Foundation/blob/master/doc/2.3-layout-and-request-facets.md</a></li>
+<li><a href="https://github.com/maboiteaspam/Foundation/blob/master/doc/2.4-layout-using-ajax-and-esi.md" target="_blank">https://github.com/maboiteaspam/Foundation/blob/master/doc/2.4-layout-using-ajax-and-esi.md</a></li>
+<li><a href="https://github.com/maboiteaspam/Foundation/blob/master/doc/2.5-layout-and-view-templates.md" target="_blank">https://github.com/maboiteaspam/Foundation/blob/master/doc/2.5-layout-and-view-templates.md</a></li>
+<li><a href="https://github.com/maboiteaspam/Foundation/blob/master/doc/2.6-layout-and-internationalization.md" target="_blank">https://github.com/maboiteaspam/Foundation/blob/master/doc/2.6-layout-and-internationalization.md</a></li>
+<li><a href="https://github.com/maboiteaspam/Foundation/blob/master/doc/2.7-layout-and-form.md" target="_blank">https://github.com/maboiteaspam/Foundation/blob/master/doc/2.7-layout-and-form.md</a></li>
+<li><a href="https://github.com/maboiteaspam/Foundation/blob/master/doc/2.8-layout-and-validation.md" target="_blank">https://github.com/maboiteaspam/Foundation/blob/master/doc/2.8-layout-and-validation.md</a></li>
+</ul>
+<h5 id="loading-your-own">Loading your own</h5>
+<h3 id="the-yml-syntax">The YML syntax</h3>
+<p>Quick references about this file format :</p>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/YAML" target="_blank">https://en.wikipedia.org/wiki/YAML</a></li>
+<li><a href="https://zh.wikipedia.org/wiki/YAML" target="_blank">https://zh.wikipedia.org/wiki/YAML</a></li>
+<li><a href="http://www.yaml.org/start.html" target="_blank">http://www.yaml.org/start.html</a></li>
+<li><a href="http://docs.ansible.com/ansible/YAMLSyntax.html" target="_blank">http://docs.ansible.com/ansible/YAMLSyntax.html</a></li>
+</ul>
+
+                    
+                    </section>
+                
+                
+                </div>
+            </div>
+        </div>
+
+        
+        <a href="./1-Introduction.html" class="navigation navigation-prev " aria-label="Previous page: Introduction"><i class="fa fa-angle-left"></i></a>
+        
+        
+        <a href="./2.1-layout-actions.html" class="navigation navigation-next " aria-label="Next page: Layout actions"><i class="fa fa-angle-right"></i></a>
+        
+    </div>
+</div>
+
+        
+<script src="gitbook/app.js"></script>
+
+    
+    <script src="gitbook/plugins/gitbook-plugin-search/lunr.min.js"></script>
+    
+
+    
+    <script src="gitbook/plugins/gitbook-plugin-search/search.js"></script>
+    
+
+    
+    <script src="gitbook/plugins/gitbook-plugin-sharing/buttons.js"></script>
+    
+
+    
+    <script src="gitbook/plugins/gitbook-plugin-fontsettings/buttons.js"></script>
+    
+
+<script>
+require(["gitbook"], function(gitbook) {
+    var config = {"highlight":{},"search":{},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2}};
+    gitbook.start(config);
+});
+</script>
+
+        
+    </body>
+    
+</html>

@@ -1,0 +1,515 @@
+<!DOCTYPE HTML>
+<html lang="en" >
+    
+    <head>
+        
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <title>Working with assets | C - A php framework for frontend development</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 2.5.0">
+        
+        
+        <meta name="HandheldFriendly" content="true"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <link rel="apple-touch-icon-precomposed" sizes="152x152" href="gitbook/images/apple-touch-icon-precomposed-152.png">
+        <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
+        
+    <link rel="stylesheet" href="gitbook/style.css">
+    
+        
+        <link rel="stylesheet" href="gitbook/plugins/gitbook-plugin-highlight/website.css">
+        
+    
+        
+        <link rel="stylesheet" href="gitbook/plugins/gitbook-plugin-search/search.css">
+        
+    
+        
+        <link rel="stylesheet" href="gitbook/plugins/gitbook-plugin-fontsettings/website.css">
+        
+    
+    
+
+        
+    
+    
+    <link rel="next" href="./2.3-layout-and-request-facets.html" />
+    
+    
+    <link rel="prev" href="./2.1-layout-actions.html" />
+    
+
+        
+    </head>
+    <body>
+        
+        
+    <div class="book" data-level="2.2" data-chapter-title="Working with assets" data-filepath="2.2-layout-and-assets.md" data-basepath="." data-revision="Tue Oct 27 2015 21:05:28 GMT+0800 (CST)">
+    
+
+<div class="book-summary">
+    <nav role="navigation">
+        <ul class="summary">
+            
+            
+            
+            
+
+            
+
+            
+    
+        <li class="chapter " data-level="0" data-path="index.html">
+            
+                
+                    <a href="./index.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                        Introduction
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="1" data-path="1-Introduction.html">
+            
+                
+                    <a href="./1-Introduction.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>1.</b>
+                        
+                        Introduction
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2" data-path="2.0-working-from-layout-perspective.html">
+            
+                
+                    <a href="./2.0-working-from-layout-perspective.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.</b>
+                        
+                        Working from layout perspective
+                    </a>
+            
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="2.1" data-path="2.1-layout-actions.html">
+            
+                
+                    <a href="./2.1-layout-actions.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.1.</b>
+                        
+                        Layout actions
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter active" data-level="2.2" data-path="2.2-layout-and-assets.html">
+            
+                
+                    <a href="./2.2-layout-and-assets.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.2.</b>
+                        
+                        Working with assets
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.3" data-path="2.3-layout-and-request-facets.html">
+            
+                
+                    <a href="./2.3-layout-and-request-facets.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.3.</b>
+                        
+                        Working with request facets
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.4" data-path="2.4-layout-using-ajax-and-esi.html">
+            
+                
+                    <a href="./2.4-layout-using-ajax-and-esi.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.4.</b>
+                        
+                        Working with ajax and esi
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.5" data-path="2.5-layout-and-view-templates.html">
+            
+                
+                    <a href="./2.5-layout-and-view-templates.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.5.</b>
+                        
+                        Working with view templates
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.6" data-path="2.6-layout-and-internationalization.html">
+            
+                
+                    <a href="./2.6-layout-and-internationalization.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.6.</b>
+                        
+                        Working with internationalization
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.7" data-path="2.7-layout-and-form.html">
+            
+                
+                    <a href="./2.7-layout-and-form.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.7.</b>
+                        
+                        Working with forms
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.8" data-path="2.8-layout-and-validation.html">
+            
+                
+                    <a href="./2.8-layout-and-validation.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.8.</b>
+                        
+                        Working wih validation
+                    </a>
+            
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="3" data-path="3.0-working-from-controller-perspective.html">
+            
+                
+                    <a href="./3.0-working-from-controller-perspective.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.</b>
+                        
+                        Working from controller perspective
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="4" data-path="4.0-advanced-topics.html">
+            
+                
+                    <a href="./4.0-advanced-topics.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.</b>
+                        
+                        Advanced topics
+                    </a>
+            
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.1" data-path="4.1-setting-up-dev-environment.html">
+            
+                
+                    <a href="./4.1-setting-up-dev-environment.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.1.</b>
+                        
+                        Setup your dev environment
+                    </a>
+            
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+
+            
+            <li class="divider"></li>
+            <li>
+                <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+                    Published with GitBook
+                </a>
+            </li>
+            
+        </ul>
+    </nav>
+</div>
+
+    <div class="book-body">
+        <div class="body-inner">
+            <div class="book-header" role="navigation">
+    <!-- Actions Left -->
+    
+    <a href="./GLOSSARY.html" class="btn pull-left" aria-label="Glossary"><i class="fa fa-sort-alpha-asc"></i></a>
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="./" >C - A php framework for frontend development</a>
+    </h1>
+</div>
+
+            <div class="page-wrapper" tabindex="-1" role="main">
+                <div class="page-inner">
+                
+                
+                    <section class="normal" id="section-">
+                    
+                        <h2 id="working-with-assets">Working with assets</h2>
+<p>Assets are fundamentals within web applications.</p>
+<p>C framework gives you the ability
+to work with them by <code>semver require</code> injection,
+instead of embed definition.</p>
+<p>For inline asset composition which are defined within the view,
+C framework gives you the ability
+to defines their position into the document.</p>
+<p>Those methods should help to ease integration and management
+of assets within the context of a scaled application.</p>
+<p>Hello the world about assets example looks likes</p>
+<p><strong>File:</strong> src/layouts/hello-the-world-in-ajax.yml</p>
+<pre><code class="lang-yml"># provide information about the layout to be rendered
+meta:
+    id: hello-the-world
+    description: Hello the world written with a layout
+
+# describe and update the structure of the layout
+structure:
+
+  # Import a base layout
+  # It will inject numerous blocks
+  # to manage assets
+  - import: HTML:/1-column.yml
+
+  # register an asset reference on the layout
+  # the later a block can require it with
+  # require: [jquery:2.x]
+  - register_assets:
+      alias: jquery
+      path: jQuery:/jquery-2.1.3.min.js
+      version: 2.1.3
+      target: page_footer_js
+      first: true
+
+    # select body_content node of the layout
+    # body_content was delared by HTML:/1-column.yml
+    body_content:
+      # set its body
+      body: |
+          Hello the world !
+    # ajaxify will render the block using ajax
+    # and also inject jquery,
+    # if it is available on the layout !
+    ajaxify:
+      id: body_content
+
+  # Always good stuff
+  - show_dashboard:
+      - time_travel
+      - structure_visualizer
+      - stats
+</code></pre>
+<h4 id="html1column-a-base-layout">HTML:/1-column: A base layout</h4>
+<p><a href="https://github.com/maboiteaspam/Foundation/blob/master/src/C/ModernApp/HTML/layouts/1-column.yml" target="_blank">https://github.com/maboiteaspam/Foundation/blob/master/src/C/ModernApp/HTML/layouts/1-column.yml</a></p>
+<h5 id="vendor-assets">Vendor assets</h5>
+<p>To define vendor and load vendor asset
+C framework suggest to make use of <code>register.yml</code>
+per vendor.</p>
+<p>Let s see how <code>jQuery</code> is provided within the system.</p>
+<p>It provides a layout file, dedicated to jQuery vendor asset
+definition and loading via <code>register_assets</code> keyword.</p>
+<p><strong>File:</strong> <a href="https://github.com/maboiteaspam/Foundation/tree/master/src/C/ModernApp/jQuery/layouts/register.yml" target="_blank">https://github.com/maboiteaspam/Foundation/tree/master/src/C/ModernApp/jQuery/layouts/register.yml</a></p>
+<pre><code class="lang-yml"># Register jQuery on the layout
+structure:
+
+  # register_assets adds an asset reference on the layout object
+  - register_assets:
+      alias: jquery # it s the public alias consumed by module requiring this asset
+      path: jQuery:/jquery-2.1.3.min.js # it s the path of the assets, can be array
+      version: 2.1.3 # it s the version of this asset, it lets module require their own version
+      target: page_footer_js # it s te layout target asset block to inject the asset into
+      first: true # preferably first asset, it s not guaranteed ! but does the job so far.
+      satisfy: # this is a list of well known require constraints that this asset can satisfy
+      # its mainly for performance purpose
+        - &quot;2.x || 1.x&quot;
+  # now register jquery for non html5 browsers,
+  # the system will implement a strategy to select appropriate resource.
+  - register_assets:
+      alias: jquery
+      path: jQuery:/jquery-1.11.3.min.js
+      version: 1.11.3
+      target: page_footer_js
+      first: true
+      satisfy:
+        - &quot;2.x || 1.x&quot;
+</code></pre>
+<p><strong>To consume</strong> those asset you can proceed in two steps,</p>
+<ul>
+<li>import <code>vendor:/register.yml</code></li>
+<li>require the asset via <code>require: [vendor:x.x]</code></li>
+</ul>
+<p><strong>File:</strong> src/layouts/hello-the-world-in-ajax.yml</p>
+<pre><code class="lang-yml">structure:
+
+  - import: HTML:/1-column.yml
+  - import: jQuery:/register.yml
+
+    body_content:
+      body: |
+          Hello the world !
+
+    # ajaxify will inject jquery via a require constraint
+    # require: jquery:2.x || 1.x
+    ajaxify:
+      id: body_content
+</code></pre>
+<h3 id="structure-keywords">Structure keywords</h3>
+<h6 id="registerassets">register_assets</h6>
+<p><code>register_assets</code> keyword to register a vendor asset.</p>
+<pre><code class="lang-yml">structure:
+  - register_assets:
+        alias: js-normalizer
+        path: HTML:/normalizer.js
+        version: 1.1.1
+        target: template_head_js
+        first: true|false
+</code></pre>
+<h4 id="block-actions">Block actions</h4>
+<h6 id="require">require</h6>
+<p><code>require</code> keyword to require a vendor asset on the given block.</p>
+<pre><code class="lang-yml">structure:
+    [block_id]:
+      require: [js-normalizer:1.x]
+</code></pre>
+<h6 id="addassets">add_assets</h6>
+<p><code>add_assets</code> keyword to attach assets on the given block.</p>
+<p>Assets are injected according to the specified targets.</p>
+<pre><code class="lang-yml">structure:
+    [block_id]:
+      add_assets:
+        template_head_js:
+            - HTML:/normalizer.js
+</code></pre>
+<h6 id="removeassets">remove_assets</h6>
+<p><code>remove_assets</code> keyword to remove an asset from the given block.</p>
+<pre><code class="lang-yml">structure:
+    [block_id]:
+      remove_assets:
+        template_head_js:
+            - HTML:/normalizer.js
+</code></pre>
+<h2 id="whats-next-">What&apos;s next ?</h2>
+<p>To continue your tour and experience, read more about <code>request facets</code></p>
+<ul>
+<li><a href="https://github.com/maboiteaspam/Foundation/blob/master/doc/2.3-layout-and-request-facets.md" target="_blank">https://github.com/maboiteaspam/Foundation/blob/master/doc/2.3-layout-and-request-facets.md</a></li>
+</ul>
+
+                    
+                    </section>
+                
+                
+                </div>
+            </div>
+        </div>
+
+        
+        <a href="./2.1-layout-actions.html" class="navigation navigation-prev " aria-label="Previous page: Layout actions"><i class="fa fa-angle-left"></i></a>
+        
+        
+        <a href="./2.3-layout-and-request-facets.html" class="navigation navigation-next " aria-label="Next page: Working with request facets"><i class="fa fa-angle-right"></i></a>
+        
+    </div>
+</div>
+
+        
+<script src="gitbook/app.js"></script>
+
+    
+    <script src="gitbook/plugins/gitbook-plugin-search/lunr.min.js"></script>
+    
+
+    
+    <script src="gitbook/plugins/gitbook-plugin-search/search.js"></script>
+    
+
+    
+    <script src="gitbook/plugins/gitbook-plugin-sharing/buttons.js"></script>
+    
+
+    
+    <script src="gitbook/plugins/gitbook-plugin-fontsettings/buttons.js"></script>
+    
+
+<script>
+require(["gitbook"], function(gitbook) {
+    var config = {"highlight":{},"search":{},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2}};
+    gitbook.start(config);
+});
+</script>
+
+        
+    </body>
+    
+</html>
