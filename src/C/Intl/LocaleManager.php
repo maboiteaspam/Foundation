@@ -23,6 +23,11 @@ class LocaleManager {
     private $fallbackLocales = array();
 
     /**
+     * @var array
+     */
+    private $wellKnownLocales = array();
+
+    /**
      * Set preferred locale for translations.
      *
      * @param $locale
@@ -58,6 +63,25 @@ class LocaleManager {
         }
 
         $this->fallbackLocales = $locales;
+    }
+
+
+    /**
+     * Sets the wellKnown locales.
+     *
+     * @param array $locales The fallback locales
+     *
+     * @throws \InvalidArgumentException If a locale contains invalid characters
+     *
+     * @api
+     */
+    public function setWellKnownLocales(array $locales)
+    {
+        foreach ($locales as $locale) {
+            $this->assertValidLocale($locale);
+        }
+
+        $this->wellKnownLocales = $locales;
     }
 
     /**
@@ -141,6 +165,38 @@ class LocaleManager {
         return $this->computed[$locale];
     }
     protected $computed = [];
+
+
+    /**
+     * Given preferred request language,
+     *  it fallback to first fallback locale,
+     *      - if the user does not provide a preference
+     *      - the system can not satisfy provided language
+     *
+     *  Then it computes the language into a locale
+     *
+     * @param null $requestPreferredLanguage
+     * @return bool
+     */
+    public function setBestLocalGivenReqLng($requestPreferredLanguage=null) {
+
+        // compute the best locale between
+        // available locales in the system
+        // and user locale provided in the request.
+        $knownLocales = $this->wellKnownLocales;
+
+        if (!$requestPreferredLanguage && count($this->fallbackLocales))
+            $requestPreferredLanguage = $this->fallbackLocales[0];
+
+        $locale = $this->computeLocales ($knownLocales, $requestPreferredLanguage);
+        if ($locale) {
+            $locale = $locale[0];
+            $this->setLocale($locale);
+            return true;
+        }
+        // ouch. That s a kind of problem..
+        return false;
+    }
 
     /**
      * Asserts that the locale is valid, throws an Exception if not.
