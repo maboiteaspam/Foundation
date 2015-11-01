@@ -384,28 +384,34 @@ class FormViewHelper extends AbstractViewHelper {
 
         } else if (in_array($type, ['checkbox',])) {
             $str .= $this->form_label($form, null, ['label_attr'=>['for'=>$form->vars['id']]]);
-            $str .= $this->checkbox_widget($form);
+            $str .= $this->checkbox_widget($form, $variables);
 
         } else if (in_array($type, ['radio',])) {
             $str .= $this->form_label($form, null, ['label_attr'=>['for'=>$form->vars['id']]]);
-            $str .= $this->radio_widget($form);
+            $str .= $this->radio_widget($form, $variables);
 
         } else if (in_array($type, ['date',])) {
             $str .= "<div>";
             $str .= $this->form_label($form, null, ['label_attr'=>['for'=>$form->vars['id']]]);
-            $str .= $this->date_widget($form);
+            $str .= $this->date_widget($form, $variables);
             $str .= "</div>";
 
         } else if (in_array($type, ['datetime',])) {
             $str .= "<div>";
             $str .= $this->form_label($form, null, ['label_attr'=>['for'=>$form->vars['id']]]);
-            $str .= $this->datetime_widget($form);
+            $str .= $this->datetime_widget($form, $variables);
             $str .= "</div>";
 
         } else if (in_array($type, ['time',])) {
             $str .= "<div>";
             $str .= $this->form_label($form, null, ['label_attr'=>['for'=>$form->vars['id']]]);
-            $str .= $this->time_widget($form);
+            $str .= $this->time_widget($form, $variables);
+            $str .= "</div>";
+
+        } else if (in_array($type, ['textarea',])) {
+            $str .= "<div>";
+            $str .= $this->form_label($form, null, ['label_attr'=>['for'=>$form->vars['id']]]);
+            $str .= $this->textarea_widget($form, $variables);
             $str .= "</div>";
 
         } else {
