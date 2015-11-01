@@ -6,8 +6,13 @@ use C\Misc\Utils;
 
 /**
  * Class AssetsViewHelper
- * provides to inject assets as html inline
- * or external script to a specified layout target
+ * provides new capabilities
+ * - to inject assets as html inline
+ * - to inject assets as remote file
+ * - to generate asset of an url given name and parameters.
+ *
+ * Those methods let the end developer
+ * decide the desired block target.
  *
  * @package C\View\Helper
  */
@@ -55,7 +60,7 @@ class AssetsViewHelper implements ViewHelperInterface {
 
 
     /**
-     * Get url of an asset
+     * Generate url of an asset
      * given it s name and its parameters.
      *
      * @param $name
@@ -108,7 +113,10 @@ class AssetsViewHelper implements ViewHelperInterface {
     }
 
     /**
-     * Inject into target the given asset path
+     * Attach a new asset such Module:/asset.ext
+     * to the currently rendered block.
+     * The asset can be injected into one
+     * of the many asset blocks available.
      *
      * @param $target
      * @param $asset
