@@ -4,7 +4,14 @@ namespace C\Repository;
 
 use Illuminate\Database\Capsule\Manager as Capsule;
 
-abstract class TagableEloquentRepository extends TagableRepository{
+/**
+ * Class EloquentRepository
+ * is the base class for an
+ * eloquent service data provider
+ *
+ * @package C\Repository
+ */
+abstract class EloquentRepository extends Repository{
 
     /**
      * @var \Illuminate\Database\Capsule\Manager
@@ -17,5 +24,4 @@ abstract class TagableEloquentRepository extends TagableRepository{
     public function setCapsule(Capsule $capsule) {
         $this->capsule = $capsule;
     }
-
 }
