@@ -19,7 +19,7 @@ composer require git@github.com:maboiteaspam/Foundation.git
 
 # Register
 
-This module provides a list of services
+This module provides a list of core service providers
 to register to your application.
 
 Get an eye on bootstrap module to know more.
@@ -32,24 +32,43 @@ https://github.com/maboiteaspam/Bootstrap
 
 #### Contributing guidelines
 
-#### Writing the doc
+#### Documentation
 
 The documentation is wrote using Markdown , GH flavor.
 
 It s hosted on github at this address
 
-https://github.com/maboiteaspam/Foundation/tree/master/doc
+- https://github.com/maboiteaspam/Foundation/tree/master/doc
 
-The documentation is provided as a book to the end user
+At that day, the documentation is provided as a book to the end user at
 
-http://maboiteaspam.github.io/Foundation/1-Introduction.html
+- http://maboiteaspam.github.io/Foundation/1-Introduction.html
 
 It s published and made public via github `gh-pages`
 
-https://github.com/maboiteaspam/Foundation/tree/gh-pages
+- https://github.com/maboiteaspam/Foundation/tree/gh-pages
 
-To generate the documentation `C` relies on `gitbook`
+At present time, to generate the documentation
+`C` relies on `gitbook`
 
+#### Writing the doc
+
+##### Regarding packaged classes and libraries
+
+`C` suggest the use of provided guidelines by `symfony` for
+classes, methods signatures, examples and general documentation of
+your modules,
+
+- http://symfony.com/doc/current/contributing/documentation/format.html
+- http://symfony.com/doc/current/contributing/documentation/standards.html
+
+
+##### Regarding service provider, templates, layouts
+
+`C` suggest to use `literal documentation` style.
+
+- https://github.com/jashkenas/docco
+- https://github.com/laughedelic/literator
 
 #### Generating the doc
 
@@ -68,12 +87,14 @@ __setup__
 
 __routine build__
 ```sh
+rm -fr ../Foundation-book
 mkdir ../Foundation-book
 cd ../Foundation-book
 git clone git@github.com:maboiteaspam/Foundation.git .
 git branch gh-pages
 git checkout gh-pages
 gitbook build ../Foundation/doc .
+find ../Foundation/src/C/Provider/ -type f -exec sh -c "docco -l linear -o providers {}" \;
 git add -A
 git commit -m "Book update"
 git push
@@ -81,12 +102,20 @@ cd ../Foundation
 rm -fr ../Foundation-book
 ```
 
+__docco build__
+```sh
+find serc/layouts/ -type f -exec sh -c "docco -l linear -o providers {}" \;
+find serc/templates/ -type f -exec sh -c "docco -l linear -o providers {}" \;
+```
 
 
 
 
 
-@todo move this part out into per service README file.
+========
+
+
+@todo move following part out into per service README file.
 
 ## Modules provided
 
