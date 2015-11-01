@@ -102,8 +102,8 @@ rm -fr ../Foundation-book
 
 __docco build__
 ```sh
-find serc/layouts/ -type f -exec sh -c "docco -l linear -o providers {}" \;
-find serc/templates/ -type f -exec sh -c "docco -l linear -o providers {}" \;
+find src/layouts/ -type f -exec sh -c "docco -l linear -o providers {}" \;
+find src/templates/ -type f -exec sh -c "docco -l linear -o providers {}" \;
 ```
 
 
