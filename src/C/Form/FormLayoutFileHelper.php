@@ -1,8 +1,6 @@
 <?php
-namespace C\ModernApp\File\Helpers;
+namespace C\Form;
 
-use C\Form\FormBuilder;
-use C\Form\FormFileLoader;
 use C\ModernApp\File\AbstractStaticLayoutHelper;
 use C\ModernApp\File\FileTransformsInterface;
 use Symfony\Component\Form\FormFactory;
@@ -18,7 +16,7 @@ use Symfony\Component\Routing\Generator\UrlGenerator;
  *
  * @package C\ModernApp\File\Helpers
  */
-class FormViewHelper extends  AbstractStaticLayoutHelper{
+class FormLayoutFileHelper extends  AbstractStaticLayoutHelper{
 
     /**
      * @var FormFactory
