@@ -2,7 +2,6 @@
 
 namespace C\Layout;
 
-use C\Layout\Misc\LayoutSerializer;
 use C\Layout\Misc\RequestTypeMatcher;
 use C\TagableResource\TagedResource;
 use C\TagableResource\TagableResourceInterface;
@@ -664,18 +663,6 @@ class Layout implements TagableResourceInterface{
         $this->on('after_resolve_'.$id, function($event) use($layout, $id, $fn){
             $fn($event, $layout, $id);
         });
-    }
-    #endregion
-
-
-    #region serializer
-    // @todo move this out.
-    /**
-     * @var LayoutSerializer
-     */
-    public $serializer;
-    public function setLayoutSerializer (LayoutSerializer $serializer) {
-        $this->serializer = $serializer;
     }
     #endregion
 
