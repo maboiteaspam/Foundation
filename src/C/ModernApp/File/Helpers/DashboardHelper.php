@@ -2,6 +2,7 @@
 namespace C\ModernApp\File\Helpers;
 
 use C\Layout\Transforms\Transforms;
+use C\Misc\ArrayHelpers;
 use C\ModernApp\File\AbstractStaticLayoutHelper;
 use C\ModernApp\Dashboard\Transforms as Dashboard;
 use C\ModernApp\File\FileTransformsInterface;
@@ -12,21 +13,40 @@ use C\ModernApp\File\FileTransformsInterface;
  * - to display the dashboard in your view
  * - to configure debug method of specific blocks.
  *
+ *  structure:
+ *      show_dashboard:
+ *          - extension1
+ *          - extension2
+ *
+ * It also provide a new keyword to choose
+ * a debug style for some blocks.
+ * This is recommended to not blow out
+ * the html inspector of the browser.
+ *
+ *  structure:
+ *      [block_id]
+ *          debug_with: comments
+ *          debug_with: node
+ *
  * @package C\ModernApp\File\Helpers
  */
 class DashboardHelper extends  AbstractStaticLayoutHelper{
 
     /**
-     * @var array
+     * @var ArrayHelpers
      */
-    public $extensions = [];
+    public $extensions;
+
+    public function __construct () {
+        $this->extensions = new ArrayHelpers();
+    }
 
     /**
      * @param $extensions
      * @return $this
      */
     public function setExtensions ($extensions) {
-        $this->extensions = array_merge($this->extensions, $extensions);
+        $this->extensions->merge($extensions);
         return $this;
     }
 
@@ -43,8 +63,8 @@ class DashboardHelper extends  AbstractStaticLayoutHelper{
      *      - time_travel
      *
      * @param FileTransformsInterface $T
-     * @param $nodeAction
-     * @param $nodeContents
+     * @param $nodeAction   string  show_dashboard:
+     * @param $nodeContents array   An array of extension name to load.
      * @return bool
      */
     public function executeStructureNode (FileTransformsInterface $T, $nodeAction, $nodeContents) {
