@@ -212,16 +212,16 @@ class Block implements TagableResourceInterface{
                         $templateItem = $fs->get($templateStr);
                         if ($templateItem!==false) require ($templateItem['absolute_path']);
                         else require ($templateStr);
-                        $block->body = ob_get_clean();
+                        return ob_get_clean();
                     };
                 }
 
                 $context->setBlockToRender($this);
                 $boundFn = \Closure::bind($template, $context);
                 try{
-                    $boundFn($this);
+                    $this->body = $boundFn($this);
                 }catch(\Exception $ex) {
-                    throw new \Exception("'{$this->id}' has failed to execute: {$ex->getMessage()}", 0, $ex);
+                    throw $ex;
                 }
             }
         }
