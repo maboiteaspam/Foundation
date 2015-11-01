@@ -25,6 +25,20 @@ class Transforms extends Base{
     }
 
     /**
+     * @var LayoutSerializer
+     */
+    public $serializer;
+
+    /**
+     * @param LayoutSerializer $serializer
+     * @return $this
+     */
+    public function setLayoutSerializer (LayoutSerializer $serializer) {
+        $this->serializer = $serializer;
+        return $this;
+    }
+
+    /**
      * Display a time travel extension to change date of browsing.
      *
      * @return \C\Layout\Transforms\Transforms
@@ -70,8 +84,8 @@ class Transforms extends Base{
      * @return $this
      */
     public function structure_visualizer ($fromClass=__CLASS__) {
-        if ($this->layout->serializer) {
-            $serializer = $this->layout->serializer;
+        if ($this->serializer) {
+            $serializer = $this->serializer;
 
             $this->set('dashboard-structure-pholder', [
                 'body' => "<!-- layout_structure_placeholder -->",
