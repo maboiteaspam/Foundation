@@ -1,38 +1,61 @@
 <?php
 namespace C\Provider;
 
+use C\ModernApp\DashboardExtension\LayoutSerializer;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
 use C\ModernApp\DashboardExtension\Transforms;
 
+/**
+ * Class DashboardExtensionProvider
+ * Provides extensions to the
+ * dashboard displayed.
+ *
+ * It also declare new assets
+ * and layouts module path
+ * DashboardExtension:/
+ *
+ * @package C\Provider
+ */
 class DashboardExtensionProvider implements ServiceProviderInterface
 {
-    /**
-     *
-     * @param Application $app
-     **/
     public function register(Application $app)
     {
-        if (isset($app['modern.dashboard.extensions'])) {
-            $app['modern.dashboard.extensions'] = $app->share($app->extend('modern.dashboard.extensions', function ($extensions) use($app) {
-                $extensions[] = Transforms::transform()->setLayout($app['layout']);
-                return $extensions;
-            }));
-        }
     }
-    /**
-     *
-     * @param Application $app Silex application instance.
-     *
-     * @return void
-     **/
+
     public function boot(Application $app)
     {
+        // register the new extensions
+        // to the dashboard as a layout transform
+        if (isset($app['modern.dashboard.extensions'])) {
+            $app['modern.dashboard.extensions'] = $app->share(
+                $app->extend('modern.dashboard.extensions',
+                    function ($extensions) use($app) {
+                        $serializer = new LayoutSerializer();
+                        $serializer->setApp($app);
+                        if(isset($app["assets.fs"])) $serializer->setAssetsFS($app["assets.fs"]);
+                        if(isset($app["layout.fs"])) $serializer->setLayoutFS($app["layout.fs"]);
+                        if(isset($app["modern.fs"])) $serializer->setModernFS($app["modern.fs"]);
+
+                        $extensions[] = Transforms::transform()
+                            ->setLayoutSerializer($serializer)
+                            ->setLayout($app['layout']);
+                        return $extensions;
+                    }
+                )
+            );
+        }
+        // provide the assets and layouts
+        // of dashboard extensions
         if (isset($app['assets.fs'])) {
-            $app['assets.fs']->register(__DIR__.'/../ModernApp/DashboardExtension/assets/', 'DashboardExtension');
+            $app['assets.fs']->register(
+                __DIR__.'/../ModernApp/DashboardExtension/assets/',
+                'DashboardExtension');
         }
         if (isset($app['layout.fs'])) {
-            $app['layout.fs']->register(__DIR__.'/../ModernApp/DashboardExtension/templates/', 'DashboardExtension');
+            $app['layout.fs']->register(
+                __DIR__.'/../ModernApp/DashboardExtension/templates/',
+                'DashboardExtension');
         }
     }
 }
