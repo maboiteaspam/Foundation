@@ -61,7 +61,7 @@ class EsiHelper extends  AbstractStaticLayoutHelper{
                 Esi::transform()
                     ->setLayout($T->getLayout())
                     ->esify($nodeContents['id'], [
-                        'url'   => $generator->generate($route['name'], $route['params']),
+                        'url' => $generator->generate($route['route'], $route['params']),
                     ]);
             });
 
