@@ -1,26 +1,22 @@
 <?php
 namespace C\Provider;
 
+use C\Repository\RepositoryGhoster;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
 
+/**
+ * Class RepositoryServiceProvider
+ * provides a tag computer for ghosted service calls
+ *
+ * @package C\Provider
+ */
 class RepositoryServiceProvider implements ServiceProviderInterface
 {
-    /**
-     * Register the Capsule service.
-     *
-     * @param Application $app
-     **/
     public function register(Application $app)
     {
     }
-    /**
-     * Boot the Capsule service.
-     *
-     * @param Application $app Silex application instance.
-     *
-     * @return void
-     **/
+
     public function boot(Application $app)
     {
         if (isset($app['httpcache.tagger'])) {
@@ -29,12 +25,16 @@ class RepositoryServiceProvider implements ServiceProviderInterface
             // the repository data records methods calls,
             // this resolver executes those methods calls on-delayed-demand.
             /* @var $tagger \C\TagableResource\ResourceTagger */
-            $tagger->tagDataWith('repository', function ($data) use($app) {
+            $tagger->addTagComputer('repository', function ($data) use($app) {
                 $repositoryName = $data[0];
-                $method = $data[1];
-                $repository = $app[$repositoryName];
-                $v = call_user_func_array([$repository, $method[0]], $method[1]);
-                return $v;
+                $ghoster = new RepositoryGhoster($app[$repositoryName]);
+                return $ghoster->setMethods($data[1])->unwrap();
+            });
+
+            $tagger->addTagComputer('ghosted', function ($data) use($app) {
+                $instance = $data[0];
+                $ghoster = new RepositoryGhoster($instance);
+                return $ghoster->setMethods($data[1])->unwrap();
             });
         }
     }
