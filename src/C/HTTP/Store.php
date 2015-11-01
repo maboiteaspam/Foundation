@@ -1,5 +1,5 @@
 <?php
-namespace C\HTTP\Cache;
+namespace C\HTTP;
 
 use C\TagableResource\TagedResource;
 use Moust\Silex\Cache\CacheInterface;
