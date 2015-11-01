@@ -2,13 +2,12 @@
 namespace C\ModernApp\Dashboard;
 
 use C\Layout\Transforms\Transforms as Base;
+use C\Misc\ArrayHelpers;
 
 /**
  * Class Transforms
- * helps to transform the layout
- * to inject a dashboard into your view.
- *
- * Dashboard can receive extensions to display.
+ * the layout to inject the dashboard
+ * and its extensions into the final HTML
  *
  * @package C\ModernApp\Dashboard
  */
@@ -21,10 +20,14 @@ class Transforms extends Base{
         return new self();
     }
 
+    public function __construct () {
+        $this->extensions = new ArrayHelpers();
+    }
+
     /**
-     * @var array
+     * @var ArrayHelpers
      */
-    public $extensions = [];
+    public $extensions;
 
     /**
      * Set extensions object available for display in the dashboard.
@@ -34,14 +37,14 @@ class Transforms extends Base{
      * @return $this
      */
     public function setExtensions ($extensions) {
-        $this->extensions = array_merge($this->extensions, $extensions);
+        $this->extensions->merge($extensions);
         return $this;
     }
 
     /**
      * Transform the layout in order to show the dashboard.
-     * it will display extensions provided in $showExtensions
-     * according to provided extensions object.
+     * It will display extensions provided in $showExtensions
+     * in order.
      *
      * @param string $fromClass
      * @param array $showExtensions
