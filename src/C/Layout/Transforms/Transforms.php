@@ -274,27 +274,6 @@ class Transforms implements TransformsInterface{
      * @return $this
      */
     public function removeAssetRequirement($id, $require){
-
-        return $this;
-    }
-
-    /**
-     * Register an asset on the layout.
-     *
-     * $alias is the name of the vendor asset
-     * $path to the asset
-     * $version is the version of this asset
-     * $target is the asset block target to inject the asset into
-     *
-     * @param $alias
-     * @param $path
-     * @param $version
-     * @param $target
-     * @param bool|false $first
-     * @return $this
-     */
-    public function registerAssets($alias, $path, $version, $target, $first=false){
-        $this->layout->registerAsset($alias, $path, $version, $target, $first);
         return $this;
     }
 
@@ -323,6 +302,27 @@ class Transforms implements TransformsInterface{
     public function setDefaultMeta($id, $meta=[]){
         $block = $this->layout->getOrCreate($id);
         $block->meta = array_merge($meta, $block->meta);
+        return $this;
+    }
+
+    /**
+     * Register an asset on the layout.
+     *
+     * $alias is the name of the vendor asset
+     * $path to the asset
+     * $version is the version of this asset
+     * $target is the asset block target to inject the asset into
+     *
+     * @param $alias
+     * @param $path
+     * @param $version
+     * @param $target
+     * @param bool|false $first
+     * @param array $satisfy
+     * @return $this
+     */
+    public function registerAssets($alias, $path, $version, $target, $first=false, $satisfy=[]){
+        $this->layout->registerAsset($alias, $path, $version, $target, $first, $satisfy);
         return $this;
     }
 
