@@ -197,6 +197,23 @@ In that regard, please check and get to know about those underlying tools and th
 
 
 
+## C core providers
+
+`C` comes with code providers,
+
+- [AssetsServiceProvider](http://maboiteaspam.github.io/Foundation/providers/AssetsServiceProvider.html)
+- [CacheProvider](http://maboiteaspam.github.io/Foundation/providers/CacheProvider.html)
+- [CapsuleServiceProvider](http://maboiteaspam.github.io/Foundation/providers/CapsuleServiceProvider.html)
+- [DashboardExtensionProvider](http://maboiteaspam.github.io/Foundation/providers/DashboardExtensionProvider.html)
+- [EsiServiceProvider](http://maboiteaspam.github.io/Foundation/providers/EsiServiceProvider.html)
+- [FormServiceProvider](http://maboiteaspam.github.io/Foundation/providers/FormServiceProvider.html)
+- [HttpCacheServiceProvider](http://maboiteaspam.github.io/Foundation/providers/HttpCacheServiceProvider.html)
+- [IntlServiceProvider](http://maboiteaspam.github.io/Foundation/providers/IntlServiceProvider.html)
+- [LayoutServiceProvider](http://maboiteaspam.github.io/Foundation/providers/LayoutServiceProvider.html)
+- [ModernAppServiceProvider](http://maboiteaspam.github.io/Foundation/providers/ModernAppServiceProvider.html)
+- [RepositoryServiceProvider](http://maboiteaspam.github.io/Foundation/providers/RepositoryServiceProvider.html)
+- [WatcherServiceProvider](http://maboiteaspam.github.io/Foundation/providers/WatcherServiceProvider.html)
+
 
 
 ## What's next ?
@@ -206,15 +223,15 @@ To continue your tour and experience, please choose one of the following topic,
 
 - I'm front end designer, get to know how to work with layouts
 
-    https://github.com/maboiteaspam/Foundation/blob/master/doc/2.0-working-from-layout-perspective.md
+- [2.0 working-from-layout-perspective](2.0-working-from-layout-perspective.md)
 
 - I'm back end developer, get to know how to work with controllers, entities, cache
 
-    https://github.com/maboiteaspam/Foundation/blob/master/doc/3.0-working-from-controller-perspective.md
+- [3.0 working-from-controller-perspective](3.0-working-from-controller-perspective.md)
 
 - I'm senior project developer, get to know how to work with framework internals and advanced topics
 
-    https://github.com/maboiteaspam/Foundation/blob/master/doc/4.0-advanced-topics.md
+- [4.0 advanced-topics](4.0-advanced-topics.md)
 
 Don t forget to check out the Welcome module available here
 https://github.com/maboiteaspam/Welcome

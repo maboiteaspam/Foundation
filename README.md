@@ -90,14 +90,12 @@ __routine build__
 rm -fr ../Foundation-book
 mkdir ../Foundation-book
 cd ../Foundation-book
-git clone git@github.com:maboiteaspam/Foundation.git .
-git branch gh-pages
-git checkout gh-pages
+git clone git@github.com:maboiteaspam/Foundation.git . -b gh-pages
 gitbook build ../Foundation/doc .
 find ../Foundation/src/C/Provider/ -type f -exec sh -c "docco -l linear -o providers {}" \;
 git add -A
 git commit -m "Book update"
-git push
+git push --set-upstream origin gh-pages
 cd ../Foundation
 rm -fr ../Foundation-book
 ```
