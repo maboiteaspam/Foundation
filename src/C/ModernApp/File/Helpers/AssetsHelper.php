@@ -42,7 +42,8 @@ class AssetsHelper extends AbstractStaticLayoutHelper{
                     $nodeContents['path'],
                     $nodeContents['version'],
                     $nodeContents['target'],
-                    isset($nodeContents['first'])?$nodeContents['first']:false);
+                    isset($nodeContents['first'])?$nodeContents['first']:false,
+                    isset($nodeContents['satisfy'])?$nodeContents['satisfy']:[]);
             return true;
 
         }
