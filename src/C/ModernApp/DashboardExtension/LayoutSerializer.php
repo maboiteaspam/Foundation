@@ -1,6 +1,5 @@
 <?php
-
-namespace C\Layout\Misc;
+namespace C\ModernApp\DashboardExtension;
 
 use C\FS\KnownFs;
 use C\Layout\Block;
@@ -19,7 +18,7 @@ use Silex\Application;
  * the original object.
  *
  *
- * @package C\Layout\Misc
+ * @package C\ModernApp\DashboardExtension
  */
 class LayoutSerializer {
 
@@ -176,8 +175,14 @@ class LayoutSerializer {
                                 'value'=>''
                             ];
                             if ($tag['type']==='repository') {
-                                $t['value'] = $tag['value'][0]."->".$tag['value'][1][0];
+                                $t['value'] = $tag['value'][0];
+                                foreach ($tag['value'][1] as $call) {
+                                    $t['value'] .= "->".$call[0]."()";
+                                }
                                 $t['type'] = get_class($app[$tag['value'][0]]);
+
+
+
                             } else if ($tag['type']==='asset' || $tag['type']==='modern.layout') {
                                 // @todo to complete, check tagDataWith('asset'...
 //                            var_dump($tag);
