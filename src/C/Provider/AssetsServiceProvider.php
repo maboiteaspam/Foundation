@@ -3,6 +3,7 @@ namespace C\Provider;
 
 use C\Assets\AssetsInjector;
 use C\Assets\BuiltinResponder;
+use C\FS\KnownFsTagResolver;
 use C\FS\Registry;
 use C\FS\LocalFs;
 use C\FS\KnownFs;
@@ -14,47 +15,57 @@ use Silex\ServiceProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use C\Watch\WatchedRegistry;
 
+/**
+ * Class AssetsServiceProvider
+ * enhance layout capability to work with assets
+ * it will use the cache systems
+ * and connect to the cache layer
+ *
+ * It provides a new FS assets.fs, to register assets.
+ *
+ * @package C\Provider
+ */
 class AssetsServiceProvider implements ServiceProviderInterface
 {
-    /**
-     * Register the Capsule service.
-     *
-     * @param Application $app
-     **/
     public function register(Application $app)
     {
         LocalFs::$record = $app['debug'];
 
-        // relative path to www
+        // Project relative path to www public directory
         if (!isset($app['assets.www_path']))
             $app['assets.www_path'] = 'www/';
 
-        // it should match the web server
-        // used by your app (http nginx biultin)
+        // Set the web server type
+        // http / nginx / builtin
         if (!isset($app['assets.bridge_type']))
             $app['assets.bridge_type'] = 'builtin';
 
-        // the path used to record bridge content
+        // the file of the path containing bridge instructions
+        // for the web server type
         if (!isset($app['assets.bridge_file_path']))
             $app['assets.bridge_file_path'] = '.assets_bridge';
 
-        // bridger will help to bridge assets enclosed into modules
-        // to www web server
+        // Add a bridger service to generate teh bridge file
         $app['assets.bridger'] = $app->share(function() {
             return new Bridger();
         });
 
+        // FS assets cache name
         if (!isset($app['assets.cache_store_name']))
             $app['assets.cache_store_name'] = "assets-store";
 
+        // declare a new asset FS,
+        // to register the assets of the module
         $app['assets.fs'] = $app->share(function(Application $app) {
-            $storeName = $app['assets.cache_store_name'];
-            if (isset($app['caches'][$storeName])) $cache = $app['caches'][$storeName];
-            else $cache = $app['cache'];
 
-            $registry = new Registry('assets-', $cache, [
+            $store = $app['assets.cache_store_name'];
+            $cache = $app['cache.get']($store);
+
+            $registry = new Registry($store, $cache, [
                 'basePath' => $app['project.path']
             ]);
+
+            // file extensions this fs will remember
             $registry->restrictWithExtensions([
                 'css',
                 'js',
@@ -65,6 +76,14 @@ class AssetsServiceProvider implements ServiceProviderInterface
             return new KnownFs($registry);
         });
 
+
+    }
+    public function boot(Application $app)
+    {
+
+        // Add an static asset responder
+        // If the system detects the responder,
+        // it will try to make use of it.
         if ($app['assets.bridge_type']==='builtin') {
             $app['assets.responder'] = $app->share(function(Application $app) {
                 $responder = new BuiltinResponder();
@@ -76,38 +95,19 @@ class AssetsServiceProvider implements ServiceProviderInterface
         }
 
 
-    }
-    /**
-     * Boot the Capsule service.
-     *
-     * @param Application $app Silex application instance.
-     *
-     * @return void
-     **/
-    public function boot(Application $app)
-    {
-
+        // register a new tag computer
+        // to bind assets into the cache system
         if (isset($app['httpcache.tagger'])) {
-            $fs     = $app['assets.fs'];
-            $tagger = $app['httpcache.tagger'];
             /* @var $fs \C\FS\KnownFs */
             /* @var $tagger \C\TagableResource\ResourceTagger */
-            $tagger->tagDataWith('asset', function ($file) use($fs) {
-                $template = $fs->get($file);
-                $h = '';
-                if ($template) {
-                    $h .= $template['sha1'].$template['dir'].$template['name'];
-                } else if(LocalFs::file_exists($file)) {
-                    $h .= LocalFs::file_get_contents($file);
-                } else {
-                    // that is bad, it means we have registered files
-                    // that does not exists
-                    // or that can t be located back.
-                }
-                return $h;
-            });
+            $fs     = $app['assets.fs'];
+            $tagger = $app['httpcache.tagger'];
+            $tagger->addTagComputer('asset', new KnownFsTagResolver($fs));
         }
 
+        // layout render helper to
+        // transform the asset directives
+        // into concrete html components
         if (isset($app['layout'])) {
             $app->before(function (Request $request, Application $app) {
 
@@ -136,12 +136,16 @@ class AssetsServiceProvider implements ServiceProviderInterface
             });
         }
 
+        // Register a new view helper
+        // it enhance the view context
+        // with new methods to work with assets
         if (isset($app['layout.view'])) {
             $assetsViewHelper = new AssetsViewHelper();
             $assetsViewHelper->setPatterns($app["assets.patterns"]);
             $app['layout.view']->addHelper($assetsViewHelper);
         }
 
+        // consume the asset responder to serve assets
         if (php_sapi_name()==='cli-server') {
             if (isset($app['assets.responder'])) {
                 /* @var $responder \C\Assets\BuiltinResponder */
@@ -150,11 +154,16 @@ class AssetsServiceProvider implements ServiceProviderInterface
                 $responder->respond($app['assets.verbose']);
             }
         } else {
+            // get ready to display a page
             $app->before(function($request, Application $app){
                 $app['assets.fs']->registry->loadFromCache();
             }, Application::EARLY_EVENT);
         }
 
+        // register asset FS to the watcher system.
+        // it will watch assets and triggers assets build,
+        // currently only the file system is supported.
+        // later sass, requirejs should have some handles here.
         if (isset($app['watchers.watched'])) {
             $app['watchers.watched'] = $app->share(
                 $app->extend('watchers.watched',
