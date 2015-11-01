@@ -1,50 +1,63 @@
 <?php
 namespace C\Provider;
 
+use C\HTTP\RequestTagResolver;
 use C\Misc\Utils;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use C\TagableResource\ResourceTagger;
-use C\HTTP\Cache\Store;
+use C\HTTP\Store;
+use C\HTTP\HttpCache;
 
+/**
+ * Class HttpCacheServiceProvider
+ * provides an http based caching system.
+ *
+ * It provides
+ * - 'resource to tag' mechanism to control the cache and its data
+ * - http cache facade to speak http cache
+ * - http cache store
+ *
+ * @package C\Provider
+ */
 class HttpCacheServiceProvider implements ServiceProviderInterface
 {
-    /**
-     * Register the Capsule service.
-     *
-     * @param Application $app
-     **/
     public function register(Application $app)
     {
+        // provides 'resource to tag' computer capabilities
         $app['httpcache.tagger'] = $app->share(function() {
             return new ResourceTagger();
         });
 
+        // the name of the http cache content
         if (!isset($app['httpcache.cache_store_name']))
             $app['httpcache.cache_store_name'] = "http-store";
 
+        // the http cache store,
+        // it contains http response content, headers and meta
         $app['httpcache.store'] = $app->share(function(Application $app) {
-            $storeName = $app['httpcache.cache_store_name'];
-            if (isset($app['caches'][$storeName])) $cache = $app['caches'][$storeName];
-            else $cache = $app['cache'];
-            $store = new Store('httpcache-', $cache);
+            $store = $app['httpcache.cache_store_name'];
+            $cache = $app['cache.get']($store);
+            $store = new Store($store, $cache);
             return $store;
         });
-        $app['httpcache.taggedResource'] = null;
+        // the application taggedResource value.
+//        $app['httpcache.taggedResource'] = null;
+
+        // defines an http cache facade
+        // it helps determine what and how to cache
+        $app['httpcache.facade'] = $app->share(function() {
+            return new HttpCache();
+        });
     }
-    /**
-     * Boot the Capsule service.
-     *
-     * @param Application $app Silex application instance.
-     *
-     * @return void
-     **/
+
     public function boot(Application $app)
     {
 
-        // This handler register tag computer to be used for http caching.
+        // This handler register tag computers
+        // to consume jit http values
         $app->before(function (Request $request, Application $app) {
             if (isset($app['httpcache.tagger'])) {
                 $tagger = $app['httpcache.tagger'];
@@ -52,59 +65,46 @@ class HttpCacheServiceProvider implements ServiceProviderInterface
                 /* @var $fs \C\FS\KnownFs */
                 /* @var $tagger \C\TagableResource\ResourceTagger */
 
-                // inject parsed parameters from request object.
-                $tagger->tagDataWith('request', function ($value) use($request) {
-                    if ($value[0]==='_GET') {
-                        return $request->query->get($value[1], null, true);
-
-                    } else if ($value[0]==='_POST') {
-                        return $request->request->get($value[1], null, true);
-
-                    } else if ($value[0]==='_COOKIE') {
-                        return $request->cookies->get($value[1], null, true);
-
-                    } else if ($value[0]==='_SESSION') {
-                        return $request->getSession()->get($value[1], null, true);
-
-                    } else if ($value[0]==='_FILES') {
-                        return $request->files->get($value[1]);
-
-                    } else if ($value[0]==='_HEADER') {
-                        return $request->headers->get($value[1]);
-
-                    }
-                    throw new \Exception("missing computer for repository {$value[0]}");
-                });
+                // inject parameters from request object.
+                $tagger->addTagComputer('request', new RequestTagResolver($request));
 
                 // inject the computed user locale.
-                $tagger->tagDataWith('jit-locale', function ($value) use($app) {
-                    /* @var $localeMngr \C\Intl\LocaleManager */
-                    $localeMngr = $app['locale.manager'];
-                    return $localeMngr->getLocale();
-                });
+                if (isset($app['locale.manager'])) {
+                    $tagger->addTagComputer('jit-locale', function ($value) use($app) {
+                        /* @var $localeMngr \C\Intl\LocaleManager */
+                        $localeMngr = $app['locale.manager'];
+                        return $localeMngr->getLocale();
+                    });
+                } else {
+                    $tagger->addTagComputer('jit-locale', function ($value) use($app) {
+                        /* @var $request Request */
+                        $request = $app['request'];
+                        return $request->getLocale();
+                    });
+                }
 
                 // inject the user device.
-                $tagger->tagDataWith('jit-device', function ($value) use($app) {
+                $tagger->addTagComputer('jit-device', function ($value) use($app) {
                     /* @var $layout \C\Layout\Layout */
                     $layout = $app['layout'];
                     return $layout->requestMatcher->deviceType;
                 });
 
                 // inject the request kind (ajax, esi, get, ect)
-                $tagger->tagDataWith('jit-request-kind', function ($value) use($app) {
+                $tagger->addTagComputer('jit-request-kind', function ($value) use($app) {
                     /* @var $layout \C\Layout\Layout */
                     $layout = $app['layout'];
                     return $layout->requestMatcher->requestKind;
                 });
 
                 // inject accept content type negotiation.
-                $tagger->tagDataWith('jit-accept', function ($value) use($app) {
+                $tagger->addTagComputer('jit-accept', function ($value) use($app) {
                     // @todo, check how to deal with HTTP accept request header.
                     return null;
                 });
 
                 // inject debug value.
-                $tagger->tagDataWith('jit-debug', function ($value) use($app) {
+                $tagger->addTagComputer('jit-debug', function ($value) use($app) {
                     return $app['debug']?'with-debug':'without-debug';
                 });
             }
@@ -121,42 +121,13 @@ class HttpCacheServiceProvider implements ServiceProviderInterface
             if ($request->isMethodSafe()) {
                 /* @var $tagger ResourceTagger */
                 /* @var $store Store */
-                $tagger = $app['httpcache.tagger'];
-                $store = $app['httpcache.store'];
+                /* @var $cache HttpCache */
+                $cache = $app['httpcache.facade'];
+                $cache->setRequest($app['request']);
+                $cache->setStore($app['httpcache.store']);
+                $cache->setTagger($app['httpcache.tagger']);
+
                 $checkFreshness = $app['httpcache.check_taged_resource_freshness'];
-                $etags = $request->getETags();
-
-                $respondEtagedResource = function ($etag) use($store, $tagger, $checkFreshness) {
-                    $res = $store->getResource($etag);
-                    if ($res) { // a corresponding resoruce was found for sent etag.
-                        Utils::stderr('found resource for etag: '.$etag);
-                        $originalTag = $res->originalTag;
-                        $fresh = !$checkFreshness || $checkFreshness && $tagger->isFresh($res);
-                        if ($fresh) { // and it happens to be cache-fresh.
-                            $content = $store->getContent($etag);
-                            $body = $content['body'];
-                            $response = new Response();
-                            $response->headers->replace($content['headers']);
-                            $response->setProtocolVersion('1.1');
-                            $response->setContent($body);
-                            $response->headers->set("X-CACHED", "true");
-                            Utils::stderr('responding from cache a content length ='.strlen($body));
-                            Utils::stderr('headers ='.json_encode($content['headers']));
-                            Utils::stderr('require fresh:'.json_encode($checkFreshness));
-                            return $response;
-
-                        } else { // that is unfortunate, the cache it not fresh....
-                            Utils::stderr('is etag fresh:'.json_encode($fresh));
-                            Utils::stderr('original Tag:'.json_encode($originalTag));
-                            Utils::stderr('new Tag:'.json_encode($res->originalTag));
-                            Utils::stderr('require fresh:'.json_encode($checkFreshness));
-                        }
-                    } else {
-                        Utils::stderr("etag $etag does not exists in cache"); // badass browser ?
-                    }
-                    return false;
-                };
-
 
                 // when the request is sent by user
                 // it may contain an if-none-match: header
@@ -164,19 +135,14 @@ class HttpCacheServiceProvider implements ServiceProviderInterface
                 // he knows its etag.
                 // We should check the cache to know how to handle this request
                 // within the best response time possible.
-                foreach ($etags as $etag) {
-                    if (!in_array($etag, ['*'])) {
-                        $etag = str_replace(['"',"'"], '', $etag);
-                        Utils::stderr("check etag {$etag} for uri {$request->getUri()}");
-                        $resultResponse = $respondEtagedResource($etag);
-                        if ($resultResponse!==false) {
-                            Utils::stderr("found valid etag");
-                            $resultResponse->setNotModified();
-                            return $resultResponse;
-                        }
-                    }
+                $resultResponse = $cache->getFirstResponseMatchingByEtag($checkFreshness);
+                if ($resultResponse!==false) {
+                    Utils::stderr("found valid etag");
+                    $resultResponse->setNotModified();
+                    return $resultResponse;
                 }
 
+                $etags = $cache->getProperEtags();
                 // here can exists a FPC cache layer.
                 // using url+ua+lang+request kind.
                 if(!count($etags) && false) {
@@ -185,17 +151,12 @@ class HttpCacheServiceProvider implements ServiceProviderInterface
                     // when user press ctl+f5, it sends request with max-age=0 (+/-),
                     // it means the user wants fresh version of the document.
                     // so we should not call cache here.
-                    $knownEtag = $store->getEtag($request->getUri());
-                    if ($knownEtag) {
-                        Utils::stderr('yeah, we found a matching known etag for this url');
-                        // @todo this must check vary by headers (lang / UA)
-                        $resultResponse = $respondEtagedResource($knownEtag);
-                        if ($resultResponse!==false) {
-                            Utils::stderr('youpi it works');
-                            return $resultResponse;
-                        } else {
-                            Utils::stderr('erf, we can t use it...');
-                        }
+                    $resultResponse = $cache->getResponseMatchingByUri($checkFreshness);
+                    if ($resultResponse!==false) {
+                        Utils::stderr("found valid etag");
+//                        $resultResponse->setNotModified();
+//                        dump($resultResponse);
+                        return $resultResponse;
                     }
                 }
             }
@@ -214,7 +175,15 @@ class HttpCacheServiceProvider implements ServiceProviderInterface
         // lets record that into the cache store.
         $app->after(function (Request $request, Response $response, Application $app) {
 
-            Utils::stderr('is response cache-able '.var_export($response->isCacheable(), true));
+            /* @var $tagger ResourceTagger */
+            /* @var $store Store */
+            /* @var $cache HttpCache */
+            $cache = $app['httpcache.facade'];
+            $cache->setRequest($app['request']);
+            $cache->setStore($app['httpcache.store']);
+            $cache->setTagger($app['httpcache.tagger']);
+
+            Utils::stderr('is response cache-able '.var_export($cache->isCacheAble($response), true));
             Utils::stderr('response code '.var_export($response->getStatusCode(), true));
             Utils::stderr('response is from cache '.var_export($response->headers->has("X-CACHED"), true));
 
@@ -222,31 +191,12 @@ class HttpCacheServiceProvider implements ServiceProviderInterface
             $layout = $app['layout'];
             $TaggedResource = $layout->getTaggedResource();
 
-            if ($request->isMethodSafe()
-                && $response->isCacheable()
-                && !$response->getStatusCode()!==304
-                && !$response->headers->has("X-CACHED")
-                && $TaggedResource) {
-                $etag = $response->getEtag();
-                Utils::stderr(' etag '.$etag);
-                if ($etag) {
+            if ($TaggedResource
+                && $request->isMethodSafe()
+                && $cache->isCacheAble($response)) {
                     Utils::stderr('saving resource '.$request->getUri());
-                    $headers = $response->headers->all();
-                    // those are headers to save into cache.
-                    // later when the cache is served, they are re injected.
-                    $headers = Utils::arrayPick($headers, [
-                        'cache-control', 'etag', 'last-modified', 'expires',
-                        'date',
-                        'Surrogate-Capability',
-                    ]);
-                    $app["httpcache.store"]->store(
-                        $TaggedResource,
-                        $request->getUri(), [
-                        'headers'   => $headers,
-                        'body'      => $response->getContent()
-                    ]);
-                    Utils::stderr('headers ='.json_encode($headers));
-                }
+                    $cache->storeResponseToCache($response, $TaggedResource);
+//                    Utils::stderr('headers ='.json_encode($headers));
             }
             $response->headers->remove("X-CACHED");
         }, Application::LATE_EVENT);
