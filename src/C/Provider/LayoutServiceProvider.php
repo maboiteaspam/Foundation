@@ -2,6 +2,7 @@
 namespace C\Provider;
 
 use C\FS\KnownFs;
+use C\FS\KnownFsTagResolver;
 use C\FS\LocalFs;
 use C\FS\Registry;
 
@@ -15,22 +16,29 @@ use C\View\Context;
 use C\View\Helper\CommonViewHelper;
 use C\View\Helper\LayoutViewHelper;
 use C\View\Helper\RoutingViewHelper;
-use C\View\Helper\FormViewHelper;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
 use C\Watch\WatchedRegistry;
 
+/**
+ * Class LayoutServiceProvider
+ * provides core mechanism
+ * to compose and render a view
+ *
+ * @package C\Provider
+ */
 class LayoutServiceProvider implements ServiceProviderInterface
 {
-    /**
-     * Register the Capsule service.
-     *
-     * @param Application $app
-     **/
     public function register(Application $app)
     {
         LocalFs::$record = $app['debug'];
 
+        // provides a factory to create layout objects,
+        // as Layout is the backbone which delimits both concerns
+        // it is tightly linked to underlying modules
+        // about http, translation and some more.
+        // Use this factory to get an insitu Layout object,
+        // in context of the current request treatment.
         $app['layout.factory'] = $app->protect(function() use($app) {
             $layout = new Layout();
             if ($app['debug']) $layout->enableDebug(true);
@@ -39,10 +47,11 @@ class LayoutServiceProvider implements ServiceProviderInterface
             $layout->setFS($app['layout.fs']);
 
 
-            $localMngr = $app['locale.manager'];
-
             $requestMatcher = new RequestTypeMatcher();
-            $requestMatcher->setLang($localMngr->getLocale());
+            if (isset($app['locale.manager'])) {
+                $localMngr = $app['locale.manager'];
+                $requestMatcher->setLang($localMngr->getLocale());
+            }
             $requestMatcher->setDevice('desktop');
             if (isset($app["mobile_detect"])) {
                 if ($app["mobile_detect"]->isTablet()) {
@@ -53,8 +62,6 @@ class LayoutServiceProvider implements ServiceProviderInterface
             }
             $layout->setRequestMatcher($requestMatcher);
 
-            $layout->setLayoutSerializer($app['layout.serializer']);
-
             $layoutViewHelper = new LayoutViewHelper();
             $layoutViewHelper->setEnv($app['layout.env']);
             $layoutViewHelper->setLayout($layout);
@@ -62,10 +69,14 @@ class LayoutServiceProvider implements ServiceProviderInterface
 
             return $layout;
         });
+
+        // Defines the current layout object for the current request
         $app['layout'] = $app->share(function() use($app) {
             return $app['layout.factory']();
         });
 
+        // defines environmental configuration
+        // to impact visual rendering of the views
         $app['layout.env.charset'] = 'utf-8';
         $app['layout.env.date_format'] = '';
         $app['layout.env.timezone'] = '';
@@ -79,33 +90,53 @@ class LayoutServiceProvider implements ServiceProviderInterface
             return $env;
         });
 
+        // defines the view context within what the views are rendered.
+        // it provides the templates with the ability
+        // of a dynamically enhanced $this object of helpers methods
         $app['layout.view'] = $app->share(function() {
             return new Context();
         });
 
-        $app['layout.view'] = $app->share($app->extend("layout.view", function(Context $view, Application $app) {
-            $view->helpers->append($app['layout.helper.common']);
-            return $view;
-        }));
+        // register the common view helper
+        // on the view context
+        $app['layout.view'] = $app->share(
+            $app->extend("layout.view",
+                function(Context $view, Application $app) {
+                    $view->helpers->append($app['layout.helper.common']);
+                    return $view;
+                }
+            )
+        );
 
+        // provides common view context helper
+        // it provides translations, encoding, text helpers
         $app['layout.helper.common'] = $app->share(function(Application $app) {
             $commonHelper = new CommonViewHelper();
             $commonHelper->setEnv($app['layout.env']);
-            // see more about translator here http://stackoverflow.com/questions/25482856/basic-use-of-translationserviceprovider-in-silex
             if (isset($app['translator'])) {
                 $commonHelper->setTranslator($app['translator']);
             }
             return $commonHelper;
         });
 
-        $app['layout.view'] = $app->share($app->extend("layout.view", function(Context $view, Application $app) {
-            $routingHelper = new RoutingViewHelper();
-            $routingHelper->setEnv($app['layout.env']);
-            $routingHelper->setUrlGenerator($app["url_generator"]);
-            $view->helpers->append($routingHelper);
-            return $view;
-        }));
 
+        // provides route view context helper
+        // to generate urls against application defined routes
+        $app['layout.view'] = $app->share(
+            $app->extend("layout.view",
+                function(Context $view, Application $app) {
+                    $routingHelper = new RoutingViewHelper();
+                    $routingHelper->setEnv($app['layout.env']);
+                    $routingHelper->setUrlGenerator($app["url_generator"]);
+                    $view->helpers->append($routingHelper);
+                    return $view;
+                }
+            )
+        );
+
+        // provides the layout responder object
+        // to wire the layout object
+        // to the http implementation
         $app['layout.responder'] = $app->share(function(Application $app) {
             $responder = new LayoutResponder();
             if (isset($app['httpcache.tagger'])) {
@@ -115,25 +146,18 @@ class LayoutServiceProvider implements ServiceProviderInterface
             return $responder;
         });
 
-        $app['layout.serializer'] = $app->share(function (Application $app) {
-            // @todo split across service providers
-            $serializer = new LayoutSerializer();
-            $serializer->setApp($app);
-            if(isset($app["assets.fs"])) $serializer->setAssetsFS($app["assets.fs"]);
-            if(isset($app["layout.fs"])) $serializer->setLayoutFS($app["layout.fs"]);
-            if(isset($app["modern.fs"])) $serializer->setModernFS($app["modern.fs"]);
-            return $serializer;
-        });
-
+        // the name of the cache to store
+        // templates fs
         if (!isset($app['layout.cache_store_name']))
             $app['layout.cache_store_name'] = "layout-store";
 
+        // declare a new templates FS,
+        // to register the templates of the module
         $app['layout.fs'] = $app->share(function(Application $app) {
-            $storeName = $app['layout.cache_store_name'];
-            if (isset($app['caches'][$storeName])) $cache = $app['caches'][$storeName];
-            else $cache = $app['cache'];
+            $store = $app['layout.cache_store_name'];
+            $cache = $app['cache.get']($store);
 
-            $registry = new Registry('layout-', $cache, [
+            $registry = new Registry($store, $cache, [
                 'basePath' => $app['project.path']
             ]);
             $registry->restrictWithExtensions([
@@ -150,14 +174,11 @@ class LayoutServiceProvider implements ServiceProviderInterface
 //            }));
 //        }
     }
-    /**
-     *
-     * @param Application $app Silex application instance.
-     *
-     * @return void
-     **/
+
     public function boot(Application $app)
     {
+        // register templates FS to the watcher system.
+        // it will watch templates and triggers fs build.
         if (isset($app['watchers.watched'])) {
             $app['watchers.watched'] = $app->share(
                 $app->extend('watchers.watched',
@@ -172,32 +193,19 @@ class LayoutServiceProvider implements ServiceProviderInterface
             );
         }
 
+        // get ready to display a page
         $app->before(function () use ($app) {
             $app['layout.fs']->registry->loadFromCache();
         });
 
+        // register a new tag computer
+        // to bind templates into the cache system
         if (isset($app['httpcache.tagger'])) {
             $fs = $app['layout.fs'];
             $tagger = $app['httpcache.tagger'];
             /* @var $fs \C\FS\KnownFs */
             /* @var $tagger \C\TagableResource\ResourceTagger */
-            $tagger->tagDataWith('template', function ($file) use($fs) {
-                $template = $fs->get($file);
-                $h = '';
-                if ($template) {
-                    $h .= $template['sha1'].$template['dir'].$template['name'];
-                } else if(LocalFs::file_exists($file)) {
-                    $h .= LocalFs::file_get_contents($file);
-                } else {
-                    // that is bad, it means we have registered files
-                    // that does not exists
-                    // or that can t be located back.
-                    //
-                    // you may have forgotten somewhere
-                    // $app['layout.fs']->register(__DIR__.'/path/to/templates/', 'ModuleName');
-                }
-                return $h;
-            });
+            $tagger->addTagComputer('template', new KnownFsTagResolver($fs));
         }
     }
 }
