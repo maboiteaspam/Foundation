@@ -6,10 +6,8 @@ use C\Intl\IntlFileLoaderInterface;
 
 /**
  * Class IntlFileLoader
- * is a facade to load multiple file formats according to their extension.
- *
- * It gets File Format translator helpers attached to it,
- * It can then load a file with the appropriate format loader.
+ * is a facade to load multiple file
+ * formats according to their extension.
  *
  * @package C\Intl\Loader
  */
