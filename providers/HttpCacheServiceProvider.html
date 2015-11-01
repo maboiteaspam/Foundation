@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>HttpCacheServiceProvider.php</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="page">
+
+      <div class="header">
+        
+          <h1>HttpCacheServiceProvider.php</h1>
+        
+
+        
+      </div>
+
+      
+        
+        
+        
+          <div class='highlight'><pre><span class="hljs-preprocessor">&lt;?php</span>
+<span class="hljs-keyword">namespace</span> <span class="hljs-title">C</span>\<span class="hljs-title">Provider</span>;
+
+<span class="hljs-keyword">use</span> <span class="hljs-title">C</span>\<span class="hljs-title">HTTP</span>\<span class="hljs-title">RequestTagResolver</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">C</span>\<span class="hljs-title">Misc</span>\<span class="hljs-title">Utils</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">Silex</span>\<span class="hljs-title">Application</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">Silex</span>\<span class="hljs-title">ServiceProviderInterface</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">Symfony</span>\<span class="hljs-title">Component</span>\<span class="hljs-title">HttpFoundation</span>\<span class="hljs-title">Response</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">Symfony</span>\<span class="hljs-title">Component</span>\<span class="hljs-title">HttpFoundation</span>\<span class="hljs-title">Request</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">C</span>\<span class="hljs-title">TagableResource</span>\<span class="hljs-title">ResourceTagger</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">C</span>\<span class="hljs-title">HTTP</span>\<span class="hljs-title">Store</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">C</span>\<span class="hljs-title">HTTP</span>\<span class="hljs-title">HttpCache</span>;
+
+<span class="hljs-comment">/**
+ * Class HttpCacheServiceProvider
+ * provides an http based caching system.
+ *
+ * It provides
+ * - 'resource to tag' mechanism to control the cache and its data
+ * - http cache facade to speak http cache
+ * - http cache store
+ *
+ * <span class="hljs-doctag">@package</span> C\Provider
+ */</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">HttpCacheServiceProvider</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">ServiceProviderInterface</span>
+</span>{
+    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">register</span><span class="hljs-params">(Application <span class="hljs-variable">$app</span>)</span>
+    </span>{</pre></div>
+        
+      
+        
+        <p>provides ‘resource to tag’ computer capabilities</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-variable">$app</span>[<span class="hljs-string">'httpcache.tagger'</span>] = <span class="hljs-variable">$app</span>-&gt;share(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> ResourceTagger();
+        });</pre></div>
+        
+      
+        
+        <p>the name of the http cache content</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$app</span>[<span class="hljs-string">'httpcache.cache_store_name'</span>]))
+            <span class="hljs-variable">$app</span>[<span class="hljs-string">'httpcache.cache_store_name'</span>] = <span class="hljs-string">"http-store"</span>;</pre></div>
+        
+      
+        
+        <p>the http cache store,
+it contains http response content, headers and meta</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-variable">$app</span>[<span class="hljs-string">'httpcache.store'</span>] = <span class="hljs-variable">$app</span>-&gt;share(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(Application <span class="hljs-variable">$app</span>)</span> </span>{
+            <span class="hljs-variable">$store</span> = <span class="hljs-variable">$app</span>[<span class="hljs-string">'httpcache.cache_store_name'</span>];
+            <span class="hljs-variable">$cache</span> = <span class="hljs-variable">$app</span>[<span class="hljs-string">'cache.get'</span>](<span class="hljs-variable">$store</span>);
+            <span class="hljs-variable">$store</span> = <span class="hljs-keyword">new</span> Store(<span class="hljs-variable">$store</span>, <span class="hljs-variable">$cache</span>);
+            <span class="hljs-keyword">return</span> <span class="hljs-variable">$store</span>;
+        });</pre></div>
+        
+      
+        
+        <p>the application taggedResource value.
+       $app[‘httpcache.taggedResource’] = null;</p>
+
+        
+      
+        
+        <p>defines an http cache facade
+it helps determine what and how to cache</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-variable">$app</span>[<span class="hljs-string">'httpcache.facade'</span>] = <span class="hljs-variable">$app</span>-&gt;share(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> HttpCache();
+        });
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">boot</span><span class="hljs-params">(Application <span class="hljs-variable">$app</span>)</span>
+    </span>{</pre></div>
+        
+      
+        
+        <p>This handler register tag computers
+to consume jit http values</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-variable">$app</span>-&gt;before(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(Request <span class="hljs-variable">$request</span>, Application <span class="hljs-variable">$app</span>)</span> </span>{
+            <span class="hljs-keyword">if</span> (<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$app</span>[<span class="hljs-string">'httpcache.tagger'</span>])) {
+                <span class="hljs-variable">$tagger</span> = <span class="hljs-variable">$app</span>[<span class="hljs-string">'httpcache.tagger'</span>];
+
+                <span class="hljs-comment">/* <span class="hljs-doctag">@var</span> $fs \C\FS\KnownFs */</span>
+                <span class="hljs-comment">/* <span class="hljs-doctag">@var</span> $tagger \C\TagableResource\ResourceTagger */</span></pre></div>
+        
+      
+        
+        <p>inject parameters from request object.</p>
+
+        
+          <div class='highlight'><pre>                <span class="hljs-variable">$tagger</span>-&gt;addTagComputer(<span class="hljs-string">'request'</span>, <span class="hljs-keyword">new</span> RequestTagResolver(<span class="hljs-variable">$request</span>));</pre></div>
+        
+      
+        
+        <p>inject the computed user locale.</p>
+
+        
+          <div class='highlight'><pre>                <span class="hljs-keyword">if</span> (<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$app</span>[<span class="hljs-string">'locale.manager'</span>])) {
+                    <span class="hljs-variable">$tagger</span>-&gt;addTagComputer(<span class="hljs-string">'jit-locale'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(<span class="hljs-variable">$value</span>)</span> <span class="hljs-title">use</span><span class="hljs-params">(<span class="hljs-variable">$app</span>)</span> </span>{
+                        <span class="hljs-comment">/* <span class="hljs-doctag">@var</span> $localeMngr \C\Intl\LocaleManager */</span>
+                        <span class="hljs-variable">$localeMngr</span> = <span class="hljs-variable">$app</span>[<span class="hljs-string">'locale.manager'</span>];
+                        <span class="hljs-keyword">return</span> <span class="hljs-variable">$localeMngr</span>-&gt;getLocale();
+                    });
+                } <span class="hljs-keyword">else</span> {
+                    <span class="hljs-variable">$tagger</span>-&gt;addTagComputer(<span class="hljs-string">'jit-locale'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(<span class="hljs-variable">$value</span>)</span> <span class="hljs-title">use</span><span class="hljs-params">(<span class="hljs-variable">$app</span>)</span> </span>{
+                        <span class="hljs-comment">/* <span class="hljs-doctag">@var</span> $request Request */</span>
+                        <span class="hljs-variable">$request</span> = <span class="hljs-variable">$app</span>[<span class="hljs-string">'request'</span>];
+                        <span class="hljs-keyword">return</span> <span class="hljs-variable">$request</span>-&gt;getLocale();
+                    });
+                }</pre></div>
+        
+      
+        
+        <p>inject the user device.</p>
+
+        
+          <div class='highlight'><pre>                <span class="hljs-variable">$tagger</span>-&gt;addTagComputer(<span class="hljs-string">'jit-device'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(<span class="hljs-variable">$value</span>)</span> <span class="hljs-title">use</span><span class="hljs-params">(<span class="hljs-variable">$app</span>)</span> </span>{
+                    <span class="hljs-comment">/* <span class="hljs-doctag">@var</span> $layout \C\Layout\Layout */</span>
+                    <span class="hljs-variable">$layout</span> = <span class="hljs-variable">$app</span>[<span class="hljs-string">'layout'</span>];
+                    <span class="hljs-keyword">return</span> <span class="hljs-variable">$layout</span>-&gt;requestMatcher-&gt;deviceType;
+                });</pre></div>
+        
+      
+        
+        <p>inject the request kind (ajax, esi, get, ect)</p>
+
+        
+          <div class='highlight'><pre>                <span class="hljs-variable">$tagger</span>-&gt;addTagComputer(<span class="hljs-string">'jit-request-kind'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(<span class="hljs-variable">$value</span>)</span> <span class="hljs-title">use</span><span class="hljs-params">(<span class="hljs-variable">$app</span>)</span> </span>{
+                    <span class="hljs-comment">/* <span class="hljs-doctag">@var</span> $layout \C\Layout\Layout */</span>
+                    <span class="hljs-variable">$layout</span> = <span class="hljs-variable">$app</span>[<span class="hljs-string">'layout'</span>];
+                    <span class="hljs-keyword">return</span> <span class="hljs-variable">$layout</span>-&gt;requestMatcher-&gt;requestKind;
+                });</pre></div>
+        
+      
+        
+        <p>inject accept content type negotiation.</p>
+
+        
+          <div class='highlight'><pre>                <span class="hljs-variable">$tagger</span>-&gt;addTagComputer(<span class="hljs-string">'jit-accept'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(<span class="hljs-variable">$value</span>)</span> <span class="hljs-title">use</span><span class="hljs-params">(<span class="hljs-variable">$app</span>)</span> </span>{</pre></div>
+        
+      
+        
+        <p>@todo, check how to deal with HTTP accept request header.</p>
+
+        
+          <div class='highlight'><pre>                    <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;
+                });</pre></div>
+        
+      
+        
+        <p>inject debug value.</p>
+
+        
+          <div class='highlight'><pre>                <span class="hljs-variable">$tagger</span>-&gt;addTagComputer(<span class="hljs-string">'jit-debug'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(<span class="hljs-variable">$value</span>)</span> <span class="hljs-title">use</span><span class="hljs-params">(<span class="hljs-variable">$app</span>)</span> </span>{
+                    <span class="hljs-keyword">return</span> <span class="hljs-variable">$app</span>[<span class="hljs-string">'debug'</span>]?<span class="hljs-string">'with-debug'</span>:<span class="hljs-string">'without-debug'</span>;
+                });
+            }
+
+            Utils::stderr(<span class="hljs-string">'-------------'</span>);
+            Utils::stderr(<span class="hljs-string">'receiving url '</span>.<span class="hljs-variable">$request</span>-&gt;getUri());
+
+        }, Application::EARLY_EVENT);</pre></div>
+        
+      
+        
+        <p>before the app is executed, we should check the cache
+and try to take a shortcut.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-variable">$app</span>-&gt;before(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(Request <span class="hljs-variable">$request</span>, Application <span class="hljs-variable">$app</span>)</span> </span>{</pre></div>
+        
+      
+        
+        <p>it is not good to cache a non GET method.</p>
+
+        
+          <div class='highlight'><pre>            <span class="hljs-keyword">if</span> (<span class="hljs-variable">$request</span>-&gt;isMethodSafe()) {
+                <span class="hljs-comment">/* <span class="hljs-doctag">@var</span> $tagger ResourceTagger */</span>
+                <span class="hljs-comment">/* <span class="hljs-doctag">@var</span> $store Store */</span>
+                <span class="hljs-comment">/* <span class="hljs-doctag">@var</span> $cache HttpCache */</span>
+                <span class="hljs-variable">$cache</span> = <span class="hljs-variable">$app</span>[<span class="hljs-string">'httpcache.facade'</span>];
+                <span class="hljs-variable">$cache</span>-&gt;setRequest(<span class="hljs-variable">$app</span>[<span class="hljs-string">'request'</span>]);
+                <span class="hljs-variable">$cache</span>-&gt;setStore(<span class="hljs-variable">$app</span>[<span class="hljs-string">'httpcache.store'</span>]);
+                <span class="hljs-variable">$cache</span>-&gt;setTagger(<span class="hljs-variable">$app</span>[<span class="hljs-string">'httpcache.tagger'</span>]);
+
+                <span class="hljs-variable">$checkFreshness</span> = <span class="hljs-variable">$app</span>[<span class="hljs-string">'httpcache.check_taged_resource_freshness'</span>];</pre></div>
+        
+      
+        
+        <p>when the request is sent by user
+it may contain an if-none-match: header
+which means the user is looking for an url page he already saw before,
+he knows its etag.
+We should check the cache to know how to handle this request
+within the best response time possible.</p>
+
+        
+          <div class='highlight'><pre>                <span class="hljs-variable">$resultResponse</span> = <span class="hljs-variable">$cache</span>-&gt;getFirstResponseMatchingByEtag(<span class="hljs-variable">$checkFreshness</span>);
+                <span class="hljs-keyword">if</span> (<span class="hljs-variable">$resultResponse</span>!==<span class="hljs-keyword">false</span>) {
+                    Utils::stderr(<span class="hljs-string">"found valid etag"</span>);
+                    <span class="hljs-variable">$resultResponse</span>-&gt;setNotModified();
+                    <span class="hljs-keyword">return</span> <span class="hljs-variable">$resultResponse</span>;
+                }
+
+                <span class="hljs-variable">$etags</span> = <span class="hljs-variable">$cache</span>-&gt;getProperEtags();</pre></div>
+        
+      
+        
+        <p>here can exists a FPC cache layer.
+using url+ua+lang+request kind.</p>
+
+        
+          <div class='highlight'><pre>                <span class="hljs-keyword">if</span>(!count(<span class="hljs-variable">$etags</span>) &amp;&amp; <span class="hljs-keyword">false</span>) {
+                    Utils::stderr(<span class="hljs-string">'no etag in this request'</span>);</pre></div>
+        
+      
+        
+        <p>@todo check if resource explicitly wants fresh version
+when user press ctl+f5, it sends request with max-age=0 (+/-),
+it means the user wants fresh version of the document.
+so we should not call cache here.</p>
+
+        
+          <div class='highlight'><pre>                    <span class="hljs-variable">$resultResponse</span> = <span class="hljs-variable">$cache</span>-&gt;getResponseMatchingByUri(<span class="hljs-variable">$checkFreshness</span>);
+                    <span class="hljs-keyword">if</span> (<span class="hljs-variable">$resultResponse</span>!==<span class="hljs-keyword">false</span>) {
+                        Utils::stderr(<span class="hljs-string">"found valid etag"</span>);</pre></div>
+        
+      
+        
+        <pre><code>                   <span class="hljs-variable">$resultResponse</span>-&gt;setNotModified();
+                   dump(<span class="hljs-variable">$resultResponse</span>);
+</code></pre>
+        
+          <div class='highlight'><pre>                        <span class="hljs-keyword">return</span> <span class="hljs-variable">$resultResponse</span>;
+                    }
+                }
+            }
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;
+        }, Application::LATE_EVENT);</pre></div>
+        
+      
+        
+        <p>once app has finished,
+let s check if the response is cache-able.
+It must not be
+a cached response itself,
+neither use an unsafe method (POST)
+neither be 304 response code
+and the system should have resource tager enabled.
+If everything looks good,
+lets record that into the cache store.</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-variable">$app</span>-&gt;after(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(Request <span class="hljs-variable">$request</span>, Response <span class="hljs-variable">$response</span>, Application <span class="hljs-variable">$app</span>)</span> </span>{
+
+            <span class="hljs-comment">/* <span class="hljs-doctag">@var</span> $tagger ResourceTagger */</span>
+            <span class="hljs-comment">/* <span class="hljs-doctag">@var</span> $store Store */</span>
+            <span class="hljs-comment">/* <span class="hljs-doctag">@var</span> $cache HttpCache */</span>
+            <span class="hljs-variable">$cache</span> = <span class="hljs-variable">$app</span>[<span class="hljs-string">'httpcache.facade'</span>];
+            <span class="hljs-variable">$cache</span>-&gt;setRequest(<span class="hljs-variable">$app</span>[<span class="hljs-string">'request'</span>]);
+            <span class="hljs-variable">$cache</span>-&gt;setStore(<span class="hljs-variable">$app</span>[<span class="hljs-string">'httpcache.store'</span>]);
+            <span class="hljs-variable">$cache</span>-&gt;setTagger(<span class="hljs-variable">$app</span>[<span class="hljs-string">'httpcache.tagger'</span>]);
+
+            Utils::stderr(<span class="hljs-string">'is response cache-able '</span>.var_export(<span class="hljs-variable">$cache</span>-&gt;isCacheAble(<span class="hljs-variable">$response</span>), <span class="hljs-keyword">true</span>));
+            Utils::stderr(<span class="hljs-string">'response code '</span>.var_export(<span class="hljs-variable">$response</span>-&gt;getStatusCode(), <span class="hljs-keyword">true</span>));
+            Utils::stderr(<span class="hljs-string">'response is from cache '</span>.var_export(<span class="hljs-variable">$response</span>-&gt;headers-&gt;has(<span class="hljs-string">"X-CACHED"</span>), <span class="hljs-keyword">true</span>));
+
+            <span class="hljs-comment">/* <span class="hljs-doctag">@var</span> $layout \C\Layout\Layout */</span>
+            <span class="hljs-variable">$layout</span> = <span class="hljs-variable">$app</span>[<span class="hljs-string">'layout'</span>];
+            <span class="hljs-variable">$TaggedResource</span> = <span class="hljs-variable">$layout</span>-&gt;getTaggedResource();
+
+            <span class="hljs-keyword">if</span> (<span class="hljs-variable">$TaggedResource</span>
+                &amp;&amp; <span class="hljs-variable">$request</span>-&gt;isMethodSafe()
+                &amp;&amp; <span class="hljs-variable">$cache</span>-&gt;isCacheAble(<span class="hljs-variable">$response</span>)) {
+                    Utils::stderr(<span class="hljs-string">'saving resource '</span>.<span class="hljs-variable">$request</span>-&gt;getUri());
+                    <span class="hljs-variable">$cache</span>-&gt;storeResponseToCache(<span class="hljs-variable">$response</span>, <span class="hljs-variable">$TaggedResource</span>);</pre></div>
+        
+      
+        
+        <pre><code>               Utils::stderr(<span class="hljs-string">'headers ='</span>.json_encode(<span class="hljs-variable">$headers</span>));
+</code></pre>
+        
+          <div class='highlight'><pre>            }
+            <span class="hljs-variable">$response</span>-&gt;headers-&gt;remove(<span class="hljs-string">"X-CACHED"</span>);
+        }, Application::LATE_EVENT);
+
+
+    }
+}</pre></div>
+        
+      
+      <div class="fleur">h</div>
+    </div>
+  </div>
+</body>
+</html>

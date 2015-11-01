@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>EsiServiceProvider.php</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="page">
+
+      <div class="header">
+        
+          <h1>EsiServiceProvider.php</h1>
+        
+
+        
+      </div>
+
+      
+        
+        
+        
+          <div class='highlight'><pre><span class="hljs-preprocessor">&lt;?php</span>
+<span class="hljs-keyword">namespace</span> <span class="hljs-title">C</span>\<span class="hljs-title">Provider</span>;
+
+<span class="hljs-keyword">use</span> <span class="hljs-title">C</span>\<span class="hljs-title">Misc</span>\<span class="hljs-title">Utils</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">Silex</span>\<span class="hljs-title">Application</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">Silex</span>\<span class="hljs-title">ServiceProviderInterface</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">Symfony</span>\<span class="hljs-title">Component</span>\<span class="hljs-title">HttpFoundation</span>\<span class="hljs-title">Request</span>;
+
+<span class="hljs-comment">/**
+ * Class EsiServiceProvider
+ * provide esi capabilities to the stack.
+ *
+ * It watches request / response
+ * to inject, remove http headers about esi.
+ *
+ * It then configure the current
+ * request type to esi-master or esi-slave,
+ * appropriately.
+ *
+ * It also registers a new templates path
+ * Esi:/
+ *
+ * <span class="hljs-doctag">@package</span> C\Provider
+ */</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">EsiServiceProvider</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">ServiceProviderInterface</span>
+</span>{
+    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">register</span><span class="hljs-params">(Application <span class="hljs-variable">$app</span>)</span>
+    </span>{
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">boot</span><span class="hljs-params">(Application <span class="hljs-variable">$app</span>)</span>
+    </span>{</pre></div>
+        
+      
+        
+        <p>register required esi template
+to inject in the view</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$app</span>[<span class="hljs-string">'layout.fs'</span>])) {
+            <span class="hljs-variable">$app</span>[<span class="hljs-string">'layout.fs'</span>]-&gt;register(
+                <span class="hljs-keyword">__DIR__</span>.<span class="hljs-string">'/../Esi/templates/'</span>, <span class="hljs-string">'Esi'</span>);
+        }</pre></div>
+        
+      
+        
+        <p>implement esi request-response challenge</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-variable">$app</span>-&gt;before(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(Request <span class="hljs-variable">$request</span>, Application <span class="hljs-variable">$app</span>)</span></span>{</pre></div>
+        
+      
+        
+        <p>esi can not occur under ajax
+due to layout request type matching nature
+where types exclude each others.</p>
+
+        
+          <div class='highlight'><pre>            <span class="hljs-keyword">if</span> (!<span class="hljs-variable">$request</span>-&gt;isXmlHttpRequest()) {</pre></div>
+        
+      
+        
+        <p>use a system secret, known by the front proxy,
+it should prevent non-authorized entities to triggers such process.
+it is also used to detect a slave request.</p>
+
+        
+          <div class='highlight'><pre>                <span class="hljs-variable">$secret</span> = <span class="hljs-variable">$app</span>[<span class="hljs-string">'esi.secret'</span>];
+                <span class="hljs-keyword">if</span> (<span class="hljs-variable">$request</span>-&gt;headers-&gt;get(<span class="hljs-string">"x-esi-secret"</span>) &amp;&amp; <span class="hljs-variable">$request</span>-&gt;query-&gt;has(<span class="hljs-string">"target"</span>)) {
+                    <span class="hljs-variable">$rsecret</span> = <span class="hljs-variable">$request</span>-&gt;headers-&gt;get(<span class="hljs-string">"x-esi-secret"</span>);
+                    <span class="hljs-keyword">if</span> (<span class="hljs-variable">$rsecret</span>===<span class="hljs-variable">$secret</span>) {
+                        Utils::stderr(<span class="hljs-string">"slave found"</span>);
+                        <span class="hljs-variable">$app</span>[<span class="hljs-string">'layout'</span>]-&gt;requestMatcher-&gt;setRequestKind(<span class="hljs-string">'esi-slave'</span>);
+                    } <span class="hljs-keyword">else</span> {
+                        Utils::stderr(<span class="hljs-string">"esi secret mismatch"</span>);
+                        Utils::stderr(<span class="hljs-string">"request secret was $rsecret"</span>);
+                    }</pre></div>
+        
+      
+        
+        <p>determine if the request is an esi master type.
+it injects surrogate control directive
+in the response object o trigger front proxy esi build</p>
+
+        
+          <div class='highlight'><pre>                } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-variable">$request</span>-&gt;headers-&gt;has(<span class="hljs-string">"Surrogate-Capability"</span>)) {
+                    <span class="hljs-variable">$app</span>[<span class="hljs-string">'layout'</span>]-&gt;requestMatcher-&gt;setRequestKind(<span class="hljs-string">'esi-master'</span>);
+                    <span class="hljs-variable">$app</span>[<span class="hljs-string">'layout'</span>]-&gt;onLayoutBuildFinish(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(<span class="hljs-variable">$ev</span>, <span class="hljs-variable">$layout</span>, <span class="hljs-variable">$response</span>)</span> </span>{
+                        <span class="hljs-variable">$response</span>-&gt;headers-&gt;set(<span class="hljs-string">"Surrogate-Control"</span>, <span class="hljs-string">"ESI/1.0"</span>);
+                    });
+                }
+            }
+        });
+
+    }
+}</pre></div>
+        
+      
+        
+        <p>read more about esi support</p>
+<p><a href="https://www.varnish-cache.org/trac/wiki/ESIfeatures">https://www.varnish-cache.org/trac/wiki/ESIfeatures</a>
+<a href="https://www.varnish-software.com/book/3/Content_Composition.html#edge-side-includes">https://www.varnish-software.com/book/3/Content_Composition.html#edge-side-includes</a>
+<a href="https://www.varnish-cache.org/docs/3.0/tutorial/esi.html">https://www.varnish-cache.org/docs/3.0/tutorial/esi.html</a>
+<a href="http://blog.lavoie.sl/2013/08/varnish-esi-and-cookies.html">http://blog.lavoie.sl/2013/08/varnish-esi-and-cookies.html</a>
+<a href="http://symfony.com/doc/current/cookbook/cache/varnish.html">http://symfony.com/doc/current/cookbook/cache/varnish.html</a>
+<a href="http://silex.sensiolabs.org/doc/providers/http_cache.html">http://silex.sensiolabs.org/doc/providers/http_cache.html</a>
+<a href="https://github.com/serbanghita/Mobile-Detect">https://github.com/serbanghita/Mobile-Detect</a>
+<a href="http://symfony.com/doc/current/cookbook/cache/form_csrf_caching.html">http://symfony.com/doc/current/cookbook/cache/form_csrf_caching.html</a></p>
+
+        
+      
+      <div class="fleur">h</div>
+    </div>
+  </div>
+</body>
+</html>

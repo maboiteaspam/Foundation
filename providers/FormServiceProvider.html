@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>FormServiceProvider.php</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="page">
+
+      <div class="header">
+        
+          <h1>FormServiceProvider.php</h1>
+        
+
+        
+      </div>
+
+      
+        
+        
+        
+          <div class='highlight'><pre><span class="hljs-preprocessor">&lt;?php</span>
+<span class="hljs-keyword">namespace</span> <span class="hljs-title">C</span>\<span class="hljs-title">Provider</span>;
+
+<span class="hljs-keyword">use</span> <span class="hljs-title">C</span>\<span class="hljs-title">Form</span>\<span class="hljs-title">FormFileLoader</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">C</span>\<span class="hljs-title">Form</span>\<span class="hljs-title">FormLayoutFileHelper</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">C</span>\<span class="hljs-title">FS</span>\<span class="hljs-title">KnownFs</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">C</span>\<span class="hljs-title">FS</span>\<span class="hljs-title">KnownFsTagResolver</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">C</span>\<span class="hljs-title">FS</span>\<span class="hljs-title">Registry</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">C</span>\<span class="hljs-title">FS</span>\<span class="hljs-title">Store</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">C</span>\<span class="hljs-title">Misc</span>\<span class="hljs-title">ArrayHelpers</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">C</span>\<span class="hljs-title">View</span>\<span class="hljs-title">Context</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">C</span>\<span class="hljs-title">Watch</span>\<span class="hljs-title">WatchedStore</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">Silex</span>\<span class="hljs-title">Application</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">Silex</span>\<span class="hljs-title">ServiceProviderInterface</span>;
+
+
+<span class="hljs-comment">/**
+ * Class FormServiceProvider
+ * provides form capabilities among the framework.
+ *
+ * It declares a new form FS, forms.fs,
+ * to declare forms as yml files.
+ *
+ * It injects helpers into the view context
+ * to support form display
+ *
+ *
+ *
+ * <span class="hljs-doctag">@package</span> C\Provider
+ */</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">FormServiceProvider</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">ServiceProviderInterface</span>
+</span>{
+    <span class="hljs-comment">/**
+     *
+     * <span class="hljs-doctag">@param</span> Application $app
+     **/</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">register</span><span class="hljs-params">(Application <span class="hljs-variable">$app</span>)</span>
+    </span>{</pre></div>
+        
+      
+        
+        <p>FS forms cache name</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$app</span>[<span class="hljs-string">'forms.fs.cache_store_name'</span>]))
+            <span class="hljs-variable">$app</span>[<span class="hljs-string">'forms.fs.cache_store_name'</span>] = <span class="hljs-string">"forms-fs-store"</span>;</pre></div>
+        
+      
+        
+        <p>declare a new form FS,
+to register the forms of the module as yml files</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-variable">$app</span>[<span class="hljs-string">'forms.fs'</span>] = <span class="hljs-variable">$app</span>-&gt;share(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(Application <span class="hljs-variable">$app</span>)</span> </span>{
+            <span class="hljs-variable">$storeName</span> = <span class="hljs-variable">$app</span>[<span class="hljs-string">'forms.fs.cache_store_name'</span>];
+            <span class="hljs-keyword">if</span> (<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$app</span>[<span class="hljs-string">'caches'</span>][<span class="hljs-variable">$storeName</span>])) <span class="hljs-variable">$cache</span> = <span class="hljs-variable">$app</span>[<span class="hljs-string">'caches'</span>][<span class="hljs-variable">$storeName</span>];
+            <span class="hljs-keyword">else</span> <span class="hljs-variable">$cache</span> = <span class="hljs-variable">$app</span>[<span class="hljs-string">'cache'</span>];
+
+            <span class="hljs-variable">$registry</span> = <span class="hljs-keyword">new</span> Registry(<span class="hljs-string">'forms-'</span>, <span class="hljs-variable">$cache</span>, [
+                <span class="hljs-string">'basePath'</span> =&gt; <span class="hljs-variable">$app</span>[<span class="hljs-string">'project.path'</span>]
+            ]);
+            <span class="hljs-variable">$registry</span>-&gt;restrictWithExtensions([
+                <span class="hljs-string">'yml'</span>,
+            ]);
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> KnownFs(<span class="hljs-variable">$registry</span>);
+        });</pre></div>
+        
+      
+        
+        <p>form files content cache name</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$app</span>[<span class="hljs-string">'forms.cache_store_name'</span>]))
+            <span class="hljs-variable">$app</span>[<span class="hljs-string">'forms.cache_store_name'</span>] = <span class="hljs-string">"forms-store"</span>;</pre></div>
+        
+      
+        
+        <p>declare a new cache for form files content</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-variable">$app</span>[<span class="hljs-string">'forms.store'</span>] = <span class="hljs-variable">$app</span>-&gt;share(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(Application <span class="hljs-variable">$app</span>)</span> </span>{
+            <span class="hljs-variable">$store</span> = <span class="hljs-keyword">new</span> Store();
+            <span class="hljs-variable">$store</span>-&gt;setFS(<span class="hljs-variable">$app</span>[<span class="hljs-string">'forms.fs'</span>]);
+
+            <span class="hljs-variable">$storeName</span> = <span class="hljs-variable">$app</span>[<span class="hljs-string">'forms.cache_store_name'</span>];
+            <span class="hljs-keyword">if</span> (<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$app</span>[<span class="hljs-string">'caches'</span>][<span class="hljs-variable">$storeName</span>])) <span class="hljs-variable">$cache</span> = <span class="hljs-variable">$app</span>[<span class="hljs-string">'caches'</span>][<span class="hljs-variable">$storeName</span>];
+            <span class="hljs-keyword">else</span> <span class="hljs-variable">$cache</span> = <span class="hljs-variable">$app</span>[<span class="hljs-string">'cache'</span>];
+            <span class="hljs-variable">$store</span>-&gt;setCache(<span class="hljs-variable">$cache</span>);
+
+            <span class="hljs-keyword">return</span> <span class="hljs-variable">$store</span>;
+        });
+    }
+    <span class="hljs-comment">/**
+     *
+     * <span class="hljs-doctag">@param</span> Application $app Silex application instance.
+     *
+     * <span class="hljs-doctag">@return</span> void
+     **/</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">boot</span><span class="hljs-params">(Application <span class="hljs-variable">$app</span>)</span>
+    </span>{</pre></div>
+        
+      
+        
+        <p>inject pre defined intl messages from symfony
+as Validation:/ and Form:/</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$app</span>[<span class="hljs-string">'intl.fs'</span>])) {
+            <span class="hljs-variable">$fs</span> = <span class="hljs-variable">$app</span>[<span class="hljs-string">'intl.fs'</span>];
+            <span class="hljs-comment">/* <span class="hljs-doctag">@var</span> $fs KnownFS */</span>
+            <span class="hljs-keyword">if</span> (<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$app</span>[<span class="hljs-string">'validator'</span>])) {
+                <span class="hljs-keyword">try</span>{
+                    <span class="hljs-variable">$r</span> = <span class="hljs-keyword">new</span> \ReflectionClass(<span class="hljs-string">'Symfony\Component\Validator\Validation'</span>);
+                    <span class="hljs-variable">$path</span> = dirname(<span class="hljs-variable">$r</span>-&gt;getFilename()).<span class="hljs-string">'/Resources/translations/'</span>;
+                    <span class="hljs-variable">$fs</span>-&gt;register(<span class="hljs-variable">$path</span>, <span class="hljs-string">'Validator'</span>);
+                }<span class="hljs-keyword">catch</span>(\<span class="hljs-keyword">Exception</span> <span class="hljs-variable">$ex</span>) {}
+            }
+
+            <span class="hljs-keyword">if</span> (<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$app</span>[<span class="hljs-string">'form.factory'</span>])) {
+                <span class="hljs-keyword">try</span>{
+                    <span class="hljs-variable">$r</span> = <span class="hljs-keyword">new</span> \ReflectionClass(<span class="hljs-string">'Symfony\Component\Form\Form'</span>);
+                    <span class="hljs-variable">$path</span> = dirname(<span class="hljs-variable">$r</span>-&gt;getFilename()).<span class="hljs-string">'/Resources/translations/'</span>;
+                    <span class="hljs-variable">$fs</span>-&gt;register(<span class="hljs-variable">$path</span>, <span class="hljs-string">'Form'</span>);
+                }<span class="hljs-keyword">catch</span>(\<span class="hljs-keyword">Exception</span> <span class="hljs-variable">$ex</span>) {}
+            }
+        }</pre></div>
+        
+      
+        
+        <p>attach a new layout helper
+to load forms from layout yml files</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$app</span>[<span class="hljs-string">'modern.layout.helpers'</span>])) {
+            <span class="hljs-variable">$app</span>[<span class="hljs-string">'modern.layout.helpers'</span>] = <span class="hljs-variable">$app</span>-&gt;share(
+                <span class="hljs-variable">$app</span>-&gt;extend(<span class="hljs-string">"modern.layout.helpers"</span>,
+                    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(ArrayHelpers <span class="hljs-variable">$helpers</span>, Application <span class="hljs-variable">$app</span>)</span> </span>{
+                        <span class="hljs-variable">$layoutHelper</span> = <span class="hljs-keyword">new</span> FormLayoutFileHelper();
+                        <span class="hljs-variable">$layoutHelper</span>-&gt;setFactory(<span class="hljs-variable">$app</span>[<span class="hljs-string">'form.factory'</span>]);
+                        <span class="hljs-variable">$layoutHelper</span>-&gt;setUrlGenerator(<span class="hljs-variable">$app</span>[<span class="hljs-string">'url_generator'</span>]);
+                        <span class="hljs-variable">$formFileLoader</span> = <span class="hljs-keyword">new</span> FormFileLoader();
+                        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$app</span>[<span class="hljs-string">'form.factory'</span>])) {
+                            <span class="hljs-variable">$formFileLoader</span>-&gt;setFactory(<span class="hljs-variable">$app</span>[<span class="hljs-string">'form.factory'</span>]);
+                        }
+                        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$app</span>[<span class="hljs-string">'forms.store'</span>])) {
+                            <span class="hljs-variable">$formFileLoader</span>-&gt;setStore(<span class="hljs-variable">$app</span>[<span class="hljs-string">'forms.store'</span>]);
+                        }
+                        <span class="hljs-variable">$layoutHelper</span>-&gt;setFormLoader(<span class="hljs-variable">$formFileLoader</span>);
+                        <span class="hljs-variable">$helpers</span>-&gt;append(<span class="hljs-variable">$layoutHelper</span>);
+                        <span class="hljs-keyword">return</span> <span class="hljs-variable">$helpers</span>;
+                    }
+                )
+            );
+        }</pre></div>
+        
+      
+        
+        <p>attach a new view context helper
+to display forms</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$app</span>[<span class="hljs-string">'layout.view'</span>])) {
+            <span class="hljs-variable">$viewHelper</span> = <span class="hljs-keyword">new</span> \C\View\Helper\FormViewHelper();
+            <span class="hljs-variable">$app</span>[<span class="hljs-string">'layout.view'</span>] = <span class="hljs-variable">$app</span>-&gt;share(
+                <span class="hljs-variable">$app</span>-&gt;extend(<span class="hljs-string">"layout.view"</span>,
+                    <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(Context <span class="hljs-variable">$view</span>, Application <span class="hljs-variable">$app</span>)</span> <span class="hljs-title">use</span><span class="hljs-params">(<span class="hljs-variable">$viewHelper</span>)</span> </span>{
+                        <span class="hljs-variable">$viewHelper</span>-&gt;setEnv(<span class="hljs-variable">$app</span>[<span class="hljs-string">'layout.env'</span>]);
+                        <span class="hljs-variable">$viewHelper</span>-&gt;setCommonHelper(<span class="hljs-variable">$app</span>[<span class="hljs-string">'layout.helper.common'</span>]);
+                        <span class="hljs-variable">$view</span>-&gt;helpers-&gt;append(<span class="hljs-variable">$viewHelper</span>);
+                        <span class="hljs-keyword">return</span> <span class="hljs-variable">$view</span>;
+                    }
+                )
+            );
+            <span class="hljs-variable">$app</span>-&gt;before(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(<span class="hljs-variable">$request</span>)</span> <span class="hljs-title">use</span><span class="hljs-params">(<span class="hljs-variable">$viewHelper</span>)</span></span>{
+                <span class="hljs-variable">$viewHelper</span>-&gt;setRequest(<span class="hljs-variable">$request</span>);
+            });
+        }</pre></div>
+        
+      
+        
+        <p>provide the assets consumed
+by the form to submit and display errors</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$app</span>[<span class="hljs-string">'assets.fs'</span>])) {
+            <span class="hljs-variable">$app</span>[<span class="hljs-string">'assets.fs'</span>]-&gt;register(<span class="hljs-keyword">__DIR__</span>.<span class="hljs-string">'/../Form/assets/'</span>, <span class="hljs-string">'Form'</span>);
+        }
+
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$app</span>[<span class="hljs-string">'modern.fs'</span>])) {
+            <span class="hljs-variable">$app</span>[<span class="hljs-string">'modern.fs'</span>]-&gt;register(<span class="hljs-keyword">__DIR__</span>.<span class="hljs-string">'/../Form/layouts/'</span>, <span class="hljs-string">'Form'</span>);
+        }</pre></div>
+        
+      
+        
+        <p>get ready to display a page</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-variable">$app</span>-&gt;before(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(<span class="hljs-variable">$request</span>, Application <span class="hljs-variable">$app</span>)</span></span>{
+            <span class="hljs-variable">$app</span>[<span class="hljs-string">'forms.fs'</span>]-&gt;registry-&gt;loadFromCache();
+        }, Application::EARLY_EVENT);</pre></div>
+        
+      
+        
+        <p>a new tag computer is registered
+to bind forms into the cache system</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$app</span>[<span class="hljs-string">'httpcache.tagger'</span>])) {
+            <span class="hljs-comment">/* <span class="hljs-doctag">@var</span> $fs \C\FS\KnownFs */</span>
+            <span class="hljs-comment">/* <span class="hljs-doctag">@var</span> $tagger \C\TagableResource\ResourceTagger */</span>
+            <span class="hljs-variable">$fs</span> = <span class="hljs-variable">$app</span>[<span class="hljs-string">'forms.fs'</span>];
+            <span class="hljs-variable">$tagger</span> = <span class="hljs-variable">$app</span>[<span class="hljs-string">'httpcache.tagger'</span>];
+            <span class="hljs-variable">$tagger</span>-&gt;addTagComputer(<span class="hljs-string">'forms'</span>, <span class="hljs-keyword">new</span> KnownFsTagResolver(<span class="hljs-variable">$fs</span>));
+        }</pre></div>
+        
+      
+        
+        <p>register forms FS to the watcher system.
+it will update ths FS
+it will also trigger form files build
+on application start and file change</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$app</span>[<span class="hljs-string">'watchers.watched'</span>])) {
+            <span class="hljs-variable">$app</span>[<span class="hljs-string">'watchers.watched'</span>] = <span class="hljs-variable">$app</span>-&gt;share(
+                <span class="hljs-variable">$app</span>-&gt;extend(<span class="hljs-string">'watchers.watched'</span>,
+                    <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(<span class="hljs-variable">$watched</span>, Application <span class="hljs-variable">$app</span>)</span> </span>{
+                        <span class="hljs-variable">$w</span> = <span class="hljs-keyword">new</span> WatchedStore();
+                        <span class="hljs-variable">$w</span>-&gt;setStore(<span class="hljs-variable">$app</span>[<span class="hljs-string">'forms.store'</span>]);
+                        <span class="hljs-variable">$w</span>-&gt;setRegistry(<span class="hljs-variable">$app</span>[<span class="hljs-string">'forms.fs'</span>]-&gt;registry);
+                        <span class="hljs-variable">$w</span>-&gt;setName(<span class="hljs-string">"forms.fs"</span>);
+                        <span class="hljs-variable">$watched</span>[] = <span class="hljs-variable">$w</span>;
+                        <span class="hljs-keyword">return</span> <span class="hljs-variable">$watched</span>;
+                    }
+                )
+            );
+        }
+    }
+}</pre></div>
+        
+      
+      <div class="fleur">h</div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>ModernAppServiceProvider.php</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="page">
+
+      <div class="header">
+        
+          <h1>ModernAppServiceProvider.php</h1>
+        
+
+        
+      </div>
+
+      
+        
+        
+        
+          <div class='highlight'><pre><span class="hljs-preprocessor">&lt;?php</span>
+<span class="hljs-keyword">namespace</span> <span class="hljs-title">C</span>\<span class="hljs-title">Provider</span>;
+
+<span class="hljs-keyword">use</span> <span class="hljs-title">C</span>\<span class="hljs-title">FS</span>\<span class="hljs-title">KnownFs</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">C</span>\<span class="hljs-title">FS</span>\<span class="hljs-title">KnownFsTagResolver</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">C</span>\<span class="hljs-title">FS</span>\<span class="hljs-title">Registry</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">C</span>\<span class="hljs-title">FS</span>\<span class="hljs-title">Store</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">C</span>\<span class="hljs-title">Misc</span>\<span class="hljs-title">ArrayHelpers</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">C</span>\<span class="hljs-title">Watch</span>\<span class="hljs-title">WatchedStore</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">Silex</span>\<span class="hljs-title">Application</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">Silex</span>\<span class="hljs-title">ServiceProviderInterface</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">Symfony</span>\<span class="hljs-title">Component</span>\<span class="hljs-title">HttpFoundation</span>\<span class="hljs-title">Request</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">C</span>\<span class="hljs-title">ModernApp</span>\<span class="hljs-title">File</span>\<span class="hljs-title">Transforms</span> <span class="hljs-title">as</span> <span class="hljs-title">FileLayout</span>;
+
+<span class="hljs-comment">/**
+ * Class ModernAppServiceProvider
+ * provides tools to compose a modern app
+ *
+ * <span class="hljs-doctag">@package</span> C\Provider
+ */</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ModernAppServiceProvider</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">ServiceProviderInterface</span>
+</span>{
+    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">register</span><span class="hljs-params">(Application <span class="hljs-variable">$app</span>)</span>
+    </span>{</pre></div>
+        
+      
+        
+        <p>FS layout cache name</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$app</span>[<span class="hljs-string">'modern.fs_store_name'</span>]))
+            <span class="hljs-variable">$app</span>[<span class="hljs-string">'modern.fs_store_name'</span>] = <span class="hljs-string">"modern-layout-store"</span>;</pre></div>
+        
+      
+        
+        <p>declare a new layout FS,
+to register the layouts of the module</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-variable">$app</span>[<span class="hljs-string">'modern.fs'</span>] = <span class="hljs-variable">$app</span>-&gt;share(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(Application <span class="hljs-variable">$app</span>)</span> </span>{
+            <span class="hljs-variable">$store</span> = <span class="hljs-variable">$app</span>[<span class="hljs-string">'modern.fs_store_name'</span>];
+            <span class="hljs-variable">$cache</span> = <span class="hljs-variable">$app</span>[<span class="hljs-string">'cache.get'</span>](<span class="hljs-variable">$store</span>);
+            <span class="hljs-variable">$registry</span> = <span class="hljs-keyword">new</span> Registry(<span class="hljs-variable">$store</span>, <span class="hljs-variable">$cache</span>, [
+                <span class="hljs-string">'basePath'</span> =&gt; <span class="hljs-variable">$app</span>[<span class="hljs-string">'project.path'</span>]
+            ]);
+            <span class="hljs-variable">$registry</span>-&gt;restrictWithExtensions([
+                <span class="hljs-string">'yml'</span>,
+            ]);
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> KnownFs(<span class="hljs-variable">$registry</span>);
+        });</pre></div>
+        
+      
+        
+        <p>layout files content cache name</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$app</span>[<span class="hljs-string">'modern.layout_store_name'</span>]))
+            <span class="hljs-variable">$app</span>[<span class="hljs-string">'modern.layout_store_name'</span>] = <span class="hljs-string">"modern-layout-store"</span>;</pre></div>
+        
+      
+        
+        <p>declare a new cache for layout files content</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-variable">$app</span>[<span class="hljs-string">'modern.layout.store'</span>] = <span class="hljs-variable">$app</span>-&gt;share(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(Application <span class="hljs-variable">$app</span>)</span> </span>{
+            <span class="hljs-variable">$store</span> = <span class="hljs-keyword">new</span> Store();
+            <span class="hljs-variable">$store</span>-&gt;setFS(<span class="hljs-variable">$app</span>[<span class="hljs-string">'modern.fs'</span>]);
+
+            <span class="hljs-variable">$cache</span> = <span class="hljs-variable">$app</span>[<span class="hljs-string">'cache.get'</span>](<span class="hljs-variable">$app</span>[<span class="hljs-string">'modern.layout_store_name'</span>]);
+            <span class="hljs-variable">$store</span>-&gt;setCache(<span class="hljs-variable">$cache</span>);
+
+            <span class="hljs-keyword">return</span> <span class="hljs-variable">$store</span>;
+        });</pre></div>
+        
+      
+        
+        <p>attach layout files action helpers</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-variable">$app</span>[<span class="hljs-string">'modern.layout.helpers'</span>] = <span class="hljs-variable">$app</span>-&gt;share(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(Application <span class="hljs-variable">$app</span>)</span> </span>{</pre></div>
+        
+      
+        
+        <p>@todo this should probably be moved away into separate service providers, for now on it s only inlined</p>
+
+        
+          <div class='highlight'><pre>            <span class="hljs-variable">$helpers</span> = <span class="hljs-keyword">new</span> ArrayHelpers();
+            <span class="hljs-variable">$helpers</span>-&gt;append(<span class="hljs-keyword">new</span> \C\ModernApp\File\Helpers\LayoutHelper());
+            <span class="hljs-variable">$helpers</span>-&gt;append(<span class="hljs-keyword">new</span> \C\ModernApp\File\Helpers\AssetsHelper());
+            <span class="hljs-variable">$helper</span> = <span class="hljs-keyword">new</span> \C\ModernApp\File\Helpers\jQueryHelper();
+            <span class="hljs-variable">$helper</span>-&gt;setGenerator(<span class="hljs-variable">$app</span>[<span class="hljs-string">'url_generator'</span>]);
+            <span class="hljs-variable">$helper</span>-&gt;setRequest(<span class="hljs-variable">$app</span>[<span class="hljs-string">'request'</span>]);
+            <span class="hljs-variable">$helpers</span>-&gt;append(<span class="hljs-variable">$helper</span>);
+            <span class="hljs-variable">$helper</span> = <span class="hljs-keyword">new</span> \C\ModernApp\File\Helpers\EsiHelper();
+            <span class="hljs-variable">$helper</span>-&gt;setGenerator(<span class="hljs-variable">$app</span>[<span class="hljs-string">'url_generator'</span>]);
+            <span class="hljs-variable">$helper</span>-&gt;setRequest(<span class="hljs-variable">$app</span>[<span class="hljs-string">'request'</span>]);
+            <span class="hljs-variable">$helpers</span>-&gt;append(<span class="hljs-variable">$helper</span>);
+            <span class="hljs-variable">$helpers</span>-&gt;append(<span class="hljs-keyword">new</span> \C\ModernApp\File\Helpers\FileHelper());
+            <span class="hljs-variable">$helper</span> = <span class="hljs-keyword">new</span> \C\ModernApp\File\Helpers\DashboardHelper();
+            <span class="hljs-variable">$helper</span>-&gt;setExtensions(<span class="hljs-variable">$app</span>[<span class="hljs-string">'modern.dashboard.extensions'</span>]);
+            <span class="hljs-variable">$helpers</span>-&gt;append(<span class="hljs-variable">$helper</span>);
+            <span class="hljs-variable">$helpers</span>-&gt;append(<span class="hljs-keyword">new</span> \C\ModernApp\File\Helpers\RequestHelper());
+            <span class="hljs-keyword">return</span> <span class="hljs-variable">$helpers</span>;
+        });</pre></div>
+        
+      
+        
+        <p>attach dashboard extensions</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-variable">$app</span>[<span class="hljs-string">'modern.dashboard.extensions'</span>] = <span class="hljs-variable">$app</span>-&gt;share(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(Application <span class="hljs-variable">$app</span>)</span> </span>{
+            <span class="hljs-keyword">return</span> [];
+        });</pre></div>
+        
+      
+        
+        <p>provides layout transform able to load from a file</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-variable">$app</span>[<span class="hljs-string">'layout.file.transform'</span>] = <span class="hljs-variable">$app</span>-&gt;protect(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(Application <span class="hljs-variable">$app</span>)</span> </span>{
+            <span class="hljs-keyword">return</span> FileLayout::transform()
+                    -&gt;setHelpers(<span class="hljs-variable">$app</span>[<span class="hljs-string">'modern.layout.helpers'</span>])
+                    -&gt;setStore(<span class="hljs-variable">$app</span>[<span class="hljs-string">'modern.layout.store'</span>])
+                    -&gt;setLayout(<span class="hljs-variable">$app</span>[<span class="hljs-string">'layout'</span>]);
+        });
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">boot</span><span class="hljs-params">(Application <span class="hljs-variable">$app</span>)</span>
+    </span>{</pre></div>
+        
+      
+        
+        <p>declare resources for a modern app</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$app</span>[<span class="hljs-string">'assets.fs'</span>])) {
+            <span class="hljs-variable">$app</span>[<span class="hljs-string">'assets.fs'</span>]-&gt;register(<span class="hljs-keyword">__DIR__</span>.<span class="hljs-string">'/../ModernApp/Dashboard/assets/'</span>, <span class="hljs-string">'Dashboard'</span>);
+            <span class="hljs-variable">$app</span>[<span class="hljs-string">'assets.fs'</span>]-&gt;register(<span class="hljs-keyword">__DIR__</span>.<span class="hljs-string">'/../ModernApp/jQuery/assets/'</span>, <span class="hljs-string">'jQuery'</span>);
+            <span class="hljs-variable">$app</span>[<span class="hljs-string">'assets.fs'</span>]-&gt;register(<span class="hljs-keyword">__DIR__</span>.<span class="hljs-string">'/../ModernApp/HTML/assets/'</span>, <span class="hljs-string">'HTML'</span>);
+        }
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$app</span>[<span class="hljs-string">'layout.fs'</span>])) {
+            <span class="hljs-variable">$app</span>[<span class="hljs-string">'layout.fs'</span>]-&gt;register(<span class="hljs-keyword">__DIR__</span>.<span class="hljs-string">'/../ModernApp/HTML/templates/'</span>, <span class="hljs-string">'HTML'</span>);
+            <span class="hljs-variable">$app</span>[<span class="hljs-string">'layout.fs'</span>]-&gt;register(<span class="hljs-keyword">__DIR__</span>.<span class="hljs-string">'/../ModernApp/Dashboard/templates/'</span>, <span class="hljs-string">'Dashboard'</span>);
+            <span class="hljs-variable">$app</span>[<span class="hljs-string">'layout.fs'</span>]-&gt;register(<span class="hljs-keyword">__DIR__</span>.<span class="hljs-string">'/../ModernApp/jQuery/templates/'</span>, <span class="hljs-string">'jQuery'</span>);
+        }
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$app</span>[<span class="hljs-string">'modern.fs'</span>])) {
+            <span class="hljs-variable">$app</span>[<span class="hljs-string">'modern.fs'</span>]-&gt;register(<span class="hljs-keyword">__DIR__</span>.<span class="hljs-string">'/../ModernApp/HTML/layouts/'</span>, <span class="hljs-string">'HTML'</span>);
+            <span class="hljs-variable">$app</span>[<span class="hljs-string">'modern.fs'</span>]-&gt;register(<span class="hljs-keyword">__DIR__</span>.<span class="hljs-string">'/../ModernApp/jQuery/layouts/'</span>, <span class="hljs-string">'jQuery'</span>);
+        }</pre></div>
+        
+      
+        
+        <p>a new tag computer is registered
+to bind layouts to the cache system</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$app</span>[<span class="hljs-string">'httpcache.tagger'</span>])) {
+            <span class="hljs-variable">$fs</span> = <span class="hljs-variable">$app</span>[<span class="hljs-string">'modern.fs'</span>];
+            <span class="hljs-variable">$tagger</span> = <span class="hljs-variable">$app</span>[<span class="hljs-string">'httpcache.tagger'</span>];
+            <span class="hljs-comment">/* <span class="hljs-doctag">@var</span> $fs \C\FS\KnownFs */</span>
+            <span class="hljs-comment">/* <span class="hljs-doctag">@var</span> $tagger \C\TagableResource\ResourceTagger */</span>
+            <span class="hljs-variable">$tagger</span>-&gt;addTagComputer(<span class="hljs-string">'modern.layout'</span>, <span class="hljs-keyword">new</span> KnownFsTagResolver(<span class="hljs-variable">$fs</span>));
+        }</pre></div>
+        
+      
+        
+        <p>get app ready to run</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-variable">$app</span>-&gt;before(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(Request <span class="hljs-variable">$request</span>, Application <span class="hljs-variable">$app</span>)</span></span>{
+            <span class="hljs-keyword">if</span> (<span class="hljs-variable">$request</span>-&gt;isXmlHttpRequest()) {
+                <span class="hljs-variable">$app</span>[<span class="hljs-string">'layout'</span>]-&gt;requestMatcher-&gt;setRequestKind(<span class="hljs-string">'ajax'</span>);
+            }
+            <span class="hljs-variable">$app</span>[<span class="hljs-string">'modern.fs'</span>]-&gt;registry-&gt;loadFromCache();
+        }, Application::EARLY_EVENT);</pre></div>
+        
+      
+        
+        <p>register layout FS to the watcher system.
+it will update the FS
+it will also trigger layout files build
+on application start and file change</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$app</span>[<span class="hljs-string">'watchers.watched'</span>])) {
+            <span class="hljs-variable">$app</span>[<span class="hljs-string">'watchers.watched'</span>] = <span class="hljs-variable">$app</span>-&gt;share(
+                <span class="hljs-variable">$app</span>-&gt;extend(<span class="hljs-string">'watchers.watched'</span>,
+                    <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(<span class="hljs-variable">$watched</span>, Application <span class="hljs-variable">$app</span>)</span> </span>{
+                        <span class="hljs-variable">$w</span> = <span class="hljs-keyword">new</span> WatchedStore();
+                        <span class="hljs-variable">$w</span>-&gt;setStore(<span class="hljs-variable">$app</span>[<span class="hljs-string">'modern.layout.store'</span>]);
+                        <span class="hljs-variable">$w</span>-&gt;setRegistry(<span class="hljs-variable">$app</span>[<span class="hljs-string">'modern.fs'</span>]-&gt;registry);
+                        <span class="hljs-variable">$w</span>-&gt;setName(<span class="hljs-string">"modern.fs"</span>);
+                        <span class="hljs-variable">$watched</span>[] = <span class="hljs-variable">$w</span>;
+                        <span class="hljs-keyword">return</span> <span class="hljs-variable">$watched</span>;
+                    }
+                )
+            );
+        }
+
+    }
+}</pre></div>
+        
+      
+      <div class="fleur">h</div>
+    </div>
+  </div>
+</body>
+</html>

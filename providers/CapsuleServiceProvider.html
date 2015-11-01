@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>CapsuleServiceProvider.php</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="page">
+
+      <div class="header">
+        
+          <h1>CapsuleServiceProvider.php</h1>
+        
+
+        
+      </div>
+
+      
+        
+        
+        
+          <div class='highlight'><pre><span class="hljs-preprocessor">&lt;?php</span>
+<span class="hljs-keyword">namespace</span> <span class="hljs-title">C</span>\<span class="hljs-title">Provider</span>;
+
+<span class="hljs-keyword">use</span> <span class="hljs-title">Silex</span>\<span class="hljs-title">Application</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">Silex</span>\<span class="hljs-title">ServiceProviderInterface</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">Illuminate</span>\<span class="hljs-title">Database</span>\<span class="hljs-title">Capsule</span>\<span class="hljs-title">Manager</span> <span class="hljs-title">as</span> <span class="hljs-title">Capsule</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">Illuminate</span>\<span class="hljs-title">Events</span>\<span class="hljs-title">Dispatcher</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">Illuminate</span>\<span class="hljs-title">Container</span>\<span class="hljs-title">Container</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">C</span>\<span class="hljs-title">Schema</span>\<span class="hljs-title">Loader</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">C</span>\<span class="hljs-title">FS</span>\<span class="hljs-title">Registry</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">C</span>\<span class="hljs-title">Watch</span>\<span class="hljs-title">WatchedCapsule</span>;
+
+<span class="hljs-comment">/**
+ * Class CapsuleServiceProvider
+ *
+ * provides support of eloquent database framework,
+ * it declares a new schema FS capsule.schema
+ * to register database schemas
+ *
+ * <span class="hljs-doctag">@package</span> C\Provider
+ */</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CapsuleServiceProvider</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">ServiceProviderInterface</span>
+</span>{
+    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">register</span><span class="hljs-params">(Application <span class="hljs-variable">$app</span>)</span>
+    </span>{</pre></div>
+        
+      
+        
+        <p>set the default database connection credentials
+it s a root-mysql-localhost</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-variable">$app</span>[<span class="hljs-string">'capsule.connection_defaults'</span>] = <span class="hljs-keyword">array</span>(
+            <span class="hljs-string">'driver'</span> =&gt; <span class="hljs-string">'mysql'</span>,
+            <span class="hljs-string">'host'</span> =&gt; <span class="hljs-string">'localhost'</span>,
+            <span class="hljs-string">'database'</span> =&gt; <span class="hljs-keyword">null</span>,
+            <span class="hljs-string">'username'</span> =&gt; <span class="hljs-string">'root'</span>,
+            <span class="hljs-string">'password'</span> =&gt; <span class="hljs-keyword">null</span>,
+            <span class="hljs-string">'charset'</span> =&gt; <span class="hljs-string">'utf8'</span>,
+            <span class="hljs-string">'collation'</span> =&gt; <span class="hljs-string">'utf8_unicode_ci'</span>,
+            <span class="hljs-string">'prefix'</span> =&gt; <span class="hljs-keyword">null</span>,
+            <span class="hljs-string">'logging'</span> =&gt; <span class="hljs-keyword">false</span>,
+        );</pre></div>
+        
+      
+        
+        <p>Set capsule behavior and requirements</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-variable">$app</span>[<span class="hljs-string">'capsule.global'</span>] = <span class="hljs-keyword">true</span>;
+        <span class="hljs-variable">$app</span>[<span class="hljs-string">'capsule.eloquent'</span>] = <span class="hljs-keyword">true</span>;
+        <span class="hljs-variable">$app</span>[<span class="hljs-string">'capsule.container'</span>] = <span class="hljs-variable">$app</span>-&gt;share(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Container;
+        });
+
+        <span class="hljs-variable">$app</span>[<span class="hljs-string">'capsule.dispatcher'</span>] = <span class="hljs-variable">$app</span>-&gt;share(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(Application <span class="hljs-variable">$app</span>)</span> </span>{
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Dispatcher(<span class="hljs-variable">$app</span>[<span class="hljs-string">'capsule.container'</span>]);
+        });</pre></div>
+        
+      
+        
+        <p>FS schema cache name</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$app</span>[<span class="hljs-string">'capsule.cache_store_name'</span>]))
+            <span class="hljs-variable">$app</span>[<span class="hljs-string">'capsule.cache_store_name'</span>] = <span class="hljs-string">"capsule-store"</span>;</pre></div>
+        
+      
+        
+        <p>declare a new schema FS,
+to register the database schemas of the module</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-variable">$app</span>[<span class="hljs-string">'capsule.schema'</span>] = <span class="hljs-variable">$app</span>-&gt;share(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(Application <span class="hljs-variable">$app</span>)</span> </span>{
+            <span class="hljs-variable">$store</span> = <span class="hljs-variable">$app</span>[<span class="hljs-string">'capsule.cache_store_name'</span>];
+            <span class="hljs-variable">$cache</span> = <span class="hljs-variable">$app</span>[<span class="hljs-string">'cache.get'</span>](<span class="hljs-variable">$store</span>);
+
+            <span class="hljs-variable">$registry</span> = <span class="hljs-keyword">new</span> Registry(<span class="hljs-variable">$store</span>, <span class="hljs-variable">$cache</span>, [
+                <span class="hljs-string">'basePath'</span> =&gt; <span class="hljs-variable">$app</span>[<span class="hljs-string">'project.path'</span>]
+            ]);
+            <span class="hljs-variable">$registry</span>-&gt;restrictWithExtensions([
+                <span class="hljs-string">'php'</span>,
+            ]);
+            <span class="hljs-variable">$loader</span> = <span class="hljs-keyword">new</span> Loader(<span class="hljs-variable">$registry</span>);
+            <span class="hljs-variable">$loader</span>-&gt;setCapsule(<span class="hljs-variable">$app</span>[<span class="hljs-string">'capsule'</span>]);
+            <span class="hljs-keyword">return</span> <span class="hljs-variable">$loader</span>;
+        });
+
+        <span class="hljs-comment">/*
+        if (class_exists('Illuminate\Cache\CacheManager')) {
+            $app['capsule.cache_manager'] = $app-&gt;share(function() use($app) {
+                return new CacheManager($app['capsule.container']);
+            });
+        }
+         */</span></pre></div>
+        
+      
+        
+        <p>Initialize the capsule provider</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-variable">$app</span>[<span class="hljs-string">'capsule'</span>] = <span class="hljs-variable">$app</span>-&gt;share(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(Application <span class="hljs-variable">$app</span>)</span> </span>{
+
+            <span class="hljs-variable">$capsule</span> = <span class="hljs-keyword">new</span> Capsule(<span class="hljs-variable">$app</span>[<span class="hljs-string">'capsule.container'</span>]);
+
+            <span class="hljs-variable">$capsule</span>-&gt;setEventDispatcher(<span class="hljs-variable">$app</span>[<span class="hljs-string">'capsule.dispatcher'</span>]);
+            <span class="hljs-keyword">if</span> (<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$app</span>[<span class="hljs-string">'capsule.cache_manager'</span>]) &amp;&amp; <span class="hljs-keyword">isset</span>(<span class="hljs-variable">$app</span>[<span class="hljs-string">'capsule.cache'</span>])) {</pre></div>
+        
+      
+        
+        <pre><code>           <span class="hljs-variable">$capsule</span>-&gt;setCacheManager(<span class="hljs-variable">$app</span>[<span class="hljs-string">'capsule.cache_manager'</span>]);
+</code></pre>
+        
+          <div class='highlight'><pre>                <span class="hljs-keyword">foreach</span> (<span class="hljs-variable">$app</span>[<span class="hljs-string">'capsule.cache'</span>] <span class="hljs-keyword">as</span> <span class="hljs-variable">$key</span> =&gt; <span class="hljs-variable">$value</span>) {
+                    <span class="hljs-variable">$app</span>[<span class="hljs-string">'capsule.container'</span>]-&gt;offsetGet(<span class="hljs-string">'config'</span>)-&gt;offsetSet(<span class="hljs-string">'cache.'</span> . <span class="hljs-variable">$key</span>, <span class="hljs-variable">$value</span>);
+                }
+            }
+            <span class="hljs-keyword">if</span> (<span class="hljs-variable">$app</span>[<span class="hljs-string">'capsule.global'</span>]) {
+                <span class="hljs-variable">$capsule</span>-&gt;setAsGlobal();
+            }
+            <span class="hljs-keyword">if</span> (<span class="hljs-variable">$app</span>[<span class="hljs-string">'capsule.eloquent'</span>]) {
+                <span class="hljs-variable">$capsule</span>-&gt;bootEloquent();
+            }</pre></div>
+        
+      
+        
+        <p>you can use capsule.connection as the default,
+or capsule.connections, to declare multiple connections</p>
+
+        
+          <div class='highlight'><pre>            <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$app</span>[<span class="hljs-string">'capsule.connections'</span>])) {
+                <span class="hljs-variable">$app</span>[<span class="hljs-string">'capsule.connections'</span>] = <span class="hljs-keyword">array</span>(
+                    <span class="hljs-string">'default'</span> =&gt; (<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$app</span>[<span class="hljs-string">'capsule.connection'</span>]) ? <span class="hljs-variable">$app</span>[<span class="hljs-string">'capsule.connection'</span>] : <span class="hljs-keyword">array</span>()),
+                );
+            }</pre></div>
+        
+      
+        
+        <p>add the connections to the capsule
+use the defaults of capsule.connection_defaults</p>
+
+        
+          <div class='highlight'><pre>            <span class="hljs-keyword">foreach</span> (<span class="hljs-variable">$app</span>[<span class="hljs-string">'capsule.connections'</span>] <span class="hljs-keyword">as</span> <span class="hljs-variable">$connection</span> =&gt; <span class="hljs-variable">$options</span>) {
+                <span class="hljs-variable">$options</span> = array_replace(<span class="hljs-variable">$app</span>[<span class="hljs-string">'capsule.connection_defaults'</span>], <span class="hljs-variable">$options</span>);
+                <span class="hljs-variable">$capsule</span>-&gt;addConnection(<span class="hljs-variable">$options</span>, <span class="hljs-variable">$connection</span>);
+            }</pre></div>
+        
+      
+        
+        <p>you can use capsule.use_connection to define the connection to use
+otherwise it fallback to the environment name</p>
+
+        
+          <div class='highlight'><pre>            <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$app</span>[<span class="hljs-string">'capsule.use_connection'</span>])) {
+                <span class="hljs-variable">$app</span>[<span class="hljs-string">'capsule.use_connection'</span>] = <span class="hljs-variable">$app</span>[<span class="hljs-string">'env'</span>];
+            }</pre></div>
+        
+      
+        
+        <p>always set a default connection</p>
+
+        
+          <div class='highlight'><pre>            <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$app</span>[<span class="hljs-string">'capsule.connections'</span>][<span class="hljs-string">'default'</span>])) {
+                <span class="hljs-variable">$capsule</span>-&gt;addConnection(<span class="hljs-variable">$app</span>[<span class="hljs-string">'capsule.connections'</span>][<span class="hljs-variable">$app</span>[<span class="hljs-string">'capsule.use_connection'</span>]], <span class="hljs-string">'default'</span>);
+            }
+
+            <span class="hljs-keyword">return</span> <span class="hljs-variable">$capsule</span>;
+
+        });
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">boot</span><span class="hljs-params">(Application <span class="hljs-variable">$app</span>)</span>
+    </span>{</pre></div>
+        
+      
+        
+        <p>a new tag computer is registered
+to bind sql queries to the cache system</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$app</span>[<span class="hljs-string">'capsule.eloquent'</span>])) {
+            <span class="hljs-keyword">if</span> (<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$app</span>[<span class="hljs-string">'httpcache.tagger'</span>])) {
+                <span class="hljs-variable">$tagger</span> = <span class="hljs-variable">$app</span>[<span class="hljs-string">'httpcache.tagger'</span>];
+                <span class="hljs-variable">$capsule</span> = <span class="hljs-variable">$app</span>[<span class="hljs-string">'capsule'</span>];
+                <span class="hljs-comment">/* <span class="hljs-doctag">@var</span> $tagger \C\TagableResource\ResourceTagger */</span>
+                <span class="hljs-variable">$tagger</span>-&gt;addTagComputer(<span class="hljs-string">'sql'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(<span class="hljs-variable">$sql</span>)</span> <span class="hljs-title">use</span><span class="hljs-params">(<span class="hljs-variable">$capsule</span>)</span> </span>{
+                    <span class="hljs-variable">$k</span> = <span class="hljs-variable">$capsule</span>-&gt;getConnection()-&gt;select(<span class="hljs-variable">$sql</span>);
+                    <span class="hljs-keyword">return</span> <span class="hljs-variable">$k</span>;
+                });
+            }
+        }</pre></div>
+        
+      
+        
+        <p>enable query logging</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-variable">$app</span>-&gt;before(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> <span class="hljs-title">use</span><span class="hljs-params">(<span class="hljs-variable">$app</span>)</span> </span>{
+            <span class="hljs-variable">$connections</span> = <span class="hljs-variable">$app</span>[<span class="hljs-string">'capsule.connections'</span>];
+            <span class="hljs-variable">$capsule</span> = <span class="hljs-variable">$app</span>[<span class="hljs-string">'capsule'</span>];
+            <span class="hljs-keyword">foreach</span> (<span class="hljs-variable">$connections</span> <span class="hljs-keyword">as</span> <span class="hljs-variable">$connection</span> =&gt; <span class="hljs-variable">$options</span>) {
+                <span class="hljs-variable">$options</span> = array_replace(<span class="hljs-variable">$app</span>[<span class="hljs-string">'capsule.connection_defaults'</span>], <span class="hljs-variable">$options</span>);
+                <span class="hljs-keyword">if</span> (<span class="hljs-variable">$options</span>[<span class="hljs-string">'logging'</span>]) {
+                    <span class="hljs-variable">$capsule</span>-&gt;connection(<span class="hljs-variable">$connection</span>)-&gt;enableQueryLog();
+                }
+            }
+        });</pre></div>
+        
+      
+        
+        <p>register schema FS to the watcher system.
+it will update ths FS
+it will also trigger database build on application start</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$app</span>[<span class="hljs-string">'watchers.watched'</span>])) {
+            <span class="hljs-variable">$app</span>[<span class="hljs-string">'watchers.watched'</span>] = <span class="hljs-variable">$app</span>-&gt;share(
+                <span class="hljs-variable">$app</span>-&gt;extend(<span class="hljs-string">'watchers.watched'</span>,
+                    <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(<span class="hljs-variable">$watched</span>, Application <span class="hljs-variable">$app</span>)</span> </span>{
+                        <span class="hljs-variable">$w</span> = <span class="hljs-keyword">new</span> WatchedCapsule();
+                        <span class="hljs-variable">$w</span>-&gt;setSchemaLoader(<span class="hljs-variable">$app</span>[<span class="hljs-string">'capsule.schema'</span>]);
+                        <span class="hljs-variable">$w</span>-&gt;setName(<span class="hljs-string">"capsule.schema"</span>);
+                        <span class="hljs-variable">$watched</span>[] = <span class="hljs-variable">$w</span>;
+                        <span class="hljs-keyword">return</span> <span class="hljs-variable">$watched</span>;
+                    }
+                )
+            );
+        }
+
+    }
+}</pre></div>
+        
+      
+      <div class="fleur">h</div>
+    </div>
+  </div>
+</body>
+</html>

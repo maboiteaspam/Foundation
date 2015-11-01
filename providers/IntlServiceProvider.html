@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>IntlServiceProvider.php</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="page">
+
+      <div class="header">
+        
+          <h1>IntlServiceProvider.php</h1>
+        
+
+        
+      </div>
+
+      
+        
+        
+        
+          <div class='highlight'><pre><span class="hljs-preprocessor">&lt;?php</span>
+<span class="hljs-keyword">namespace</span> <span class="hljs-title">C</span>\<span class="hljs-title">Provider</span>;
+
+<span class="hljs-keyword">use</span> <span class="hljs-title">C</span>\<span class="hljs-title">FS</span>\<span class="hljs-title">KnownFs</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">C</span>\<span class="hljs-title">FS</span>\<span class="hljs-title">KnownFsTagResolver</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">C</span>\<span class="hljs-title">FS</span>\<span class="hljs-title">LocalFs</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">C</span>\<span class="hljs-title">FS</span>\<span class="hljs-title">Registry</span>;
+
+<span class="hljs-keyword">use</span> <span class="hljs-title">C</span>\<span class="hljs-title">Intl</span>\<span class="hljs-title">Format</span>\<span class="hljs-title">XliffIntlLoader</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">C</span>\<span class="hljs-title">Intl</span>\<span class="hljs-title">Format</span>\<span class="hljs-title">YmlIntlLoader</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">C</span>\<span class="hljs-title">Intl</span>\<span class="hljs-title">Loader</span>\<span class="hljs-title">IntlFileLoader</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">C</span>\<span class="hljs-title">Intl</span>\<span class="hljs-title">Loader</span>\<span class="hljs-title">IntlJitLoader</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">C</span>\<span class="hljs-title">Intl</span>\<span class="hljs-title">LocaleManager</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">C</span>\<span class="hljs-title">Intl</span>\<span class="hljs-title">Translator</span>;
+
+<span class="hljs-keyword">use</span> <span class="hljs-title">Moust</span>\<span class="hljs-title">Silex</span>\<span class="hljs-title">Cache</span>\<span class="hljs-title">CacheInterface</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">Silex</span>\<span class="hljs-title">Application</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">Silex</span>\<span class="hljs-title">ServiceProviderInterface</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">Symfony</span>\<span class="hljs-title">Component</span>\<span class="hljs-title">HttpFoundation</span>\<span class="hljs-title">Request</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">C</span>\<span class="hljs-title">Watch</span>\<span class="hljs-title">WatchedIntl</span>;
+
+<span class="hljs-comment">/**
+ * Class IntlServiceProvider
+ *
+ * provides intl capabilities
+ * - to load intl from files
+ * - support yml / xliff formats
+ * - provides translator object
+ *
+ * It also configures the locale manager
+ * just in time
+ * given the current request
+ * to detect the most appropriate locale
+ *
+ * <span class="hljs-doctag">@package</span> C\Provider
+ */</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">IntlServiceProvider</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">ServiceProviderInterface</span>
+</span>{
+    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">register</span><span class="hljs-params">(Application <span class="hljs-variable">$app</span>)</span>
+    </span>{
+        LocalFs::<span class="hljs-variable">$record</span> = <span class="hljs-variable">$app</span>[<span class="hljs-string">'debug'</span>];</pre></div>
+        
+      
+        
+        <p>FS intl cache name</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$app</span>[<span class="hljs-string">'intl.cache_store_name'</span>]))
+            <span class="hljs-variable">$app</span>[<span class="hljs-string">'intl.cache_store_name'</span>] = <span class="hljs-string">"intl-fs-store"</span>;</pre></div>
+        
+      
+        
+        <p>declare a new intl FS,
+to register the intl of the module</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-variable">$app</span>[<span class="hljs-string">'intl.fs'</span>] = <span class="hljs-variable">$app</span>-&gt;share(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(Application <span class="hljs-variable">$app</span>)</span> </span>{
+            <span class="hljs-variable">$store</span> = <span class="hljs-variable">$app</span>[<span class="hljs-string">'intl.cache_store_name'</span>];
+            <span class="hljs-variable">$cache</span> = <span class="hljs-variable">$app</span>[<span class="hljs-string">'cache.get'</span>](<span class="hljs-variable">$store</span>);
+
+            <span class="hljs-variable">$registry</span> = <span class="hljs-keyword">new</span> Registry(<span class="hljs-variable">$store</span>, <span class="hljs-variable">$cache</span>, [
+                <span class="hljs-string">'basePath'</span> =&gt; <span class="hljs-variable">$app</span>[<span class="hljs-string">'project.path'</span>]
+            ]);
+            <span class="hljs-variable">$registry</span>-&gt;restrictWithExtensions([
+                <span class="hljs-string">'yml'</span>, <span class="hljs-string">'xlf'</span>,
+            ]);
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> KnownFs(<span class="hljs-variable">$registry</span>);
+        });</pre></div>
+        
+      
+        
+        <p>intl files content cache name</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$app</span>[<span class="hljs-string">'intl-content.cache_store_name'</span>]))
+            <span class="hljs-variable">$app</span>[<span class="hljs-string">'intl-content.cache_store_name'</span>] = <span class="hljs-string">"intl-content-store"</span>;</pre></div>
+        
+      
+        
+        <p>declare a new cache for intl files content</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-variable">$app</span>[<span class="hljs-string">'intl-content.cache'</span>] = <span class="hljs-variable">$app</span>-&gt;share(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(Application <span class="hljs-variable">$app</span>)</span> </span>{
+            <span class="hljs-variable">$store</span> = <span class="hljs-variable">$app</span>[<span class="hljs-string">'intl-content.cache_store_name'</span>];
+            <span class="hljs-variable">$cache</span> = <span class="hljs-variable">$app</span>[<span class="hljs-string">'cache.get'</span>](<span class="hljs-variable">$store</span>);
+            <span class="hljs-keyword">return</span> <span class="hljs-variable">$cache</span>;
+        });</pre></div>
+        
+      
+        
+        <p>declare a file loaders
+to build intl files</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-variable">$app</span>[<span class="hljs-string">'intl.loader'</span>] = <span class="hljs-variable">$app</span>-&gt;share(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(Application <span class="hljs-variable">$app</span>)</span> </span>{
+            <span class="hljs-variable">$loader</span> = <span class="hljs-keyword">new</span> IntlFileLoader();
+            <span class="hljs-variable">$loader</span>-&gt;addLoader(<span class="hljs-keyword">new</span> YmlIntlLoader());
+            <span class="hljs-variable">$loader</span>-&gt;addLoader(<span class="hljs-keyword">new</span> XliffIntlLoader());
+            <span class="hljs-keyword">return</span> <span class="hljs-variable">$loader</span>;
+        });</pre></div>
+        
+      
+        
+        <p>declare a translations loader
+to use once the intl files are built</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-variable">$app</span>[<span class="hljs-string">'intl.jitloader'</span>] = <span class="hljs-variable">$app</span>-&gt;share(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(Application <span class="hljs-variable">$app</span>)</span> </span>{
+            <span class="hljs-comment">/* <span class="hljs-doctag">@var</span> $mngr LocaleManager */</span>
+            <span class="hljs-comment">/* <span class="hljs-doctag">@var</span> $cache CacheInterface */</span>
+            <span class="hljs-variable">$manager</span> = <span class="hljs-variable">$app</span>[<span class="hljs-string">'locale.manager'</span>];
+            <span class="hljs-variable">$cache</span> = <span class="hljs-variable">$app</span>[<span class="hljs-string">'intl-content.cache'</span>];
+            <span class="hljs-variable">$jitLoader</span> = <span class="hljs-keyword">new</span> IntlJitLoader();
+            <span class="hljs-variable">$jitLoader</span>-&gt;setCache(<span class="hljs-variable">$cache</span>);
+            <span class="hljs-variable">$jitLoader</span>-&gt;setLocaleManager(<span class="hljs-variable">$manager</span>);
+            <span class="hljs-keyword">return</span> <span class="hljs-variable">$jitLoader</span>;
+        });</pre></div>
+        
+      
+        
+        <p>define a default locale</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-variable">$app</span>[<span class="hljs-string">'locale'</span>] = <span class="hljs-string">'en'</span>;</pre></div>
+        
+      
+        
+        <p>add locale challenge decision capabilities</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-variable">$app</span>[<span class="hljs-string">'locale.manager'</span>] = <span class="hljs-variable">$app</span>-&gt;share(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(Application <span class="hljs-variable">$app</span>)</span> </span>{
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> LocaleManager();
+        });</pre></div>
+        
+      
+        
+        <p>provides the translation capabilities</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-variable">$app</span>[<span class="hljs-string">'translator'</span>] = <span class="hljs-variable">$app</span>-&gt;share(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(Application <span class="hljs-variable">$app</span>)</span> </span>{
+            <span class="hljs-variable">$translator</span> = <span class="hljs-keyword">new</span> Translator(<span class="hljs-keyword">null</span>, <span class="hljs-variable">$app</span>[<span class="hljs-string">'debug'</span>]);
+            <span class="hljs-variable">$translator</span>-&gt;setJitLoader(<span class="hljs-variable">$app</span>[<span class="hljs-string">'intl.jitloader'</span>]);
+            <span class="hljs-keyword">return</span> <span class="hljs-variable">$translator</span>;
+        });</pre></div>
+        
+      
+        
+        <p>configures the fallback for the locale challenge decision</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$app</span>[<span class="hljs-string">'locale_fallbacks'</span>])) <span class="hljs-variable">$app</span>[<span class="hljs-string">'locale_fallbacks'</span>] = <span class="hljs-keyword">array</span>(<span class="hljs-string">'en'</span>);
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">boot</span><span class="hljs-params">(Application <span class="hljs-variable">$app</span>)</span>
+    </span>{</pre></div>
+        
+      
+        
+        <p>register intl FS to the watcher system.
+it will update the FS
+it will also trigger intl files build
+on application start and file change</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$app</span>[<span class="hljs-string">'watchers.watched'</span>])) {
+            <span class="hljs-variable">$app</span>[<span class="hljs-string">'watchers.watched'</span>] = <span class="hljs-variable">$app</span>-&gt;share(
+                <span class="hljs-variable">$app</span>-&gt;extend(<span class="hljs-string">'watchers.watched'</span>,
+                    <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(<span class="hljs-variable">$watched</span>, Application <span class="hljs-variable">$app</span>)</span> </span>{
+                        <span class="hljs-variable">$w</span> = <span class="hljs-keyword">new</span> WatchedIntl();
+                        <span class="hljs-variable">$w</span>-&gt;setRegistry(<span class="hljs-variable">$app</span>[<span class="hljs-string">'intl.fs'</span>]-&gt;registry);
+                        <span class="hljs-variable">$w</span>-&gt;setLoader(<span class="hljs-variable">$app</span>[<span class="hljs-string">'intl.loader'</span>]);
+                        <span class="hljs-variable">$w</span>-&gt;setJitLoader(<span class="hljs-variable">$app</span>[<span class="hljs-string">'intl.jitloader'</span>]);
+                        <span class="hljs-variable">$w</span>-&gt;setName(<span class="hljs-string">"intl"</span>);
+                        <span class="hljs-variable">$watched</span>[] = <span class="hljs-variable">$w</span>;
+                        <span class="hljs-keyword">return</span> <span class="hljs-variable">$watched</span>;
+                    }
+                )
+            );
+        }</pre></div>
+        
+      
+        
+        <p>load and configure translations</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-variable">$app</span>-&gt;before(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(Request <span class="hljs-variable">$request</span>)</span> <span class="hljs-title">use</span> <span class="hljs-params">(<span class="hljs-variable">$app</span>)</span> </span>{</pre></div>
+        
+      
+        
+        <p>load all translations from cache.</p>
+
+        
+          <div class='highlight'><pre>            <span class="hljs-variable">$app</span>[<span class="hljs-string">'intl.fs'</span>]-&gt;registry-&gt;loadFromCache();</pre></div>
+        
+      
+        
+        <p>configure the locale manager</p>
+
+        
+          <div class='highlight'><pre>            <span class="hljs-keyword">if</span> (<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$app</span>[<span class="hljs-string">'locale.manager'</span>])) {
+                <span class="hljs-comment">/* <span class="hljs-doctag">@var</span> $localMngr \C\Intl\LocaleManager */</span>
+                <span class="hljs-comment">/* <span class="hljs-doctag">@var</span> $jitLoader \C\Intl\Loader\IntlJitLoader */</span>
+                <span class="hljs-variable">$localMngr</span> = <span class="hljs-variable">$app</span>[<span class="hljs-string">'locale.manager'</span>];
+                <span class="hljs-variable">$jitLoader</span> = <span class="hljs-variable">$app</span>[<span class="hljs-string">'intl.jitloader'</span>];
+
+                <span class="hljs-variable">$knownLocales</span> = <span class="hljs-variable">$jitLoader</span>-&gt;fetchWellKnownLocales();
+                <span class="hljs-variable">$localMngr</span>-&gt;setFallbackLocales(<span class="hljs-variable">$app</span>[<span class="hljs-string">'locale_fallbacks'</span>]);
+                <span class="hljs-variable">$localMngr</span>-&gt;setWellKnownLocales(<span class="hljs-variable">$knownLocales</span>);
+
+                <span class="hljs-variable">$localMngr</span>-&gt;setBestLocalGivenReqLng(<span class="hljs-variable">$request</span>-&gt;getPreferredLanguage(<span class="hljs-variable">$knownLocales</span>));
+            }
+        });</pre></div>
+        
+      
+        
+        <p>a new tag computer is registered
+to bind assets into the cache system</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$app</span>[<span class="hljs-string">'httpcache.tagger'</span>])) {
+            <span class="hljs-comment">/* <span class="hljs-doctag">@var</span> $fs \C\FS\KnownFs */</span>
+            <span class="hljs-comment">/* <span class="hljs-doctag">@var</span> $tagger \C\TagableResource\ResourceTagger */</span>
+            <span class="hljs-variable">$fs</span> = <span class="hljs-variable">$app</span>[<span class="hljs-string">'intl.fs'</span>];
+            <span class="hljs-variable">$tagger</span> = <span class="hljs-variable">$app</span>[<span class="hljs-string">'httpcache.tagger'</span>];
+            <span class="hljs-variable">$tagger</span>-&gt;addTagComputer(<span class="hljs-string">'intl'</span>, <span class="hljs-keyword">new</span> KnownFsTagResolver(<span class="hljs-variable">$fs</span>));
+        }
+    }
+}</pre></div>
+        
+      
+        
+        <p>read more about translator here
+<a href="http://stackoverflow.com/questions/25482856/basic-use-of-translationserviceprovider-in-silex">http://stackoverflow.com/questions/25482856/basic-use-of-translationserviceprovider-in-silex</a></p>
+
+        
+      
+      <div class="fleur">h</div>
+    </div>
+  </div>
+</body>
+</html>

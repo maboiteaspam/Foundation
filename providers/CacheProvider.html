@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>CacheProvider.php</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="page">
+
+      <div class="header">
+        
+          <h1>CacheProvider.php</h1>
+        
+
+        
+      </div>
+
+      
+        
+        
+        
+          <div class='highlight'><pre><span class="hljs-preprocessor">&lt;?php</span>
+<span class="hljs-keyword">namespace</span> <span class="hljs-title">C</span>\<span class="hljs-title">Provider</span>;
+
+<span class="hljs-keyword">use</span> <span class="hljs-title">Silex</span>\<span class="hljs-title">Application</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">Silex</span>\<span class="hljs-title">ServiceProviderInterface</span>;
+
+<span class="hljs-comment">/**
+ * Class CacheProvider
+ *
+ * extends the original cache provider
+ * to register a new cache drivers IncludeCache.
+ *
+ * IncludeCache is cool t use because the content
+ * is easier to read than serialize, the original serializer.
+ *
+ * Although, it require to use a dirty hack
+ * which consist of a str_replace of stdClass::__set_state to ''
+ * so, it s not recommended to use it in production.
+ *
+ *
+ * <span class="hljs-doctag">@package</span> C\Provider
+ */</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CacheProvider</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">ServiceProviderInterface</span>
+</span>{</pre></div>
+        
+      
+        
+        <p>extends cache.drivers service,
+register the new cache driver include.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">register</span><span class="hljs-params">(Application <span class="hljs-variable">$app</span>)</span>
+    </span>{
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$app</span>[<span class="hljs-string">'cache.drivers'</span>])) {
+            <span class="hljs-variable">$app</span>[<span class="hljs-string">'cache.drivers'</span>] = <span class="hljs-variable">$app</span>-&gt;extend(<span class="hljs-string">'cache.drivers'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(<span class="hljs-variable">$drivers</span>)</span> </span>{
+                <span class="hljs-variable">$drivers</span>[<span class="hljs-string">'include'</span>] = <span class="hljs-string">'\\C\\Cache\\IncludeCache'</span>;
+                <span class="hljs-keyword">return</span> <span class="hljs-variable">$drivers</span>;
+            });
+        }</pre></div>
+        
+      
+        
+        <p>provides a cache factory given a store name
+it switches to default cache if the given store
+is not configured</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-variable">$app</span>[<span class="hljs-string">'cache.get'</span>] = <span class="hljs-variable">$app</span>-&gt;protect(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(<span class="hljs-variable">$storeName</span>)</span> <span class="hljs-title">use</span> <span class="hljs-params">(<span class="hljs-variable">$app</span>)</span> </span>{
+            <span class="hljs-keyword">if</span> (<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$app</span>[<span class="hljs-string">'caches'</span>][<span class="hljs-variable">$storeName</span>]))
+                <span class="hljs-variable">$cache</span> = <span class="hljs-variable">$app</span>[<span class="hljs-string">'caches'</span>][<span class="hljs-variable">$storeName</span>];
+            <span class="hljs-keyword">else</span>
+                <span class="hljs-variable">$cache</span> = <span class="hljs-variable">$app</span>[<span class="hljs-string">'cache'</span>];
+
+            <span class="hljs-keyword">return</span> <span class="hljs-variable">$cache</span>;
+        });
+    }
+    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">boot</span><span class="hljs-params">(Application <span class="hljs-variable">$app</span>)</span> </span>{}
+}</pre></div>
+        
+      
+      <div class="fleur">h</div>
+    </div>
+  </div>
+</body>
+</html>
