@@ -26,9 +26,20 @@ Get an eye on bootstrap module to know more.
 
 https://github.com/maboiteaspam/Bootstrap
 
-# Developer
+# Development
 
 #### Running the tests
+
+To run the tests, please install `phpunit`.
+
+`c2-bin get-phpunit` can help you to get ready.
+
+To run it,
+```
+php phpunit.phar
+phpunit
+c2-bin phpunit
+```
 
 #### Contributing guidelines
 
