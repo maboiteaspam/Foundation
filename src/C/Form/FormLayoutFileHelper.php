@@ -129,6 +129,8 @@ class FormLayoutFileHelper extends  AbstractStaticLayoutHelper{
 
             $formId = isset($nodeContents['name']) ? $nodeContents['name'] : 'form';
 
+            // @todo, delay form object instance creation to later
+
             $builder = $this->formLoader->createFormBuilder($nodeContents);
             if ($this->defaultMethod) $builder->setMethod($this->defaultMethod);
             if ($this->defaultRoute) $builder->setAction(
@@ -146,6 +148,8 @@ class FormLayoutFileHelper extends  AbstractStaticLayoutHelper{
 
             $formFile   = isset($nodeContents['from']) ? $nodeContents['from'] : '';
             $formId     = isset($nodeContents['as']) ? $nodeContents['as'] : 'form';
+
+            // @todo, delay form object instance creation to later
 
             $builder = $this->formLoader->createFormBuilderFromFile($formFile);
             if ($this->defaultMethod)   $builder->setMethod($this->defaultMethod);
