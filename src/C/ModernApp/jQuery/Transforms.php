@@ -2,6 +2,7 @@
 namespace C\ModernApp\jQuery;
 
 use C\Layout\Transforms\Transforms as base;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class Transforms
@@ -16,6 +17,26 @@ class Transforms extends base{
      */
     public static function transform(){
         return new self();
+    }
+    /**
+     * @var Request
+     */
+    public $request;
+
+    /**
+     * @param Request $request
+     * @return $this
+     */
+    public function setRequest (Request $request) {
+        $this->request = $request;
+        return $this;
+    }
+
+    /**
+     * @return Request
+     */
+    public function getRequest () {
+        return $this->request;
     }
 
     /**
@@ -69,6 +90,7 @@ class Transforms extends base{
      */
     public function ajaxify($target, $options=[]){
         $options = array_merge(['url'=>'',], $options);
+        $request = $this->getRequest();
         // use layout capabilities to target non ajax queries
         // and injected the js code to trigger the ajax loading
         return $this->forRequest('!ajax')
@@ -93,8 +115,12 @@ class Transforms extends base{
             // set root layout as ajaxified block id to render the block
             // and its children.
             ->forRequest('ajax')
-            ->then(function (Transforms $transform) use($target) {
-                if ($_GET['target']===$target) {
+            ->then(function (Transforms $transform) use($request, $target) {
+                if ($request && $request->query->has('target')
+                    && $request->query->get('target')===$target) {
+                    $transform->getLayout()->block = $target;
+                } else if (isset($_GET['target'])
+                    && $_GET['target']===$target) {
                     $transform->getLayout()->block = $target;
                 }
             });

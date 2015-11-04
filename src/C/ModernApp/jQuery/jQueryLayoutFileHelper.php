@@ -1,5 +1,5 @@
 <?php
-namespace C\ModernApp\File\Helpers;
+namespace C\ModernApp\jQuery;
 
 use C\ModernApp\File\AbstractStaticLayoutHelper;
 use C\ModernApp\File\FileTransformsInterface;
@@ -8,16 +8,16 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 
 /**
- * Class jQueryHelper
+ * Class jQueryLayoutFileHelper
  * provide ajaxify: keyword
  *
  * structure:
  *  ajaxify:
  *      id: [select block id]
  *
- * @package C\ModernApp\File\Helpers
+ * @package C\ModernApp\jQuery
  */
-class jQueryHelper extends  AbstractStaticLayoutHelper{
+class jQueryLayoutFileHelper extends  AbstractStaticLayoutHelper{
 
     /**
      * @var UrlGenerator
@@ -63,6 +63,7 @@ class jQueryHelper extends  AbstractStaticLayoutHelper{
                 $route = array_merge($requestRoute, isset($nodeContents['route']) ? $nodeContents['route'] : []);
                 jQuery::transform()
                     ->setLayout($T->getLayout())
+                    ->setRequest($request)
                     ->ajaxify($nodeContents['id'], [
                         'url'   => $generator->generate($route['route'], $route['params']),
                     ]);
