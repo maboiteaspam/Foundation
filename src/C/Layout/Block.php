@@ -178,6 +178,9 @@ class Block implements TagableResourceInterface{
             if (strpos($what, "assets")!==false) {
                 $this->assets = [];
             }
+            if (strpos($what, "body")!==false) {
+                $this->body = null;
+            }
             if (strpos($what, "meta")!==false) {
                 $this->meta = [];
             }
