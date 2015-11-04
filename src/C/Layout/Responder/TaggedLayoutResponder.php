@@ -31,7 +31,7 @@ class TaggedLayoutResponder extends LayoutResponder{
     /**
      * Renders and respond a layout.
      * If the layout is taggable,
-     *  it will add extra global resources (device, language, request kind) on the tag
+     *  it will add jit resources (device, language, request kind) on the tag
      *  It will then generate the signature of the layout,
      *      in order to set the etag value of the response object.
      *  Finally, if this layout is cache-able, it will set shared-maxage and set the response as public.
@@ -59,6 +59,7 @@ class TaggedLayoutResponder extends LayoutResponder{
             // we shall not let that happen.
         } else {
 
+            // those needs just in time resolution
             $requestMatcher = $layout->requestMatcher;
             $TaggedResource->addResource($requestMatcher->langPreferred, 'jit-locale');
             $TaggedResource->addResource($requestMatcher->deviceType, 'jit-device');

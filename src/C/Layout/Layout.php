@@ -502,10 +502,13 @@ class Layout implements TagableResourceInterface{
             $res = new TagedResource();
             $excluded = $this->excludedBlocksFromTagResource();
             try{
+                // add root block
                 $res->addResource($this->block);
+                // add globals
                 foreach($this->globalResourceTags as $extra) {
                     $res->addTaggedResource($extra);
                 }
+                // add blocks resolved subsequently to the 'root' block
                 foreach($this->registry->blocks as $block) {
                     if ($block->resolved
                         && !in_array($block->id, $excluded)) {
