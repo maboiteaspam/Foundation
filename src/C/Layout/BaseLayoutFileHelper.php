@@ -1,5 +1,5 @@
 <?php
-namespace C\ModernApp\File\Helpers;
+namespace C\Layout;
 
 use C\Layout\Layout;
 use C\Layout\Transforms\Transforms;
@@ -7,12 +7,12 @@ use C\ModernApp\File\AbstractStaticLayoutHelper;
 use C\ModernApp\File\FileTransformsInterface;
 
 /**
- * Class LayoutHelper
+ * Class BaseLayoutFileHelper
  * Provides the basics transforms to apply on layout.
  *
- * @package C\ModernApp\File\Helpers
+ * @package C\Layout
  */
-class LayoutHelper extends  AbstractStaticLayoutHelper{
+class BaseLayoutFileHelper extends  AbstractStaticLayoutHelper{
 
     /**
      * Provides meta node to set/update id and description of the layout
@@ -124,7 +124,7 @@ class LayoutHelper extends  AbstractStaticLayoutHelper{
         } else if ($nodeAction==="clear") {
             Transforms::transform()
                 ->setLayout($T->getLayout())
-                ->clearBlock($blockSubject, 'all');
+                ->clearBlock($blockSubject, $nodeContents);
             return true;
 
         } else if ($nodeAction==="delete") {

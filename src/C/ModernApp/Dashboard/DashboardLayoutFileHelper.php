@@ -1,5 +1,5 @@
 <?php
-namespace C\ModernApp\File\Helpers;
+namespace C\ModernApp\Dashboard;
 
 use C\Layout\Transforms\Transforms;
 use C\Misc\ArrayHelpers;
@@ -8,7 +8,7 @@ use C\ModernApp\Dashboard\Transforms as Dashboard;
 use C\ModernApp\File\FileTransformsInterface;
 
 /**
- * Class DashboardHelper
+ * Class DashboardLayoutFileHelper
  * Provides new block and structure action
  * - to display the dashboard in your view
  * - to configure debug method of specific blocks.
@@ -28,9 +28,9 @@ use C\ModernApp\File\FileTransformsInterface;
  *          debug_with: comments
  *          debug_with: node
  *
- * @package C\ModernApp\File\Helpers
+ * @package C\ModernApp\Dashboard
  */
-class DashboardHelper extends  AbstractStaticLayoutHelper{
+class DashboardLayoutFileHelper extends  AbstractStaticLayoutHelper{
 
     /**
      * @var ArrayHelpers

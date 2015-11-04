@@ -1,6 +1,7 @@
 <?php
 namespace C\Provider;
 
+use C\Misc\ArrayHelpers;
 use C\ModernApp\DashboardExtension\LayoutSerializer;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
@@ -45,6 +46,26 @@ class DashboardExtensionProvider implements ServiceProviderInterface
                 )
             );
         }
+
+        // register a new layout file helper
+        //  structure:
+        //      show_dashboard:
+        //          - ext1
+        //          - ext2
+        if (isset($app['modern.layout.helpers'])) {
+            $app['modern.layout.helpers'] = $app->extend('modern.layout.helpers',
+                $app->share(
+                    function (ArrayHelpers $helpers) use($app) {
+                        $helper = new \C\ModernApp\Dashboard\DashboardLayoutFileHelper();
+                        $helper->setExtensions($app['modern.dashboard.extensions']);
+                        $helpers->append($helper);
+                        return $helpers;
+                    }
+                )
+            );
+        }
+
+
         // provide the assets and layouts
         // of dashboard extensions
         if (isset($app['assets.fs'])) {

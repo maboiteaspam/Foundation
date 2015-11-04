@@ -58,24 +58,7 @@ class ModernAppServiceProvider implements ServiceProviderInterface
 
         // attach layout files action helpers
         $app['modern.layout.helpers'] = $app->share(function (Application $app) {
-            // @todo this should probably be moved away into separate service providers, for now on it s only inlined
-            $helpers = new ArrayHelpers();
-            $helpers->append(new \C\ModernApp\File\Helpers\LayoutHelper());
-            $helpers->append(new \C\ModernApp\File\Helpers\AssetsHelper());
-            $helper = new \C\ModernApp\File\Helpers\jQueryHelper();
-            $helper->setGenerator($app['url_generator']);
-            $helper->setRequest($app['request']);
-            $helpers->append($helper);
-            $helper = new \C\ModernApp\File\Helpers\EsiHelper();
-            $helper->setGenerator($app['url_generator']);
-            $helper->setRequest($app['request']);
-            $helpers->append($helper);
-            $helpers->append(new \C\ModernApp\File\Helpers\FileHelper());
-            $helper = new \C\ModernApp\File\Helpers\DashboardHelper();
-            $helper->setExtensions($app['modern.dashboard.extensions']);
-            $helpers->append($helper);
-            $helpers->append(new \C\ModernApp\File\Helpers\RequestHelper());
-            return $helpers;
+            return new ArrayHelpers();
         });
 
         // attach dashboard extensions
@@ -108,6 +91,56 @@ class ModernAppServiceProvider implements ServiceProviderInterface
         if (isset($app['modern.fs'])) {
             $app['modern.fs']->register(__DIR__.'/../ModernApp/HTML/layouts/', 'HTML');
             $app['modern.fs']->register(__DIR__.'/../ModernApp/jQuery/layouts/', 'jQuery');
+        }
+
+        // register a new layout file helper
+        //  structure:
+        //      ajaxify:
+        //          id: [block_id]
+        //      - import: jQuery:/register.yml
+        if (isset($app['modern.layout.helpers'])) {
+            $app['modern.layout.helpers'] = $app->extend('modern.layout.helpers',
+                $app->share(
+                    function (ArrayHelpers $helpers) use($app) {
+                        $helper = new \C\ModernApp\jQuery\jQueryLayoutFileHelper();
+                        $helper->setGenerator($app['url_generator']);
+                        $helper->setRequest($app['request']);
+                        $helpers->append($helper);
+                        return $helpers;
+                    }
+                )
+            );
+        }
+
+        // register a new layout file helper
+        //  structure:
+        //      - import: Module:/layout.yml
+        if (isset($app['modern.layout.helpers'])) {
+            $app['modern.layout.helpers'] = $app->extend('modern.layout.helpers',
+                $app->share(
+                    function (ArrayHelpers $helpers) use($app) {
+                        $helpers->append(new \C\ModernApp\File\ImportLayoutFileHelper());
+                        return $helpers;
+                    }
+                )
+            );
+        }
+
+        // register a new layout file helper
+        //  structure:
+        //      for_device: mobile
+        //      for_facets: mobile
+        //          device: <device type>
+        //          request: <request kind>
+        if (isset($app['modern.layout.helpers'])) {
+            $app['modern.layout.helpers'] = $app->extend('modern.layout.helpers',
+                $app->share(
+                    function (ArrayHelpers $helpers) use($app) {
+                        $helpers->append(new \C\ModernApp\File\Helpers\RequestHelper());
+                        return $helpers;
+                    }
+                )
+            );
         }
 
         // a new tag computer is registered

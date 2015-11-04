@@ -1,6 +1,7 @@
 <?php
 namespace C\Provider;
 
+use C\Misc\ArrayHelpers;
 use C\Misc\Utils;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
@@ -35,6 +36,24 @@ class EsiServiceProvider implements ServiceProviderInterface
         if (isset($app['layout.fs'])) {
             $app['layout.fs']->register(
                 __DIR__.'/../Esi/templates/', 'Esi');
+        }
+
+        // register a new layout file helper
+        //  structure:
+        //      esify:
+        //          id: [block_id]
+        if (isset($app['modern.layout.helpers'])) {
+            $app['modern.layout.helpers'] = $app->extend('modern.layout.helpers',
+                $app->share(
+                    function (ArrayHelpers $helpers) use($app) {
+                        $helper = new \C\Esi\EsiLayoutFileHelper();
+                        $helper->setGenerator($app['url_generator']);
+                        $helper->setRequest($app['request']);
+                        $helpers->append($helper);
+                        return $helpers;
+                    }
+                )
+            );
         }
 
         // implement esi request-response challenge

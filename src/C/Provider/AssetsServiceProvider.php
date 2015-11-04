@@ -8,6 +8,7 @@ use C\FS\Registry;
 use C\FS\LocalFs;
 use C\FS\KnownFs;
 use C\Assets\Bridger;
+use C\Misc\ArrayHelpers;
 use C\View\Helper\AssetsViewHelper;
 
 use Silex\Application;
@@ -103,6 +104,20 @@ class AssetsServiceProvider implements ServiceProviderInterface
             $fs     = $app['assets.fs'];
             $tagger = $app['httpcache.tagger'];
             $tagger->addTagComputer('asset', new KnownFsTagResolver($fs));
+        }
+
+        // register a new layout file helper
+        //  structure:
+        //      - import: Module:/layout.yml
+        if (isset($app['modern.layout.helpers'])) {
+            $app['modern.layout.helpers'] = $app->extend('modern.layout.helpers',
+                $app->share(
+                    function (ArrayHelpers $helpers) use($app) {
+                        $helpers->append(new \C\Assets\AssetsLayoutFileHelper());
+                        return $helpers;
+                    }
+                )
+            );
         }
 
         // layout render helper to

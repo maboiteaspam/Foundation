@@ -1,11 +1,8 @@
 <?php
-namespace C\ModernApp\File\Helpers;
-
-use C\ModernApp\File\AbstractStaticLayoutHelper;
-use C\ModernApp\File\FileTransformsInterface;
+namespace C\ModernApp\File;
 
 /**
- * Class FileHelper
+ * Class ImportLayoutFileHelper
  * Provides a new structure node
  * to import a layout file
  * from another layout file.
@@ -13,9 +10,9 @@ use C\ModernApp\File\FileTransformsInterface;
  * structure:
  *  - import_file: Module:/path/to/layout.yml
  *
- * @package C\ModernApp\File\Helpers
+ * @package C\ModernApp\File
  */
-class FileHelper extends  AbstractStaticLayoutHelper{
+class ImportLayoutFileHelper extends  AbstractStaticLayoutHelper{
 
     /**
      * Provides a new structure node action

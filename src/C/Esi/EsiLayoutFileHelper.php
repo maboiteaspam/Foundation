@@ -1,5 +1,5 @@
 <?php
-namespace C\ModernApp\File\Helpers;
+namespace C\Esi;
 
 use C\ModernApp\File\AbstractStaticLayoutHelper;
 use C\ModernApp\File\FileTransformsInterface;
@@ -8,16 +8,16 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 
 /**
- * Class EsiHelper
+ * Class EsiLayoutFileHelper
  * provide esify: keyword
  *
  * structure:
  *  esify:
  *      id: [select block id]
  *
- * @package C\ModernApp\File\Helpers
+ * @package C\Esi
  */
-class EsiHelper extends  AbstractStaticLayoutHelper{
+class EsiLayoutFileHelper extends  AbstractStaticLayoutHelper{
 
     /**
      * @var UrlGenerator

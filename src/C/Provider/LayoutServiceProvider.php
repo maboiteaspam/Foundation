@@ -11,6 +11,7 @@ use C\Layout\Responder\LayoutResponder;
 use C\Layout\Responder\TaggedLayoutResponder;
 use C\Layout\Misc\LayoutSerializer;
 use C\Layout\Misc\RequestTypeMatcher;
+use C\Misc\ArrayHelpers;
 use C\View\Env;
 use C\View\Context;
 use C\View\Helper\CommonViewHelper;
@@ -188,6 +189,26 @@ class LayoutServiceProvider implements ServiceProviderInterface
                         $w->setName("layout.fs");
                         $watched[] = $w;
                         return $watched;
+                    }
+                )
+            );
+        }
+
+        // register a new layout file helper
+        //  meta:
+        //      id ...
+        //  structure:
+        //      [block_id]
+        //          set_template: Module:/template.php
+        //          set_default_data: {some: value}
+        //          body: use inline body instead of template file
+        //          clear: body
+        if (isset($app['modern.layout.helpers'])) {
+            $app['modern.layout.helpers'] = $app->extend('modern.layout.helpers',
+                $app->share(
+                    function (ArrayHelpers $helpers) use($app) {
+                        $helpers->append(new \C\Layout\BaseLayoutFileHelper());
+                        return $helpers;
                     }
                 )
             );

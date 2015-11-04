@@ -1,20 +1,43 @@
 <?php
-namespace C\ModernApp\File\Helpers;
+
+namespace C\Assets;
 
 use C\Layout\Transforms\Transforms;
 use C\ModernApp\File\AbstractStaticLayoutHelper;
 use C\ModernApp\File\FileTransformsInterface;
 
 /**
- * Class AssetsHelper
+ * Class AssetsLayoutFileHelper
  * Provide new block actions to add / remove / replace assets.
  *
  * It can also register and require assets
  *
  *
- * @package C\ModernApp\File\Helpers
+ * structure:
+ *
+ *  - register_assets:
+ *      alias: [require alias]
+ *      path: Module:/asset-to-add.js
+ *      version: [asset version]
+ *      target: [target_layout_asset_block]
+ *      first: [true|false]
+ *
+ *  [block_id]:
+ *      require: [asset_alias:compatible_version]
+ *
+ *  [block_id]:
+ *      add_assets:
+ *          [target_layout_asset_block]:
+ *              - Module:/asset-to-add.js
+ *      remove_assets:
+ *          [target_layout_asset_block]:
+ *              - Module:/asset-to-add.js
+ *
+ *
+ *
+ * @package C\Assets
  */
-class AssetsHelper extends AbstractStaticLayoutHelper{
+class AssetsLayoutFileHelper extends AbstractStaticLayoutHelper{
 
     /**
      * Provide a new structure action
