@@ -78,6 +78,7 @@ class FormFileLoader {
             $attr       = isset($elData['attr'])        ? $elData['attr'] : [];
             $validation = isset($elData['validation'])  ? $this->createRealConstraintObjects($elData['validation']) : [];
 
+            $options = \C\Misc\Utils::objectToArray($options);
             $options['attr'] = isset($options['attr']) ? array_merge($attr, $options['attr']) : $attr;
             if (count($validation)) $options['constraints'] = $validation;
 
