@@ -44,6 +44,25 @@ class ArrayHelpers extends \ArrayObject {
     }
 
     /**
+     * Find index of the given item class type.
+     * @param $some string
+     * @return mixed|false
+     */
+    public function indexOf ($some) {
+        foreach($this as $i=>$o){
+            if (is_a($o, $some)) {
+                return $i;
+            }
+        }
+        foreach($this as $i=>$o){
+            if (strpos(get_class($o), $some)!==false) {
+                return $i;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Find an item given its class type.
      * @param $some string
      * @return mixed|null
@@ -65,16 +84,32 @@ class ArrayHelpers extends \ArrayObject {
     /**
      * Remove an item given its class type
      * @param $some string
-     * @return bool
+     * @return mixed|null
      */
     public function remove ($some) {
         $found = $this->find($some);
         if ($found!==null) {
             $internals = $this->getArrayCopy();
-            array_splice($internals, $i, 1);
+            $removed = array_splice($internals, $i, 1);
             $this->exchangeArray($internals);
+            return $removed;
         }
-        return $found!==null;
+        return null;
+    }
+
+    /**
+     * Remove item at given index
+     * @param $index int
+     * @return mixed|null
+     */
+    public function removeAt ($index) {
+        if ($index<$this->count()) {
+            $internals = $this->getArrayCopy();
+            $removed = array_splice($internals, $index, 1);
+            $this->exchangeArray($internals);
+            return $removed;
+        }
+        return null;
     }
 
     /**
