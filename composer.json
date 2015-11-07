@@ -15,11 +15,18 @@
     "wa72/htmlpagedom": "~1.1",
     "symfony/var-dumper": "^2.7",
     "jbinfo/mobile-detect-service-provider": "^1.1",
-    "vierbergenlars/php-semver": "^3.0"
+    "vierbergenlars/php-semver": "^3.0",
+    "c/stream-object-transform": "dev-master"
   },
   "autoload": {
     "psr-4": {
       "C\\": "src/C"
     }
-  }
+  },
+  "repositories": [
+    {
+      "type": "git",
+      "url": "git@github.com:maboiteaspam/StreamObjectTransform.git"
+    }
+  ]
 }
