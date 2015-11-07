@@ -27,7 +27,7 @@ class Generator{
     public static function generate ($what, $transform, $len=10) {
         $results = new \ArrayObject();
         $concat = new StreamConcat();
-        StreamFlow::duplex($len)
+        StreamFlow::demultiplex($len)
             ->pipe($transform)
             ->pipe($concat->appendTo($results))
             ->write($what);
