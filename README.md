@@ -13,8 +13,25 @@ http://maboiteaspam.github.io/Foundation/index.html
 
 To hack it, just run usual `composer` commands.
 
-```sh
-composer require git@github.com:maboiteaspam/Foundation.git
+Until the module is published,
+add this repository to the `composer` file
+then run `composer update`.
+```
+# composer.json
+,
+    {
+      "type": "git",
+      "url": "git@github.com:maboiteaspam/Foundation.git
+    }
+
+shell
+# composer update
+```
+
+or run `c2-bin require-gh -m=...`
+
+```
+c2-bin require-gh -m=maboiteaspam/Foundation
 ```
 
 # Register
