@@ -2,7 +2,7 @@
 
 Foundation module for C framework.
 
-C framework is a lightweight framework dedicated to frontend development for php applications.
+C is a lightweight framework dedicated to frontend development for php applications.
 
 Based on top of silex and symfony.
 
