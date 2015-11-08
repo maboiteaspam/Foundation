@@ -3,7 +3,6 @@
 namespace C\Schema;
 
 use C\FS\Registry;
-use Illuminate\Database\Capsule\Manager as Capsule;
 
 class Loader implements ISchema{
 
@@ -20,10 +19,6 @@ class Loader implements ISchema{
 
     public function register(ISchema $schema){
         $this->schemas[] = $schema;
-    }
-
-    public function setCapsule(Capsule $capsule){
-        $this->capsule = $capsule;
     }
 
     public function loadSchemas(){
