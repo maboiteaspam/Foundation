@@ -2,6 +2,7 @@
 namespace C\Form;
 
 use \Symfony\Component\Form\Form;
+use \Symfony\Component\Form\FormBuilderInterface;
 use C\TagableResource\TagableResourceInterface;
 use C\TagableResource\UnwrapableResourceInterface;
 use C\TagableResource\TagedResource;
@@ -19,17 +20,17 @@ use C\TagableResource\TagedResource;
 class FormBuilder implements TagableResourceInterface, UnwrapableResourceInterface {
 
     /**
-     * @param Form $form
+     * @param FormBuilderInterface $form
      * @return FormBuilder
      */
-    public static function createView (Form $form) {
+    public static function createView (FormBuilderInterface $form) {
         $args = func_get_args();
         array_shift($args);
         return new self($form, $args);
     }
 
     /**
-     * @var Form
+     * @var FormBuilderInterface
      */
     public $form;
     /**
@@ -38,12 +39,19 @@ class FormBuilder implements TagableResourceInterface, UnwrapableResourceInterfa
     public $args;
 
     /**
-     * @param Form $form
+     * @param FormBuilderInterface $form
      * @param array $args
      */
-    public function __construct (Form $form, $args=[]) {
+    public function __construct (FormBuilderInterface $form, $args=[]) {
         $this->form = $form;
         $this->args = $args;
+    }
+
+    /**
+     * @return FormBuilderInterface
+     */
+    public function getForm () {
+        return $this->form;
     }
 
     /**
@@ -61,10 +69,13 @@ class FormBuilder implements TagableResourceInterface, UnwrapableResourceInterfa
     }
 
     /**
+     * Create the form object
+     * for the view to display.
+     *
      * @return mixed
      */
     public function unwrap () {
-        return $this->form->createView(); // this is the reason of this class....!
+        return $this->form->getForm()->createView(); // this is the reason of this class....!
         // when createView is triggered, the http response is modified to private
         // which prevents cache strategy to be effective
         //      is response cache-able=>false
