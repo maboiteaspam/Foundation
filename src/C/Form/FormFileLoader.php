@@ -64,10 +64,13 @@ class FormFileLoader {
         $formType       = isset($config['type'])      ? $config['type']         : null;
         $formContent    = isset($config['children'])  ? $config['children']     : [];
         $formAttrs      = isset($config['attr'])      ? $config['attr']         : [];
+        $formName       = isset($config['name'])      ? $config['name']         : null;
 
-        $builder = $this->formFactory->createBuilder(
-            'form',
-            $formType? new $formType : null, ['attr'=>$formAttrs]
+        $formType = $formType!==null ? new $formType : null;
+        $formName = $formName===null && $formType!==null ? $formType->getName() : $formName;
+        $formName = $formName!==null ? $formName : 'form';
+        $builder = $this->formFactory->createNamedBuilder(
+            $formName, $formType, null, ['attr'=>$formAttrs]
         );
 
 
