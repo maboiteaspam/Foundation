@@ -140,7 +140,7 @@ class FormLayoutFileHelper extends  AbstractStaticLayoutHelper{
                 ]))
             );
 
-            $T->setDefaultData($blockSubject, [$formId => FormBuilder::createView($builder->getForm())]);
+            $T->setDefaultData($blockSubject, [$formId => FormBuilder::createView($builder)]);
 
             return true;
 
@@ -160,7 +160,7 @@ class FormLayoutFileHelper extends  AbstractStaticLayoutHelper{
                 ]))
             );
 
-            $T->setDefaultData($blockSubject, [$formId=>FormBuilder::createView($builder->getForm())]);
+            $T->setDefaultData($blockSubject, [$formId=>FormBuilder::createView($builder)]);
 
             return true;
         }
