@@ -18,11 +18,16 @@ class SchemaServiceProvider implements ServiceProviderInterface
 {
     public function register(Application $app)
     {
+
+        // Schema cache name
+        if (!isset($app['schema.cache_store_name']))
+            $app['schema.cache_store_name'] = "schema-fs";
+
         // declare a new schema loader,
         // is has a fs registry to watch for fs.events
         // it provides a Schema\Loader
         $app['schema.fs'] = $app->share(function(Application $app) {
-            $store = $app['capsule.cache_store_name'];
+            $store = $app['schema.cache_store_name'];
             $cache = $app['cache.get']($store);
 
             $registry = new Registry($store, $cache, [
