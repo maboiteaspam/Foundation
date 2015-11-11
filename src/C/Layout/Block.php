@@ -445,9 +445,23 @@ class Block implements TagableResourceInterface{
      * @return mixed
      */
     public function getData ($name) {
-        $data = $this->data[$name];
-        if ($data instanceof UnwrapableResourceInterface) {
+        $data = $this->getRawData($name);
+        if ($data!==false && $data instanceof UnwrapableResourceInterface) {
             $data = $data->unwrap();
+        }
+        return $data;
+    }
+
+    /**
+     * Get a specific data
+     *
+     * @param $name
+     * @return mixed
+     */
+    public function getRawData ($name) {
+        $data = false;
+        if (isset($this->data[$name])) {
+            $data = $this->data[$name];
         }
         return $data;
     }
