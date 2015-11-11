@@ -11,10 +11,16 @@ class Loader implements ISchema{
      * @var \C\FS\Registry
      */
     public $registry;
-    public $capsule;
 
     public function __construct(Registry $registry){
         $this->registry = $registry;
+    }
+
+    /**
+     * @return Registry
+     */
+    public function getRegistry () {
+        return $this->registry;
     }
 
     public function register(ISchema $schema){

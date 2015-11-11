@@ -18,8 +18,9 @@ class SchemaServiceProvider implements ServiceProviderInterface
 {
     public function register(Application $app)
     {
-        // declare a new schema FS,
-        // to register the database schemas of the module
+        // declare a new schema loader,
+        // is has a fs registry to watch for fs.events
+        // it provides a Schema\Loader
         $app['schema.fs'] = $app->share(function(Application $app) {
             $store = $app['capsule.cache_store_name'];
             $cache = $app['cache.get']($store);
@@ -51,8 +52,8 @@ class SchemaServiceProvider implements ServiceProviderInterface
                 $app->extend('watchers.watched',
                     function($watched, Application $app) {
                         $w = new WatchedCapsule();
-                        $w->setSchemaLoader($app['capsule.schema']);
-                        $w->setName("capsule.schema");
+                        $w->setSchemaLoader($app['schema.fs']);
+                        $w->setName("schema.fs");
                         $watched[] = $w;
                         return $watched;
                     }

@@ -28,23 +28,10 @@ class DbInit extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $app = $this->webapp;
-        if (isset($app['capsule.connections'])) {
-            $connections = $app['capsule.connections'];
-            foreach ($connections as $connection => $options) {
-                if ($options["driver"]==='sqlite') {
-                    if ($options["database"]!==':memory:') {
-                        $exists = LocalFs::file_exists($options['database']);
-                        if (!$exists) {
-                            $dir = dirname($options["database"]);
-                            if (!LocalFs::is_dir($dir)) LocalFs::mkdir($dir, 0700, true);
-                            LocalFs::touch($options["database"]);
-                        }
-                    }
-                }
-            }
-            $app['capsule.schema']->loadSchemas();
-            $app['capsule.schema']->cleanDb();
-            $app['capsule.schema']->initDb();
+        if (isset($app['schema.fs'])) {
+            $app['schema.fs']->loadSchemas();
+            $app['schema.fs']->cleanDb();
+            $app['schema.fs']->initDb();
         } else {
             \C\Misc\Utils::stderr("There is no database configuration available.");
         }
