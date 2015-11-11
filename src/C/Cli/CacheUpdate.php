@@ -56,7 +56,7 @@ class CacheUpdate extends Command
                     \C\Misc\Utils::stdout($watched->getName()." updated with action $change");
                 }
             }catch(\Exception $ex) {
-                \C\Misc\Utils::stderr($watched->getName()." failed to update !");
+                \C\Misc\Utils::stderr($watched->getName()." failed to update $file!");
                 if ($ex->getPrevious())
                     \C\Misc\Utils::stderr($ex->getPrevious()->getMessage());
                 else
